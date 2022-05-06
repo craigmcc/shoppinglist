@@ -1,0 +1,53 @@
+name: Ubuntu Server Smoke Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  UbuntuServerSmokeTest:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+          POSTGRES_PORT: 5432
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      ACCESS_LOG: stdout
+      CLIENT_LOG: stdout
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+      OAUTH_ENABLED: true
+      PORT: 8081
+      SERVER_LOG: stdout
+      SUPERUSER_SCOPE: superuser
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Ubuntu With Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run server:build --if-present
+      - run: npm run test:coverage --if-present
