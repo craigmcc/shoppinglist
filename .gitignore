@@ -1,0 +1,14 @@
+.env
+.env.*
+.idea/
+.migraterc*
+.nyc_output/
+backup/
+build/
+dist/
+fullchain.pem
+log/
+migrations/current.sql
+node_modules/
+privkey.pem
+transfer/*.csv
