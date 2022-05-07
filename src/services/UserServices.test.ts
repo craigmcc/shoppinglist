@@ -39,8 +39,8 @@ describe("UserServices Functional Tests", () => {
         it("should pass on active Users", async () => {
 
             const users = await UserServices.all({ active: "" });
-            users.forEach(library => {
-                expect(library.active).to.be.true;
+            users.forEach(user => {
+                expect(user.active).to.be.true;
             });
 
         });

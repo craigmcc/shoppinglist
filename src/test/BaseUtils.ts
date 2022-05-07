@@ -11,7 +11,7 @@ import AccessToken from "../models/AccessToken";
 //import Category from "../models/Category";
 import Database from "../models/Database";
 //import Item from "../models/Item";
-//import List from "../models/List";
+import List from "../models/List";
 import RefreshToken from "../models/RefreshToken";
 import User from "../models/User";
 import {clearMapping} from "../oauth/OAuthMiddleware";
@@ -22,11 +22,9 @@ import {hashPassword} from "../oauth/OAuthUtils";
 export type OPTIONS = {
     withAccessTokens: boolean,
     withCategories: boolean,
-    withGroups: boolean,
     withItems: boolean,
     withLists: boolean,
     withRefreshTokens: boolean,
-    withSelecteds: boolean,
     withUsers: boolean,
 };
 
@@ -52,8 +50,9 @@ export abstract class BaseUtils {
         clearMapping();
 
         // Load users (and tokens) if requested
+        let users: User[] = [];
         if (options.withUsers) {
-            await loadUsers(SeedData.USERS);
+            users = await loadUsers(SeedData.USERS);
             const userSuperuser = await User.findOne({
                 where: { username: SeedData.USER_USERNAME_SUPERUSER }
             });
@@ -64,6 +63,14 @@ export abstract class BaseUtils {
                 if (options.withRefreshTokens) {
                     await loadRefreshTokens(userSuperuser, SeedData.REFRESH_TOKENS_SUPERUSER);
                 }
+            }
+        }
+
+        // Load lists (and related items) if requested
+        if (options.withLists) {
+            const lists = await loadLists(SeedData.LISTS);
+            if (options.withUsers) {
+                // TODO: establish relevant relationships
             }
         }
 
@@ -157,7 +164,6 @@ const loadItems = async (items: Partial<Item>[]): Promise<Item[]> => {
 }
 */
 
-/*
 const loadLists = async (lists: Partial<List>[]): Promise<List[]> => {
     try {
         //@ts-ignore NOTE - did Typescript get tougher about Partial<M>?
@@ -167,7 +173,6 @@ const loadLists = async (lists: Partial<List>[]): Promise<List[]> => {
         throw error;
     }
 }
-*/
 
 const loadRefreshTokens
     = async (user: User, refreshTokens: Partial<RefreshToken>[]): Promise<RefreshToken[]> => {

@@ -10,7 +10,7 @@ import {PasswordTokenRequest} from "@craigmcc/oauth-orchestrator";
 // Internal Modules ----------------------------------------------------------
 
 import BaseUtils, {OPTIONS} from "./BaseUtils";
-//import Category from "../models/Category";
+import List from "../models/List";
 import User from "../models/User";
 import OAuthOrchestrator from "../oauth/OAuthOrchestrator";
 import {NotFound} from "../util/HttpErrors";
@@ -90,6 +90,25 @@ export class ServicesUtils extends BaseUtils {
     public async loadData(options: Partial<OPTIONS>): Promise<void> {
         await super.loadData(options);
         this.credentialsCache.clear();
+    }
+
+    /**
+     * Look up and return the specified List from the database.
+     * NOTE: name is not unique, so this just returns the first match
+     *
+     * @param name                      Name of the requested User
+     *
+     * @throws NotFound                 If no such List exists
+     */
+    public async lookupList(name: string): Promise<List> {
+        const results = await List.findAll({
+            where: { name: name }
+        });
+        if (results.length > 0) {
+            return results[0];
+        } else {
+            throw new NotFound(`name: Missing List '${name}'`);
+        }
     }
 
     /**

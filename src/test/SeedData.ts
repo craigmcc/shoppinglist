@@ -9,7 +9,7 @@
 import AccessToken from "../models/AccessToken";
 //import Category from "../models/Category";
 //import Item from "../models/Item";
-//import List from "../models/List";
+import List from "../models/List";
 import RefreshToken from "../models/RefreshToken";
 import User from "../models/User";
 
@@ -82,7 +82,6 @@ export const ITEMS: Partial<Item>[] = [
 
 // *** Lists ***
 
-/*
 export const LIST_NAME_FIRST = "First List";
 export const LIST_NAME_SECOND = "Second List";
 export const LIST_NAME_THIRD = "Third List";
@@ -101,7 +100,6 @@ export const LISTS: Partial<List>[] = [
         name: LIST_NAME_THIRD,
     },
 ];
-*/
 
 
 // *** Refresh Tokens ***

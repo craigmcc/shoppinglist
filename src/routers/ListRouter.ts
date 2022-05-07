@@ -44,19 +44,19 @@ ListRouter.post("/",
 // DELETE /:listId - Remove List by ID
 ListRouter.delete("/:listId",
     async (req: Request, res: Response) => {
-        res.send(await ListServices.remove(req.params.userId));
+        res.send(await ListServices.remove(req.params.listId));
     });
 
 // GET /:listId - Find List by ID
 ListRouter.get("/:listId",
     async (req: Request, res: Response) => {
-        res.send(await ListServices.find(req.params.userId, req.query));
+        res.send(await ListServices.find(req.params.listId, req.query));
     });
 
 // PUT /:listId - Update List by ID
 ListRouter.put("/:listId",
     async (req: Request, res: Response) => {
-        res.send(await ListServices.update(req.params.userId, req.body));
+        res.send(await ListServices.update(req.params.listId, req.body));
     });
 
 // List-User Routes ----------------------------------------------------------
@@ -67,13 +67,13 @@ ListRouter.get("/:listId/users",
         res.send(await ListServices.users(req.params.listId, req.query));
     });
 
-// DELETE /:listId/users/:userId - Disassociate List and User
+// DELETE /:listId/users/:listId - Disassociate List and User
 ListRouter.delete("/:listId/users/:userId}",
     async (req: Request, res: Response) => {
         res.send(await ListServices.usersExclude(req.params.listId, req.params.userId));
-    })
+    });
 
-// POST /:listId/users/:userId - Associate List and User
+// POST /:listId/users/:listId - Associate List and User
 ListRouter.post("/:listId/users/:userId",
     async (req: Request, res: Response) => {
         let admin: boolean = false;
@@ -81,7 +81,7 @@ ListRouter.post("/:listId/users/:userId",
             admin = true;
         }
         res.send(await ListServices.usersInclude(req.params.listId, req.params.userId, admin));
-    })
+    });
 
 // Child Lookup Routes -------------------------------------------------------
 
