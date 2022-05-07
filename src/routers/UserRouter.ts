@@ -18,7 +18,7 @@ export const UserRouter = Router({
     strict: true,
 });
 
-// Superuser access required for all routes
+// TODO - superuser access required for all routes
 UserRouter.use(requireSuperuser);
 
 export default UserRouter;
@@ -68,6 +68,30 @@ UserRouter.get("/:userId",
 UserRouter.put("/:userId",
     async (req: Request, res: Response) => {
         res.send(await UserServices.update(req.params.userId, req.body));
+    });
+
+// User-List Routes ----------------------------------------------------------
+
+// GET /:userId/lists - Find Lists for this User
+UserRouter.get("/:userId/lists",
+    async (req: Request, res: Response) => {
+        res.send(await UserServices.lists(req.params.userId, req.query));
+    });
+
+// DELETE /:userId/lists/:listId - Disassociate User and List
+UserRouter.delete("/:userId/lists/:listId}",
+    async (req: Request, res: Response) => {
+        res.send(await UserServices.listsExclude(req.params.userId, req.params.listId));
+    });
+
+// POST /:userId/lists/:listId - Associate User and List
+UserRouter.post("/:userId/lists/:listId",
+    async (req: Request, res: Response) => {
+        let admin: boolean = false;
+        if (req.query && (req.query.admin === "")) {
+            admin = true;
+        }
+        res.send(await UserServices.listsInclude(req.params.userId, req.params.listId, admin))
     });
 
 // Child Lookup Routes -------------------------------------------------------

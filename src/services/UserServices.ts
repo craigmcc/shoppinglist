@@ -8,8 +8,11 @@ import {FindOptions, Op} from "sequelize";
 
 // Internal Modules ----------------------------------------------------------
 
+import ListServices from "./ListServices";
 import BaseParentServices from "./BaseParentServices";
+import List from "../models/List";
 import User from "../models/User";
+import UserList from "../models/UserList";
 import {hashPassword} from "../oauth/OAuthUtils";
 import {BadRequest, NotFound} from "../util/HttpErrors";
 import {appendPaginationOptions} from "../util/QueryParameters";
@@ -95,10 +98,36 @@ class UserServices extends BaseParentServices<User> {
         return results[0];
     }
 
+    public async lists(userId: string, query?: any): Promise<List[]> {
+        const user = await this.read("UserServices.lists", userId);
+        // TODO : options
+        return user.$get("lists"/*, options*/);
+    }
+
+    public async listsExclude(userId: string, listId: string): Promise<List> {
+        const user = await this.read("UserServices.listsExclude", userId);
+        const list = await ListServices.read("UserServices.listsExclude", listId);
+        await user.$remove("lists", list);
+        return list;
+    }
+
+    public async listsInclude(userId: string, listId: string, admin?: boolean): Promise<List> {
+        const user = await this.read("UserServices.listsInclude", userId);
+        const list = await ListServices.read("UserServices.listsInclude", listId);
+        // @ts-ignore
+        await UserList.upsert({
+            admin: (admin !== undefined) ? admin : true,
+            listId: listId,
+            userId: userId,
+        });
+        return list;
+    }
+
     // Public Helpers --------------------------------------------------------
 
     /**
      * Supported include query parameters:
+     * * withLists                      Include authorized Lists
      */
     public appendIncludeOptions(options: FindOptions, query?: any): FindOptions {
         if (!query) {
@@ -106,6 +135,9 @@ class UserServices extends BaseParentServices<User> {
         }
         options = appendPaginationOptions(options, query);
         const include: any = options.include ? options.include : [];
+        if (""  === query.withLists) {
+            include.push(List);
+        }
         if (include.length > 0) {
             options.include = include;
         }
@@ -114,7 +146,7 @@ class UserServices extends BaseParentServices<User> {
 
     /**
      * Supported match query parameters:
-     * * active                         Select active users
+     * * active                         Select active Users
      * * username={wildcard}            Select Users with username matching {wildcard}
      */
     public appendMatchOptions(options: FindOptions, query?: any): FindOptions {

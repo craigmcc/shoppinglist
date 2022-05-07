@@ -14,16 +14,16 @@ export const ACCESS_TOKENS: Order = [
 ];
 
 export const CATEGORIES: Order = [
-    [ "groupId", "ASC" ],
+    [ "listId", "ASC" ],
     [ "name", "ASC" ],
 ];
 
 export const ITEMS: Order = [
+    [ "listId", "ASC" ],
     [ "name", "ASC" ],
 ];
 
 export const LISTS: Order = [
-    [ "groupId", "ASC" ],
     [ "name", "ASC" ],
 ];
 

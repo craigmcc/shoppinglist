@@ -10,7 +10,7 @@ import {Router} from "express";
 
 //import CategoryRouter from "./CategoryRouter";
 //import ItemRouter from "./ItemRouter";
-//import ListRouter from "./ListRouter";
+import ListRouter from "./ListRouter";
 import UserRouter from "./UserRouter";
 
 // Public Objects ------------------------------------------------------------
@@ -25,5 +25,5 @@ export default ApiRouter;
 
 //ApiRouter.use("/categories", CategoryRouter);
 //ApiRouter.use("/items", ItemRouter);
-//ApiRouter.use("/lists", ListRouter);
+ApiRouter.use("/lists", ListRouter);
 ApiRouter.use("/users", UserRouter);

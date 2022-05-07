@@ -12,9 +12,10 @@ import {Sequelize} from "sequelize-typescript";
 import AccessToken from "./AccessToken";
 //import Category from "./Category";
 //import Item from "./Item";
-//import List from "./List";
+import List from "./List";
 import RefreshToken from "./RefreshToken";
 import User from "./User";
+import UserList from "./UserList";
 import logger from "../util/ServerLogger";
 
 // Configure Database Instance -----------------------------------------------
@@ -32,14 +33,15 @@ export const Database = new Sequelize(DATABASE_URL, {
 });
 
 Database.addModels([
-    // List Stack
-//    List,
-//    Category,
-//    Item,
     // User Stack
     User,
     AccessToken,
     RefreshToken,
+    // List Stack
+    List,
+    UserList,
+//    Category,
+//    Item,
 ]);
 
 logger.info({

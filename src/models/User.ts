@@ -4,10 +4,12 @@
 
 // External Modules ----------------------------------------------------------
 
-import {Column, DataType, HasMany, Model, Table} from "sequelize-typescript";
+import {BelongsToMany, Column, DataType, Model, Table} from "sequelize-typescript";
 
 // Internal Modules ----------------------------------------------------------
 
+import List from "./List";
+import UserList from "./UserList";
 import {validateUserUsernameUnique} from "../util/AsyncValidators";
 import {BadRequest} from "../util/HttpErrors";
 
@@ -85,6 +87,13 @@ class User extends Model<User> {
     })
         // First Name of this User
     lastName!: string;
+
+    @BelongsToMany(() => List, () => UserList)
+    // Related Lists, present only if User is retrieved with withLists
+    lists!: Array<List & {UserList: UserList}>;
+
+    // Join Table contents, present only if User retrieved with withLists
+    UserList?: UserList;
 
     @Column({
         allowNull: false,
