@@ -82,7 +82,6 @@ class ListServices extends BaseParentServices<List> {
      * Supported match query parameters:
      * * active                         Select active Lists
      * * name={wildcard}                Select Lists with name matching {wildcard}
-     * * userId={userId}                Select Lists associated with this userId
      */
     public appendMatchOptions(options: FindOptions, query?: any): FindOptions {
         options = this.appendIncludeOptions(options, query);
@@ -95,9 +94,6 @@ class ListServices extends BaseParentServices<List> {
         }
         if (query.name) {
             where.name = { [Op.iLike]: `%${query.name}%`};
-        }
-        if (query.userId) {
-            where.userId = query.userId;
         }
         if (Object.keys(where).length > 0) {
             options.where = where;

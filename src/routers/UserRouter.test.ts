@@ -12,8 +12,6 @@ chai.use(chaiHttp);
 // Internal Modules ----------------------------------------------------------
 
 import app from "./ExpressApplication";
-import AccessToken from "../models/AccessToken";
-import RefreshToken from "../models/RefreshToken";
 import User from "../models/User";
 import RouterUtils, {AUTHORIZATION} from "../test/RouterUtils";
 import * as SeedData from "../test/SeedData";

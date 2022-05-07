@@ -40,26 +40,25 @@ describe("ListRouter Functional Tests", () => {
 
         const PATH = "/api/lists";
 
-        xit("should pass on authenticated request", async () => {
-
-            const response = await chai.request(app)
-                .get(PATH)
-                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_REGULAR));
-            expect(response).to.have.status(OK);
-            expect(response).to.be.json;
-            const OUTPUTS: List[] = response.body;
-            expect(OUTPUTS.length).to.equal(SeedData.LISTS.length)
-
-        })
-
-        xit("should pass on unauthenticated request", async () => {
+        it("should fail on unauthenticated request", async () => {
 
             const response = await chai.request(app)
                 .get(PATH);
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.context).to.equal("OAuthMiddleware.requireSuperuser");
+            expect(response.body.message).to.equal("No access token presented");
+
+        })
+
+        it("should pass on authenticated superuser", async () => {
+
+            const response = await chai.request(app)
+                .get(PATH)
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_SUPERUSER));
             expect(response).to.have.status(OK);
             expect(response).to.be.json;
-            const OUTPUTS: List[] = response.body;
-            expect(OUTPUTS.length).to.equal(SeedData.LISTS.length)
+            expect(response.body.length).to.equal(SeedData.LISTS.length)
 
         })
 
