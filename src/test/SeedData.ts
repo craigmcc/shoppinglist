@@ -7,8 +7,8 @@
 // Internal Modules ----------------------------------------------------------
 
 import AccessToken from "../models/AccessToken";
-//import Category from "../models/Category";
-//import Item from "../models/Item";
+import Category from "../models/Category";
+import Item from "../models/Item";
 import List from "../models/List";
 import RefreshToken from "../models/RefreshToken";
 import User from "../models/User";
@@ -36,7 +36,6 @@ export const ACCESS_TOKENS_SUPERUSER: Partial<AccessToken>[] = [
 
 // *** Categories ***
 
-/*
 export const CATEGORY_NAME_FIRST = "First Category";
 export const CATEGORY_NAME_SECOND = "Second Category";
 export const CATEGORY_NAME_THIRD = "Third Category";
@@ -55,11 +54,9 @@ export const CATEGORIES: Partial<Category>[] = [
         name: CATEGORY_NAME_THIRD,
     },
 ];
-*/
 
 // *** Items ***
 
-/*
 export const ITEM_NAME_FIRST = "First Item";
 export const ITEM_NAME_SECOND = "Second Item";
 export const ITEM_NAME_THIRD = "Third Item";
@@ -78,7 +75,6 @@ export const ITEMS: Partial<Item>[] = [
         name: ITEM_NAME_THIRD,
     },
 ];
-*/
 
 // *** Lists ***
 

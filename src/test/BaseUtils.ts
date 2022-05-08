@@ -8,9 +8,9 @@
 
 import * as SeedData from "./SeedData";
 import AccessToken from "../models/AccessToken";
-//import Category from "../models/Category";
+import Category from "../models/Category";
 import Database from "../models/Database";
-//import Item from "../models/Item";
+import Item from "../models/Item";
 import List from "../models/List";
 import RefreshToken from "../models/RefreshToken";
 import User from "../models/User";
@@ -66,55 +66,28 @@ export abstract class BaseUtils {
             }
         }
 
-        // Load lists (and related items) if requested
+        // Load Lists (and related Categories and Items) if requested
         if (options.withLists) {
             const lists = await loadLists(SeedData.LISTS);
-            if (options.withUsers) {
-                // TODO: establish relevant relationships
-            }
-        }
-
-/*
-        // Load groups (and related children) if requested
-        if (options.withGroups) {
-            const groups = await loadGroups(SeedData.GROUPS);
             if (options.withCategories) {
                 let categories: Partial<Category>[] = [];
-                groups.forEach(group => {
+                lists.forEach(list => {
                     SeedData.CATEGORIES.forEach(category => {
-                        categories.push({ ...category, groupId: group.id });
+                        categories.push({ ...category, listId: list.id });
                     });
                 });
                 categories = await loadCategories(categories);
                 if (options.withItems) {
                     let items: Partial<Item>[] = [];
-                    groups.forEach(group => {
+                    lists.forEach((list, index) => {
                         SeedData.ITEMS.forEach(item => {
-                            const newItem: Partial<Item> = { ...item, groupId: group.id };
-                            let categoryId: string | undefined;
-                            categories.forEach(category => {
-                                if (!categoryId && (category.groupId === group.id)) {
-                                    categoryId = category.id;
-                                }
-                            })
-                            newItem.categoryId = categoryId;
-                            items.push(newItem);
+                            items.push({ ...item, categoryId: categories[index].id, listId: list.id });
                         });
                     });
                     items = await loadItems(items);
                 }
             }
-            if (options.withLists) {
-                let lists: Partial<List>[] = [];
-                groups.forEach(group => {
-                    SeedData.LISTS.forEach(list => {
-                        lists.push({ ...list, groupId: group.id });
-                    });
-                });
-                lists = await loadLists(lists);
-            }
         }
-*/
 
     }
 
@@ -140,7 +113,6 @@ const loadAccessTokens
     }
 }
 
-/*
 const loadCategories = async (categories: Partial<Category>[]): Promise<Category[]> => {
     try {
         //@ts-ignore NOTE - did Typescript get tougher about Partial<M>?
@@ -150,9 +122,7 @@ const loadCategories = async (categories: Partial<Category>[]): Promise<Category
         throw error;
     }
 }
-*/
 
-/*
 const loadItems = async (items: Partial<Item>[]): Promise<Item[]> => {
     try {
         //@ts-ignore NOTE - did Typescript get tougher about Partial<M>?
@@ -162,7 +132,6 @@ const loadItems = async (items: Partial<Item>[]): Promise<Item[]> => {
         throw error;
     }
 }
-*/
 
 const loadLists = async (lists: Partial<List>[]): Promise<List[]> => {
     try {
