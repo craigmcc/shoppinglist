@@ -59,6 +59,20 @@ ListRouter.put("/:listId",
         res.send(await ListServices.update(req.params.listId, req.body));
     });
 
+// List-Child Routes ---------------------------------------------------------
+
+// GET /:listId/categories - Find Categories for this List
+ListRouter.get("/:listId/categories",
+    async (req: Request, res:Response) => {
+        res.send(await ListServices.categories(req.params.listId, req.query));
+    });
+
+// GET /:listId/items - Find Items for this List
+ListRouter.get("/:listId/items",
+    async (req: Request, res:Response) => {
+        res.send(await ListServices.items(req.params.listId, req.query));
+    });
+
 // List-User Routes ----------------------------------------------------------
 
 // GET /:listId/users - Find Users for this List
@@ -82,6 +96,3 @@ ListRouter.post("/:listId/users/:userId",
         }
         res.send(await ListServices.usersInclude(req.params.listId, req.params.userId, admin));
     });
-
-// Child Lookup Routes -------------------------------------------------------
-

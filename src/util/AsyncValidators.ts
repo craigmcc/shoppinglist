@@ -13,10 +13,9 @@ import {Op} from "sequelize";
 // Internal Modules ----------------------------------------------------------
 
 import AccessToken from "../models/AccessToken";
-//import Category from "../models/Category";
+import Category from "../models/Category";
 import RefreshToken from "../models/RefreshToken";
-//import Item from "../models/Item";
-//import List from "../models/List";
+import Item from "../models/Item";
 import User from "../models/User";
 
 // Public Objects ------------------------------------------------------------
@@ -40,7 +39,6 @@ export const validateAccessTokenTokenUnique
     }
 }
 
-/*
 export const validateCategoryNameUnique
     = async (category: Category): Promise<boolean> =>
 {
@@ -50,14 +48,14 @@ export const validateCategoryNameUnique
             options = {
                 where: {
                     id: {[Op.ne]: category.id},
-                    groupId: category.groupId,
+                    listId: category.listId,
                     name: category.name
                 }
             }
         } else {
             options = {
                 where: {
-                    groupId: category.groupId,
+                    listId: category.listId,
                     name: category.name
                 }
             }
@@ -68,10 +66,7 @@ export const validateCategoryNameUnique
         return true;
     }
 }
-*/
 
-
-/*
 export const validateItemNameUnique
     = async (item: Item): Promise<boolean> =>
 {
@@ -81,14 +76,14 @@ export const validateItemNameUnique
             options = {
                 where: {
                     id: {[Op.ne]: item.id},
-                    groupId: item.groupId,
+                    listId: item.listId,
                     name: item.name
                 }
             }
         } else {
             options = {
                 where: {
-                    groupId: item.groupId,
+                    listId: item.listId,
                     name: item.name
                 }
             }
@@ -99,37 +94,6 @@ export const validateItemNameUnique
         return true;
     }
 }
-*/
-
-/*
-export const validateListNameUnique
-    = async (list: List): Promise<boolean> =>
-{
-    if (list && list.name) {
-        let options = {};
-        if (list.id) {
-            options = {
-                where: {
-                    id: {[Op.ne]: list.id},
-                    groupId: list.groupId,
-                    name: list.name
-                }
-            }
-        } else {
-            options = {
-                where: {
-                    groupId: list.groupId,
-                    name: list.name
-                }
-            }
-        }
-        let results = await List.findAll(options);
-        return (results.length === 0);
-    } else {
-        return true;
-    }
-}
-*/
 
 export const validateRefreshTokenTokenUnique
     = async (refreshToken: RefreshToken): Promise<boolean> =>

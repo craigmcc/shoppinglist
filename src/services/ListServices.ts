@@ -8,9 +8,13 @@ import {FindOptions, Op} from "sequelize";
 // Internal Modules ----------------------------------------------------------
 
 import BaseParentServices from "./BaseParentServices";
+import Category from "../models/Category";
+import Item from "../models/Item";
 import List from "../models/List";
 import User from "../models/User";
 import UserList from "../models/UserList";
+import CategoryServices from "./CategoryServices";
+import ItemServices from "./ItemServices";
 import UserServices from "../services/UserServices";
 import {appendPaginationOptions} from "../util/QueryParameters";
 import * as SortOrder from "../util/SortOrder";
@@ -29,6 +33,22 @@ class ListServices extends BaseParentServices<List> {
     }
 
     // Model-Specific Methods ------------------------------------------------
+
+    public async categories(listId: string, query?: any): Promise<Category[]> {
+        const list = await this.read("ListServices.categories", listId);
+        const options: FindOptions = CategoryServices.appendMatchOptions({
+            order: SortOrder.CATEGORIES,
+        }, query);
+        return list.$get("categories", options);
+    }
+
+    public async items(listId: string, query?: any): Promise<Item[]> {
+        const list = await this.read("ListServices.items", listId);
+        const options: FindOptions = ItemServices.appendMatchOptions({
+            order: SortOrder.ITEMS,
+        }, query);
+        return list.$get("items", options);
+    }
 
     public async users(listId: string, query?: any): Promise<User[]> {
         const list = await this.read("ListServices.users", listId);

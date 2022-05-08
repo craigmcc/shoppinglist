@@ -1,14 +1,16 @@
 // List ----------------------------------------------------------------------
 
-// A list of Items to be potentially purchased, administered  by or available
+// A List of Items to be potentially purchased, administered  by, or available
 // to, zero or more Users.
 
 // External Modules ----------------------------------------------------------
 
-import {BelongsToMany, Column, DataType, Model, Table} from "sequelize-typescript";
+import {BelongsToMany, Column, DataType, HasMany, Model, Table} from "sequelize-typescript";
 
 // Internal Modules ----------------------------------------------------------
 
+import Category from "./Category";
+import Item from "./Item";
 import User from "./User";
 import UserList from "./UserList";
 
@@ -45,6 +47,20 @@ class List extends Model<List> {
     // Is this List active?
     active!: boolean;
 
+    @HasMany(() => Category, {
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+    })
+    // Categories owned by this List
+    categories!: Category[];
+
+    @HasMany(() => Item, {
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+    })
+    // Items owned by this List
+    items!: Item[];
+
     @Column({
         allowNull: false,
         field: "name",
@@ -55,7 +71,7 @@ class List extends Model<List> {
             },
         }
     })
-    // TODO: Per-User(s)??? unique name of this List
+    // Name of this list (NOT unique)
     name!: string;
 
     @Column({

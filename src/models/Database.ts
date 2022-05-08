@@ -10,8 +10,8 @@ import {Sequelize} from "sequelize-typescript";
 // Internal Modules ----------------------------------------------------------
 
 import AccessToken from "./AccessToken";
-//import Category from "./Category";
-//import Item from "./Item";
+import Category from "./Category";
+import Item from "./Item";
 import List from "./List";
 import RefreshToken from "./RefreshToken";
 import User from "./User";
@@ -40,8 +40,8 @@ Database.addModels([
     // List Stack
     List,
     UserList,
-//    Category,
-//    Item,
+    Category,
+    Item,
 ]);
 
 logger.info({
