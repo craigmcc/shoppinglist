@@ -10,18 +10,16 @@ import React, {createContext, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
+import {LOGIN_CONTEXT_DATA_KEY} from "../../constants";
+import {Scope} from "../../types";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import TokenResponse from "../../models/TokenResponse";
 import logger from "../../util/ClientLogger";
-import LocalStorage from "../../util/LocalStorage";
 
 // Context Properties --------------------------------------------------------
 
-const LOG_DEFAULT = "info";             // Default log level
-const LOG_PREFIX = "log:";              // Prefix for scope values defining log level
-
 // Data that is visible to HTTP clients not part of the React component hierarchy
-export interface Data {
+export interface LoginData {
     accessToken: string | null;         // Current access token (if logged in)
     expires: Date | null;               // Absolute expiration time (if logged in)
     loggedIn: boolean;                  // Is user currently logged in?
@@ -30,9 +28,8 @@ export interface Data {
     username: string | null;            // Logged in username (if logged in)
 }
 
-// For use by HTTP clients to include in their requests
-
-export let LOGIN_DATA: Data = {
+// Dummy initial values for Data
+const LOGIN_DATA: LoginData = {
     accessToken: null,
     expires: null,
     loggedIn: false,
@@ -43,30 +40,32 @@ export let LOGIN_DATA: Data = {
 
 // Context state (including data) visible to LoginContext children
 
-export interface State {
-    data: Data;                         // Externally visible information
+export interface LoginState {
+    data: LoginData;                    // Externally visible information
     handleLogin: (username: string, tokenResponse: TokenResponse) => void;
     handleLogout: () => void;
-    // TODO - scope validation stuff
+    validateScope: (scope: string) => boolean;
 }
 
-const LoginContext = createContext<State>({
+const LoginContext = createContext<LoginState>({
     data: LOGIN_DATA,
     handleLogin: (username, tokenResponse) => {},
     handleLogout: () => {},
+    validateScope: (scope: string): boolean => { return false; }
 });
 
-// Provider for LoginContext -------------------------------------------------
+// Logging level constants
 
-const LOGIN_CONTEXT_DATA_KEY = "LOGIN_CONTEXT_DATA"; // Local storage key
-export const LOGIN_CONTEXT_EXTRA_KEY = "LOGIN_CONTEXT_EXTRA";
+const LOG_DEFAULT = "info";             // Default log level
+const LOG_PREFIX = "log:";              // Prefix for scope values defining log level
+
+// Provider for LoginContext -------------------------------------------------
 
 // @ts-ignore
 export const LoginContextProvider = ({ children }) => {
 
-    const extraData = new LocalStorage(LOGIN_CONTEXT_EXTRA_KEY, LOGIN_DATA);
     const [alloweds, setAlloweds] = useState<string[]>([]);
-    const [data, setData] = useLocalStorage<Data>(LOGIN_CONTEXT_DATA_KEY, LOGIN_DATA);
+    const [data, setData] = useLocalStorage<LoginData>(LOGIN_CONTEXT_DATA_KEY, LOGIN_DATA);
 
     /**
      * Handle a successful login.
@@ -100,7 +99,7 @@ export const LoginContextProvider = ({ children }) => {
         });
 
         // Update the stored data to show this username is now logged in
-        const theData: Data = {
+        const theData: LoginData = {
             accessToken: tokenResponse.access_token,
             expires: new Date((new Date()).getTime() + (tokenResponse.expires_in * 1000)),
             loggedIn: true,
@@ -109,8 +108,6 @@ export const LoginContextProvider = ({ children }) => {
             username: username,
         }
         setData(theData);
-        LOGIN_DATA = { ...theData }; // No corruption allowed
-        extraData.value = LOGIN_DATA;
 
     }
 
@@ -124,6 +121,9 @@ export const LoginContextProvider = ({ children }) => {
             username: data.username,
         });
 
+        // Reset logging to the default level
+        logger.setLevel(LOG_DEFAULT);
+
         // Update the stored data to show this user is now logged out
         const theData = {
             accessToken: null,
@@ -134,18 +134,58 @@ export const LoginContextProvider = ({ children }) => {
             username: null,
         };
         setData(theData);
-        LOGIN_DATA = { ...theData }; // No corruption allowed
-        extraData.value = LOGIN_DATA;
 
-        logger.setLevel(LOG_DEFAULT);
+    }
+
+    /**
+     * Return true if the currently logged in user has authorization for the
+     * specified scope.
+     *
+     * @param scope                     Scope to be tested for
+     */
+    const validateScope = (scope: string): boolean => {
+
+        // Users not logged in will never pass scope requirements
+        if (!data.loggedIn) {
+            return false;
+        }
+
+        // Special handling for superuser scope
+        if (alloweds.includes(Scope.SUPERUSER)) {
+            return true;
+        }
+
+        // Special handling for a logged in user with *any* scope
+        if (scope === "") {
+            return true;
+        }
+
+        // Otherwise, check required scope(s) versus allowed scope(s)
+        const requireds = scope ? scope.split(" ") : [];
+        if (requireds.length === 0) {
+            return true;
+        }
+        let missing = false;
+        requireds.forEach(required => {
+            if (!alloweds.includes(required)) {
+                missing = true;
+            }
+        });
+        if (missing) {
+            return false;
+        }
+
+        // The requested scope is allowed
+        return true;
 
     }
 
     // Prepare and return the initial context values
-    const loginContext: State = {
+    const loginContext: LoginState = {
         data: data,
         handleLogin: handleLogin,
         handleLogout: handleLogout,
+        validateScope: validateScope,
     };
 
     return (

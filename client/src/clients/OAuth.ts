@@ -9,10 +9,11 @@ import axios, {AxiosInstance} from "axios";
 
 // Internal Modules ----------------------------------------------------------
 
-import {LOGIN_DATA, LOGIN_CONTEXT_EXTRA_KEY} from "../components/login/LoginContext";
+import {LOGIN_CONTEXT_DATA_KEY} from "../constants";
+import {LoginData} from "../components/login/LoginContext";
 import LocalStorage from "../util/LocalStorage";
 
-const extraData = new LocalStorage(LOGIN_CONTEXT_EXTRA_KEY);
+const loginData = new LocalStorage<LoginData>(LOGIN_CONTEXT_DATA_KEY);
 
 // Public Objects ------------------------------------------------------------
 
@@ -21,15 +22,14 @@ const OAuth: AxiosInstance = axios.create({
 });
 
 OAuth.interceptors.request.use(function (config) {
-    console.log("LOGIN_DATA", LOGIN_DATA);
-    console.log("EXTRA_DATA", extraData.value);
-    if (LOGIN_DATA.accessToken) {
+    const currentData = loginData.value;
+    if (currentData.accessToken) {
         // @ts-ignore
-        config.headers["Authorization"] = `Bearer ${loginData.accessToken}`;
+        config.headers["Authorization"] = `Bearer ${currentData.accessToken}`;
     }
-    if (LOGIN_DATA.username) {
+    if (currentData.username) {
         // @ts-ignore
-        config.headers["X-SL-Username"] = loginData.username;
+        config.headers["X-SL-Username"] = currentData.username;
     }
     return config;
 });

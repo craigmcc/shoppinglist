@@ -19,7 +19,7 @@ import HomeView from "./components/general/HomeView";
 import Navigation from "./components/general/Navigation";
 import {LoginContextProvider} from "./components/login/LoginContext";
 import MobileView from "./components/mobile/MobileView";
-import UsersView from "./components/users/UsersView";
+import UserView from "./components/users/UserView";
 import WebView from "./components/web/WebView";
 
 // Component Details ---------------------------------------------------------
@@ -46,7 +46,7 @@ function App () {
                     <Router>
                         <Routes>
                             <Route path="/" element={<Navigation/>}>
-                                <Route path="admin-users" element={<UsersView/>}/>
+                                <Route path="admin-users" element={<UserView/>}/>
                                 <Route path="view-mobile" element={
                                     <Container style={{ border: "2px solid black", height: "667pt", width: "375pt" }}>
                                         <MobileView/>

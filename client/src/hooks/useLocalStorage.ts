@@ -1,10 +1,7 @@
 // useLocalStorage -----------------------------------------------------------
 
-// Store an arbitrary data object under the specified key in the browser's
-// local storage.
-
-// IMPLEMENTATION NOTE:  The data object must be serializable
-// as a JSON string, so fields must be strings, numbers, or booleans.
+// Typed wrapper for information stored in the browser's local storage.
+// The specified type must be JSON serializable.
 
 // External Modules ----------------------------------------------------------
 
@@ -12,37 +9,33 @@ import {useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
-import logger from "../util/ClientLogger";
-
 // Hook Definition -----------------------------------------------------------
 
-function useLocalStorage<TYPE>(keyName: string, defaultValue?: TYPE) {
+/**
+ * Typed wrapper around access to a LocalStorage value for the specified key name.
+ * The specified type must be JSON serializable.
+ *
+ * @param keyName                       Local storage key for this instance
+ * @param initialValue                  Initially set value
+ *                                      [Not set if no initialValue is specified]
+ */
+function useLocalStorage<TYPE>(keyName: string, initialValue?: TYPE) {
 
     const [storedValue, setStoredValue] = useState(() => {
-        try {
-            const value = window.localStorage.getItem(keyName);
-            if (value) {
-                return JSON.parse(value);
-            } else {
-                window.localStorage.setItem(keyName, JSON.stringify(defaultValue));
-                return defaultValue;
-            }
-        } catch (error) {
-            return defaultValue;
+        if (initialValue) {
+            window.localStorage.setItem(keyName, JSON.stringify(initialValue));
+            return initialValue;
+        }
+        const currentValue = window.localStorage.getItem(keyName);
+        if (currentValue) {
+            return JSON.parse(currentValue);
+        } else {
+            return {};
         }
     });
 
     const setValue = (newValue: TYPE) => {
-        try {
-            window.localStorage.setItem(keyName, JSON.stringify(newValue));
-        } catch (error) {
-            logger.error({
-                context: "useLocalStorage.setValue",
-                msg: "Error serializing new value",
-                value: newValue,
-                error: error,
-            });
-        }
+        window.localStorage.setItem(keyName, JSON.stringify(newValue));
         setStoredValue(newValue);
     };
 
