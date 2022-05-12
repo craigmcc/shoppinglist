@@ -8,7 +8,7 @@ import {Request, Response, Router} from "express";
 
 // Internal Modules ----------------------------------------------------------
 
-import {requireSuperuser} from "../oauth/OAuthMiddleware";
+import {dumpRequestDetails, requireSuperuser} from "../oauth/OAuthMiddleware";
 import UserServices from "../services/UserServices";
 import {CREATED} from "../util/HttpErrors";
 
@@ -38,6 +38,7 @@ UserRouter.get("/exact/:username",
 
 // GET / - Find all matching Users
 UserRouter.get("/",
+    dumpRequestDetails,
     async (req: Request, res: Response) => {
         res.send(await UserServices.all(
             req.query

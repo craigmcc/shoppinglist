@@ -8,6 +8,7 @@
 
 import {FindOptions, ModelStatic, Order, ValidationError} from "sequelize";
 import {Model} from "sequelize-typescript";
+const uuid = require("uuid");
 
 // Internal Modules ----------------------------------------------------------
 
@@ -81,9 +82,12 @@ abstract class BaseParentServices<M extends Model> extends BaseCommonServices<M>
      */
     public async insert(model: Partial<M>): Promise<M> {
         try {
+            if (!model.id) {
+                model.id = uuid.v4();
+            }
             // @ts-ignore
             return await this.model.create(model, {
-                fields: this.fields,
+                fields: this.fieldsWithId,
             });
         } catch (error) {
             if (error instanceof BadRequest) {

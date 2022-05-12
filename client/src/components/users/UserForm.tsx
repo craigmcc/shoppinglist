@@ -21,6 +21,7 @@ import {CheckBoxField, TextField} from "@craigmcc/shared-react";
 import {HandleAction, HandleUser} from "../../types";
 import User, {UserData} from "../../models/User";
 import {validateUserUsernameUnique} from "../../util/AsyncValidators";
+import logger from "../../util/ClientLogger";
 import * as ToModel from "../../util/ToModel";
 
 // Incoming Properties ------------------------------------------------------
@@ -60,6 +61,11 @@ const UserForm = (props: Props) => {
         const theUser = new User({
             ...props.user,
             ...values,
+        });
+        logger.info({
+            context: "UserForm.onSubmit",
+            adding: adding,
+            user: theUser,
         });
         if (adding && props.handleInsert) {
             props.handleInsert(theUser);

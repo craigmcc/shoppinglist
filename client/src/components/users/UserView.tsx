@@ -58,7 +58,6 @@ const UserView = () => {
     // Create an empty User to be added
     const handleAdd: HandleAction = () => {
         const theUser = new User({
-            id: null,
             active: true,
             email: null,
             firstName: null,
@@ -134,6 +133,7 @@ const UserView = () => {
 
             {(view === View.FORM) ? (
                 <UserForm
+                    autoFocus={true}
                     handleBack={handleBack}
                     handleInsert={canInsert ? handleInsert : undefined}
                     handleRemove={canRemove ? handleRemove : undefined}

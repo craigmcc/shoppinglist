@@ -11,7 +11,7 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
-import {CheckBox, FetchingProgress} from "@craigmcc/shared-react";
+import {CheckBox, FetchingProgress, Pagination} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
 
@@ -37,10 +37,14 @@ const UserList = (props: Props) => {
 
     const [active, setActive] = useState<boolean>(false);
     const [availables, setAvailables] = useState<User[]>([]);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [pageSize] = useState<number>(100);
 
     const fetchUsers = useFetchUsers({
         active: active,
         alertPopup: false,
+        currentPage: currentPage,
+        pageSize: pageSize,
     });
 
     useEffect(() => {
@@ -71,6 +75,14 @@ const UserList = (props: Props) => {
         }
     }
 
+    const handleNext: HandleAction = () => {
+        setCurrentPage(currentPage + 1);
+    }
+
+    const handlePrevious: HandleAction = () => {
+        setCurrentPage(currentPage - 1);
+    }
+
     return (
         <Container fluid id="UserList">
 
@@ -90,6 +102,16 @@ const UserList = (props: Props) => {
                         label="Active Users Only?"
                         name="activeOnly"
                         value={active}
+                    />
+                </Col>
+                <Col className="text-end">
+                    <Pagination
+                        currentPage={currentPage}
+                        handleNext={handleNext}
+                        handlePrevious={handlePrevious}
+                        lastPage={(availables.length === 0) ||
+                            (availables.length < pageSize)}
+                        variant="secondary"
                     />
                 </Col>
                 <Col className="text-end">

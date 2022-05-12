@@ -8,6 +8,7 @@
 
 import {FindOptions, Order, ValidationError} from "sequelize";
 import {Model, ModelStatic} from "sequelize-typescript";
+const uuid = require("uuid");
 
 // Internal Modules ----------------------------------------------------------
 
@@ -113,13 +114,16 @@ abstract class BaseChildServices<C extends Model, P extends Model> extends BaseC
     public async insert(parentId: string, child: Partial<C>): Promise<C> {
         await this.readParent(`${this.name}Services.insert`, parentId);
         try {
+            if (!child.id) {
+                child.id = uuid.v4();
+            }
             child = {
                 ...child,
                 [`${this.parentKey}`]: parentId, // No cheating
             };
             // @ts-ignore
             return await this.model.create(child, {
-                fields: this.fields,
+                fields: this.fieldsWithId,
             });
         } catch (error) {
             if (error instanceof BadRequest) {
