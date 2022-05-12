@@ -31,7 +31,7 @@ const ACCESS_LOG = process.env.ACCESS_LOG ? process.env.ACCESS_LOG : "stderr";
 morgan.token("date", (req, res): string => {
     return Timestamps.iso();
 });
-const REMOTE_USER_HEADER = "x-username";
+const REMOTE_USER_HEADER = "x-sl-username";
 morgan.token("remote-user", (req, res): string => {
     let username = "-";
     const header: string | string[] | undefined = req.headers[REMOTE_USER_HEADER];

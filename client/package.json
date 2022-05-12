@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8083",
   "dependencies": {
     "@craigmcc/shared-react": "^1.2.0",
     "@craigmcc/shared-utils": "^1.0.2",

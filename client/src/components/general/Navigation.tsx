@@ -12,6 +12,8 @@ import {NavLink, Outlet} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
 
+import LoggedInUser from "../login/LoggedInUser";
+
 // Component Details ---------------------------------------------------------
 
 function Navigation () {
@@ -50,6 +52,8 @@ function Navigation () {
                             </NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
+                    <LoggedInUser/>
+                    <span className="me-2"/>
                 </Navbar.Collapse>
 
             </Navbar>
