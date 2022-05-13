@@ -32,7 +32,7 @@ export interface Props {
     handleInsert?: HandleUser;          // Handle User insert request [not allowed]
     handleRemove?: HandleUser;          // Handle User remove request [not allowed]
     handleUpdate?: HandleUser;          // Handle User update request [not allowed]
-    user: User;                         // Initial values (id < 0 for adding)
+    user: User;                         // Initial values (id null for adding)
 }
 
 // Component Details ---------------------------------------------------------
@@ -150,7 +150,7 @@ const UserForm = (props: Props) => {
                 </Row>
 
                 <Form
-                    id="UserFormForm"
+                    id="UserFormDetails"
                     noValidate
                     onSubmit={handleSubmit(onSubmit)}
                 >

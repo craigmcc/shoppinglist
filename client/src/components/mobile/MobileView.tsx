@@ -9,6 +9,7 @@ import Container from "react-bootstrap/Container";
 
 // Internal Modules ----------------------------------------------------------
 
+import MobileCreateAccountSubview from "./MobileCreateAccountSubview";
 import MobileLoggedInSubview from "./MobileLoggedInSubview";
 import MobileLoggedOutSubview from "./MobileLoggedOutSubview";
 import LoginContext from "../login/LoginContext";
@@ -20,6 +21,7 @@ import ReportError from "../../util/ReportError";
 // Component Details ---------------------------------------------------------
 
 enum View {
+    CREATE_ACCOUNT = "Create Account",
     LOGGED_OUT = "Logged Out",
     LOGGED_IN = "Logged In",
 }
@@ -38,13 +40,10 @@ const MobileView = () => {
             loggedIn: loginContext.data.loggedIn,
             view: view.toString(),
         });
-        if (!loginContext.data.loggedIn) {
-            setView(View.LOGGED_OUT);
-        }
     }, [loginContext.data.username, loginContext.data.loggedIn, view]);
 
     const handleCreateAccount: HandleAction = () => {
-        alert("handleCreateAccount is not yet implemented");
+        setView(View.CREATE_ACCOUNT);
     }
 
     const handleForgotPassword: HandleAction = () => {
@@ -59,12 +58,12 @@ const MobileView = () => {
         const accessToken = loginContext.data.accessToken;
         const username = loginContext.data.username;
         try {
-            logger.info({
-                context: "LoggedInUser.handleLogout",
-                username: username,
-            })
-            await loginContext.handleLogout();
             if (accessToken) {
+                logger.info({
+                    context: "LoggedInUser.handleLogout",
+                    username: username,
+                })
+                await loginContext.handleLogout();
                 await OAuth.delete("/token", {
                     headers: {
                         "Authorization": `Bearer ${accessToken}`
@@ -81,6 +80,12 @@ const MobileView = () => {
 
     return (
         <Container fluid id="MobileView">
+
+            {(view === View.CREATE_ACCOUNT) ? (
+                <MobileCreateAccountSubview
+                    handleBack={handleLoggedOut}
+                />
+            ) : null }
 
             {(view === View.LOGGED_IN) ? (
                 <MobileLoggedInSubview

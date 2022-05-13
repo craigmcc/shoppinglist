@@ -8,6 +8,7 @@ import React from "react";
 
 // Internal Modules ----------------------------------------------------------
 
+import CreateAccount from "./models/CreateAccount";
 import Credentials from "./models/Credentials";
 import User from "./models/User";
 
@@ -54,8 +55,10 @@ export type HandleValue = (newValue: string) => void;
 
 // Model Object Handlers -----------------------------------------------------
 
+export type HandleCreateAccount = (createAccount: CreateAccount) => void;
 export type HandleCredentials = (credentials: Credentials) => void;
 export type HandleUser = (user: User) => void;
 
+export type ProcessCreateAccount = (createAccount: CreateAccount) => Promise<User>;
 export type ProcessCredentials = (credentials: Credentials) => Promise<Credentials>;
 export type ProcessUser = (user: User) => Promise<User>;
