@@ -4,12 +4,14 @@
 
 // External Modules ----------------------------------------------------------
 
-import {FindOptions, Op} from "sequelize";
+import {FindOptions, Op, Transaction} from "sequelize";
+const uuid = require("uuid");
 
 // Internal Modules ----------------------------------------------------------
 
 import ListServices from "./ListServices";
 import BaseParentServices from "./BaseParentServices";
+import CreateAccount from "../models/CreateAccount";
 import List from "../models/List";
 import User from "../models/User";
 import UserList from "../models/UserList";
@@ -17,6 +19,7 @@ import {hashPassword} from "../oauth/OAuthUtils";
 import {BadRequest, NotFound} from "../util/HttpErrors";
 import {appendPaginationOptions} from "../util/QueryParameters";
 import * as SortOrder from "../util/SortOrder";
+import Database from "../models/Database";
 
 // Public Classes ------------------------------------------------------------
 
@@ -52,7 +55,7 @@ class UserServices extends BaseParentServices<User> {
         return result;
     }
 
-    public async insert(user: Partial<User>): Promise<User> {
+    public async insert(user: Partial<User>, options?: any): Promise<User> {
         if (!user.password) {
             throw new BadRequest(
                 `password: Is required`,
@@ -60,7 +63,7 @@ class UserServices extends BaseParentServices<User> {
             );
         }
         user.password = await hashPassword(user.password); // NOTE - leaked back to caller
-        const result = await super.insert(user);
+        const result = await super.insert(user, options);
         result.password = "";
         return result;
     }
@@ -83,6 +86,76 @@ class UserServices extends BaseParentServices<User> {
     }
 
     // Model-Specific Methods ------------------------------------------------
+
+    public async create(createUser: CreateAccount): Promise<User> {
+
+        let transaction: Transaction | null = null;
+        try {
+
+            // Start a transaction
+            transaction = await Database.transaction();
+
+            // Create the requested User
+            const user = await this.insert({
+                id: uuid.v4(),
+                active: true,
+                email: createUser.email,
+                firstName: createUser.firstName,
+                lastName: createUser.lastName,
+                password: createUser.password1,
+                scope: "TODO",
+                username: createUser.username,
+            }, {
+                transaction: transaction,
+            });
+
+            if (createUser.listName) {
+
+                // Create the associated List (if requested)
+                const list = await ListServices.insert({
+                    id: uuid.v4(),
+                    active: true,
+                    name: createUser.listName,
+                }, {
+                    transaction: transaction,
+                })
+
+                // Associate the User and List
+                // @ts-ignore
+                await UserList.upsert({
+                    admin: true,
+                    listId: list.id,
+                    userId: user.id,
+                }, {
+                    transaction: transaction,
+                });
+
+            }
+
+            // Commit the transaction
+            await transaction.commit();
+
+            // Return the new User with its nested List
+            return await this.find(user.id, {
+                withLists: "",
+            });
+
+        } catch (error) {
+
+            // Roll back the transaction (if any) and rethrow the error
+            if (transaction) {
+                await transaction.rollback();
+            }
+            throw error;
+
+        }
+
+        // @ts-ignore
+        return this.find(user.id, {
+            withLists: ""
+        });
+
+    }
 
     public async exact(username: string, query?: any): Promise<User> {
         let options: FindOptions = this.appendIncludeOptions({

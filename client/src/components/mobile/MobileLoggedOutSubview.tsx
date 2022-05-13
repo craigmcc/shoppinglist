@@ -68,7 +68,7 @@ const MobileLoggedOutSubview = (props: Props) => {
 
             <Row className="mt-2 mb-2">
                 <Col className="text-center">
-                    <h3>Welcome to My Shopping List!</h3>
+                    <strong>Welcome to My Shopping List!</strong>
                 </Col>
             </Row>
 

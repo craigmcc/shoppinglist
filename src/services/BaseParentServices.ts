@@ -72,6 +72,7 @@ abstract class BaseParentServices<M extends Model> extends BaseCommonServices<M>
      * Insert and return a new model instance with the specified contents.
      *
      * @param model                     Object containing fields for the inserted instance
+     * @param options                   Optional Sequelize options
      *
      * @returns Inserted model instance (with "id" field)
      *
@@ -80,15 +81,15 @@ abstract class BaseParentServices<M extends Model> extends BaseCommonServices<M>
      * @throws NotUnique if a unique key violation is attempted
      * @throws ServerError if some other error occurs
      */
-    public async insert(model: Partial<M>): Promise<M> {
+    public async insert(model: Partial<M>, options?: any ): Promise<M> {
         try {
             if (!model.id) {
                 model.id = uuid.v4();
             }
+            const createOptions = options ? options : {};
+            createOptions.fields = this.fieldsWithId;
             // @ts-ignore
-            return await this.model.create(model, {
-                fields: this.fieldsWithId,
-            });
+            return await this.model.create(model, createOptions);
         } catch (error) {
             if (error instanceof BadRequest) {
                 throw error;

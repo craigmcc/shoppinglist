@@ -95,5 +95,12 @@ UserRouter.post("/:userId/lists/:listId",
         res.send(await UserServices.listsInclude(req.params.userId, req.params.listId, admin))
     });
 
-// Child Lookup Routes -------------------------------------------------------
+// Account Management Routes -------------------------------------------------
 
+// POST /accounts - Create a User and associated List
+UserRouter.post("/accounts",
+    async (req: Request, res: Response) => {
+        res.send(await UserServices.create(
+            req.body
+        ));
+    });

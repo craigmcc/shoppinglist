@@ -12,6 +12,7 @@ import Row from "react-bootstrap/Row";
 
 import CreateAccountForm from "../general/CreateAccountForm";
 import {HandleAction, HandleCreateAccount} from "../../types";
+import useMutateUser from "../../hooks/useMutateUser";
 import CreateAccount from "../../models/CreateAccount";
 import logger from "../../util/ClientLogger";
 
@@ -25,6 +26,10 @@ export interface Props {
 
 const MobileCreateAccountSubview = (props: Props) => {
 
+    const mutateUser = useMutateUser({
+        alertPopup: false,
+    });
+
     const initialValues = new CreateAccount({
         listName: "My List",
     });
@@ -32,9 +37,13 @@ const MobileCreateAccountSubview = (props: Props) => {
     const handleCreateAccount: HandleCreateAccount = async (createAccount) => {
         logger.debug({
             context: "MobileCreateAccountSubview.handleCreateAccount",
-            createAccount: {createAccount},
+            createAccount: {
+                ...createAccount,
+                password1: "*REDACTED*",
+                password2: "*REDACTED*",
+            },
         });
-        // TODO - process this transaction with the server
+        /*const created = */await mutateUser.create(createAccount);
         props.handleBack();
     }
 

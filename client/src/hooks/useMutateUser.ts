@@ -8,7 +8,7 @@ import {useEffect, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {ProcessUser} from "../types";
+import {ProcessCreateAccount, ProcessUser} from "../types";
 import Api from "../clients/Api";
 import User, {USERS_BASE} from "../models/User";
 import * as Abridgers from "../util/Abridgers";
@@ -25,6 +25,7 @@ export interface Props {
 export interface State {
     error: Error | null;                // I/O error (if any)
     executing: boolean;                 // Are we currently executing?
+    create: ProcessCreateAccount;       // Function to create a new User and List
     insert: ProcessUser;                // Function to insert a new User
     remove: ProcessUser;                // Function to remove an existing User
     update: ProcessUser;                // Function to update an existing User
@@ -43,6 +44,38 @@ const useMutateUser = (props: Props = {}): State => {
             context: "useMutateUser.useEffect",
         });
     });
+
+    const create: ProcessCreateAccount = async (theAccount) => {
+
+        setError(null);
+        setExecuting(true);
+
+        let created = new User();
+        const url = USERS_BASE + "/accounts";
+
+        try {
+            created = ToModel.USER((await Api.post(url, theAccount)).data);
+            logger.debug({
+                context: "useMutateUser.create",
+                url: url,
+                user: Abridgers.USER(created),
+            });
+        } catch (e) {
+            setError(e as Error);
+            ReportError("useMutateUser.create", e, {
+                url: url,
+                account: {
+                    ...theAccount,
+                    password1: "*REDACTED*",
+                    password2: "*REDACTED*",
+                }
+            }, alertPopup);
+        }
+
+        setExecuting(false);
+        return created;
+
+    }
 
     const insert: ProcessUser = async (theUser) => {
 
@@ -140,6 +173,7 @@ const useMutateUser = (props: Props = {}): State => {
     return {
         error: error,
         executing: executing,
+        create: create,
         insert: insert,
         remove: remove,
         update: update,

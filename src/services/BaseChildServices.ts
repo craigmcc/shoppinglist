@@ -111,7 +111,7 @@ abstract class BaseChildServices<C extends Model, P extends Model> extends BaseC
      * @throws NotUnique if a unique key violation is attempted
      * @throws ServerError if some other error occurs
      */
-    public async insert(parentId: string, child: Partial<C>): Promise<C> {
+    public async insert(parentId: string, child: Partial<C>, options?: any): Promise<C> {
         await this.readParent(`${this.name}Services.insert`, parentId);
         try {
             if (!child.id) {
@@ -121,10 +121,10 @@ abstract class BaseChildServices<C extends Model, P extends Model> extends BaseC
                 ...child,
                 [`${this.parentKey}`]: parentId, // No cheating
             };
+            const createOptions = options ? options : {};
+            createOptions.fields = this.fieldsWithId;
             // @ts-ignore
-            return await this.model.create(child, {
-                fields: this.fieldsWithId,
-            });
+            return await this.model.create(child, createOptions);
         } catch (error) {
             if (error instanceof BadRequest) {
                 throw error;

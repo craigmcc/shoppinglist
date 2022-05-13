@@ -41,9 +41,13 @@ const CreateAccountForm = (props: Props) => {
             ...props.createAccount,
             ...values
         });
-        logger.info({
+        logger.debug({
             context: "CreateAccountForm.onSubmit",
-            createAccount: createAccount,
+            createAccount: {
+                ...createAccount,
+                password1: "*REDACTED*",
+                password2: "*REDACTED*",
+            },
         });
         props.handleCreateAccount(createAccount);
     }
