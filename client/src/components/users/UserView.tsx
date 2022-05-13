@@ -42,7 +42,7 @@ const UserView = () => {
 
     useEffect(() => {
 
-        logger.info({
+        logger.debug({
             context: "UserView.useEffect",
             view: view.toString(),
         });
@@ -81,7 +81,7 @@ const UserView = () => {
 
     // Handle selection of a User to edit details
     const handleEdit: HandleUser = (theUser) => {
-        logger.info({
+        logger.debug({
             context: "UserView.handleEdit",
             user: Abridgers.USER(theUser),
         });
@@ -93,7 +93,7 @@ const UserView = () => {
     const handleInsert: HandleUser = async (theUser) => {
         setMessage(`Inserting User '${theUser.username}'`);
         const inserted = await mutateUser.insert(theUser);
-        logger.info({
+        logger.debug({
             context: "UserView.handleInsert",
             user: Abridgers.USER(inserted),
         });
@@ -104,7 +104,7 @@ const UserView = () => {
     const handleRemove: HandleUser = async (theUser) => {
         setMessage(`Removing User '${theUser.username}'`);
         const removed = await mutateUser.remove(theUser);
-        logger.info({
+        logger.debug({
             context: "UserView.handleRemove",
             user: Abridgers.USER(removed),
         });
@@ -115,7 +115,7 @@ const UserView = () => {
     const handleUpdate: HandleUser = async (theUser) => {
         setMessage(`Updating User '${theUser.username}'`);
         const updated = await mutateUser.update(theUser);
-        logger.info({
+        logger.debug({
             context: "UserView.handleUpdate",
             user: Abridgers.USER(updated),
         });

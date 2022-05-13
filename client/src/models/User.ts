@@ -15,7 +15,7 @@ export const USERS_BASE = "/users";
 export class UserData {
 
     constructor(data: any = {}) {
-        this.id = data.id ? data.id : -1;
+        this.id = data.id ? data.id : null;
         this.active = (data.active !== undefined) ? data.active : true;
         this.email = data.email ? data.email : null;
         this.firstName = data.firstName ? data.firstName : null;

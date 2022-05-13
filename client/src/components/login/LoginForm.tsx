@@ -80,7 +80,7 @@ export const LoginForm = (props: Props) => {
                 </Row>
 
                 <Row className="mb-3">
-                    <Col>
+                    <Col className="text-center">
                         <Button
                             size="sm"
                             type="submit"

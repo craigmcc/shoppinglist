@@ -67,10 +67,13 @@ export const dumpRequestDetails: RequestHandler =
         logger.info({
             context: "OAuthMiddleware.dumpRequestDetails",
             msg: `${req.method} ${req.url}`,
-            authorization: `${req.get("authorization")}`,
             baseUrl: `${req.baseUrl}`,
+            headers: req.headers,
+/*
+            authorization: `${req.get("authorization")}`,
             contentLength: `${req.get("Content-Length")}`,
             contentType: `${req.get("Content-Type")}`,
+*/
             originalUrl: `${req.originalUrl}`,
             params: `${JSON.stringify(req.params)}`,
             path: `${req.path}`,

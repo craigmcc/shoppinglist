@@ -22,13 +22,13 @@ import {useState} from "react";
 function useLocalStorage<TYPE>(keyName: string, initialValue?: TYPE) {
 
     const [storedValue, setStoredValue] = useState(() => {
-        if (initialValue) {
-            window.localStorage.setItem(keyName, JSON.stringify(initialValue));
-            return initialValue;
-        }
         const currentValue = window.localStorage.getItem(keyName);
         if (currentValue) {
             return JSON.parse(currentValue);
+        }
+        if (initialValue) {
+            window.localStorage.setItem(keyName, JSON.stringify(initialValue));
+            return initialValue;
         } else {
             return {};
         }

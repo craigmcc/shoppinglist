@@ -128,6 +128,27 @@ const UserForm = (props: Props) => {
             {/* Details Form */}
             <Container id="UserForm">
 
+                <Row className="mb-3">
+                    <Col className="text-center">
+                        <strong>
+                            {(adding)? (
+                                <span>Add New</span>
+                            ) : (
+                                <span>Edit Existing</span>
+                            )}
+                            &nbsp;User
+                        </strong>
+                    </Col>
+                    <Col className="text-end">
+                        <Button
+                            onClick={() => props.handleBack()}
+                            size="sm"
+                            type="button"
+                            variant="secondary"
+                        >Back</Button>
+                    </Col>
+                </Row>
+
                 <Form
                     id="UserFormForm"
                     noValidate

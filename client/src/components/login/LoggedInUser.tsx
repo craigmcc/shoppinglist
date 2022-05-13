@@ -31,7 +31,7 @@ export const LoggedInUser = () => {
 
     useEffect(() => {
         // Just trigger rerender when login or logout occurs
-    }, [loginContext.data.loggedIn]);
+    }, [loginContext.data.loggedIn, loginContext.data.username]);
 
     const handleLogin = async (credentials: Credentials) => {
         const tokenRequest: PasswordTokenRequest = {
