@@ -8,8 +8,11 @@ import React from "react";
 
 // Internal Modules ----------------------------------------------------------
 
+import Category from "./models/Category";
 import CreateAccount from "./models/CreateAccount";
 import Credentials from "./models/Credentials";
+import Item from "./models/Item";
+import List from "./models/List";
 import User from "./models/User";
 
 // Enumerations --------------------------------------------------------------
@@ -55,10 +58,16 @@ export type HandleValue = (newValue: string) => void;
 
 // Model Object Handlers -----------------------------------------------------
 
+export type HandleCategory = (category: Category) => void;
 export type HandleCreateAccount = (createAccount: CreateAccount) => void;
 export type HandleCredentials = (credentials: Credentials) => void;
+export type HandleItem = (item: Item) => void;
+export type HandleList = (list: List) => void;
 export type HandleUser = (user: User) => void;
 
+export type ProcessCategory = (category: Category) => Promise<Category>;
 export type ProcessCreateAccount = (createAccount: CreateAccount) => Promise<User>;
 export type ProcessCredentials = (credentials: Credentials) => Promise<Credentials>;
+export type ProcessItem = (item: Item) => Promise<Item>;
+export type ProcessList = (list: List) => Promise<List>;
 export type ProcessUser = (user: User) => Promise<User>;

@@ -4,7 +4,7 @@
 
 // External Modules ----------------------------------------------------------
 
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -12,6 +12,7 @@ import Row from "react-bootstrap/Row";
 
 // Internal Modules ----------------------------------------------------------
 
+import MobileListSubview from "./MobileListSubview";
 import LoginContext from "../login/LoginContext";
 import {HandleAction} from "../../types";
 // import logger from "../../util/ClientLogger";
@@ -27,12 +28,20 @@ export interface Props {
 
 const MobileLoggedInSubview = (props: Props) => {
 
+    enum View {
+        CONTENT = "Content",
+        ITEM = "Item",
+        LIST = "List",
+    }
+
     const loginContext = useContext(LoginContext);
+
+    const [view/*, setView */] = useState<View>(View.LIST);
 
     return (
         <Container fluid id="MobileLoggedInSubview">
 
-            <Row className="mt-2">
+            <Row className="mt-2 mb-3">
                 <Col className="text-left">
                     <strong>
                         <span>Welcome&nbsp;</span>
@@ -49,6 +58,14 @@ const MobileLoggedInSubview = (props: Props) => {
                     >Log Out</Button>
                 </Col>
             </Row>
+
+            <Row>
+                <hr/>
+            </Row>
+
+            {(view === View.LIST) ? (
+                <MobileListSubview/>
+            ) : null }
 
         </Container>
     )

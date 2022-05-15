@@ -79,6 +79,12 @@ UserRouter.get("/:userId/lists",
         res.send(await UserServices.lists(req.params.userId, req.query));
     });
 
+// POST /:userId/lists - Insert List and associate with this User
+UserRouter.post("/:userId/lists",
+    async (req: Request, res: Response) => {
+        res.send(await UserServices.listsInsert(req.params.userId, req.body));
+    });
+
 // DELETE /:userId/lists/:listId - Disassociate User and List
 UserRouter.delete("/:userId/lists/:listId}",
     async (req: Request, res: Response) => {

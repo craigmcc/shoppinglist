@@ -21,10 +21,16 @@ export class ListData {
         this.name = data.name ? data.name : null;
         this.notes = data.notes ? data.notes : null;
         this.theme = data.theme ? data.theme : null;
+        if (data.UserList && (data.UserList.admin !== undefined)) {
+            this.admin = data.UserList.admin;
+        } else {
+            this.admin = false;
+        }
     }
 
     id: string;
     active: boolean;
+    admin: boolean;
     name: string;
     notes: string;
     theme: string;

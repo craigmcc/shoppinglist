@@ -47,6 +47,7 @@ class Item extends ItemData {
     }
 
     category?: Category;
+    categoryName?: string; // Artificially inserted for sorting
     list?: List;
 
 }

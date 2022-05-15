@@ -4,7 +4,7 @@
 
 // External Modules ----------------------------------------------------------
 
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -18,28 +18,31 @@ import {CheckBoxField, TextField} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {HandleAction, HandleUser} from "../../types";
-import User, {UserData} from "../../models/User";
-import {validateUserUsernameUnique} from "../../util/AsyncValidators";
+import LoginContext from "../login/LoginContext";
+import {HandleAction, HandleList} from "../../types";
+import List, {ListData} from "../../models/List";
+import {validateListNameUnique} from "../../util/AsyncValidators";
 import logger from "../../util/ClientLogger";
 import * as ToModel from "../../util/ToModel";
 
-// Incoming Properties ------------------------------------------------------
+// Incoming Properties -------------------------------------------------------
 
 export interface Props {
-    autoFocus?: boolean;                // First element receive autoFocus? [false]
+    autoFocus?: boolean;                // Should the first element receive autoFocus? [false]
     handleBack: HandleAction;           // Handle return to previous view
-    handleInsert?: HandleUser;          // Handle User insert request [not allowed]
-    handleRemove?: HandleUser;          // Handle User remove request [not allowed]
-    handleUpdate?: HandleUser;          // Handle User update request [not allowed]
-    user: User;                         // Initial values (id null for adding)
+    handleInsert?: HandleList;          // Handle List insert request [not allowed]
+    handleRemove?: HandleList;          // Handle List remove request [not allowed]
+    handleUpdate?: HandleList;          // Handle List update request [not allowed]
+    list: List;                         // Initial values (id===null for adding)
 }
 
 // Component Details ---------------------------------------------------------
 
-const UserForm = (props: Props) => {
+const ListForm = (props: Props) => {
 
-    const [adding] = useState<boolean>(!props.user.id);
+    const loginContext = useContext(LoginContext);
+
+    const [adding] = useState<boolean>(!props.list.id);
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
     const onConfirm = (): void => {
@@ -53,80 +56,53 @@ const UserForm = (props: Props) => {
     const onConfirmPositive = (): void => {
         setShowConfirm(false);
         if (props.handleRemove) {
-            props.handleRemove(props.user);
+            props.handleRemove(props.list);
         }
     }
 
-    const onSubmit: SubmitHandler<UserData> = (values) => {
-        const theUser = new User({
-            ...props.user,
+    const onSubmit: SubmitHandler<ListData> = (values) => {
+        const theList = new List({
+            ...props.list,
             ...values,
         });
         logger.debug({
-            context: "UserForm.onSubmit",
+            context: "ListForm.onSubmit",
             adding: adding,
-            user: theUser,
+            list: theList,
         });
         if (adding && props.handleInsert) {
-            props.handleInsert(theUser);
+            props.handleInsert(theList);
         } else if (!adding && props.handleUpdate) {
-            props.handleUpdate(theUser);
+            props.handleUpdate(theList);
         }
-    }
-
-    // NOTE - there is no server-side equivalent for this because there is
-    // not an individual logged-in user performing the request
-    // NOTE - needs LoginContext to provide validateScope() method
-    const validateRequestedScope = (requested: string | undefined): boolean => {
-        return true; // NOTE - needs server side support
-        /*
-                if (!requested || ("" === requested)) {
-                    return true;  // Not asking for scope but should be required
-                } else {
-                    // NOTE - deal with log:<level> pseudo-scopes
-                    return loginContext.validateScope(requested);
-                }
-        */
     }
 
     const validationSchema = Yup.object().shape({
         active: Yup.boolean(),
-        email: Yup.string()
-            .nullable(),
-        firstName: Yup.string()
-            .required("First Name is required"),
-        lastName: Yup.string()
-            .required("Last Name is required"),
-        password: Yup.string() // NOTE - required on add, optional on edit
-            .nullable(),
-        scope: Yup.string()
-            .required("Scope is required")
-            .test("allowed-scope",
-                "You are not allowed to assign a scope you do not possess",
-                function(value) {
-                    return validateRequestedScope(value);
-                }),
-        username: Yup.string()
-            .required("Username is required")
-            .test("unique-username",
-                "That username is already in use",
+        name: Yup.string()
+            .required("Name is required")
+            .test("unique-name",
+                "That list name is already in use",
                 async function (this) {
-                    return validateUserUsernameUnique(ToModel.USER(this.parent))
+                    return validateListNameUnique(loginContext.user, ToModel.LIST(this.parent));
                 }),
+        notes: Yup.string()
+            .nullable(),
+        theme: Yup.string()
+            .nullable(),
     });
 
-    const {formState: {errors}, handleSubmit, register} = useForm<UserData>({
-        defaultValues: new UserData(props.user),
+    const {formState: {errors}, handleSubmit, register} = useForm<ListData>({
+        defaultValues: new ListData(props.list),
         mode: "onBlur",
         resolver: yupResolver(validationSchema),
     });
 
     return (
-
         <>
 
             {/* Details Form */}
-            <Container id="UserForm">
+            <Container id="ListForm">
 
                 <Row className="mb-3">
                     <Col className="text-center">
@@ -136,7 +112,7 @@ const UserForm = (props: Props) => {
                             ) : (
                                 <span>Edit Existing</span>
                             )}
-                            &nbsp;User
+                            &nbsp;List
                         </strong>
                     </Col>
                     <Col className="text-end">
@@ -150,60 +126,29 @@ const UserForm = (props: Props) => {
                 </Row>
 
                 <Form
-                    id="UserFormDetails"
+                    id="ListFormDetails"
                     noValidate
                     onSubmit={handleSubmit(onSubmit)}
                 >
 
-                    <Row className="mb-3" id="firstNameLastNameRow">
+                    <Row className="mb-3" id="nameRow">
                         <TextField
                             autoFocus={(props.autoFocus !== undefined) ? props.autoFocus : undefined}
                             errors={errors}
-                            label="First Name:"
-                            name="firstName"
+                            label="Name:"
+                            name="name"
                             register={register}
-                            valid="First Name or description of this User."
-                        />
-                        <TextField
-                            errors={errors}
-                            label="Last Name:"
-                            name="lastName"
-                            register={register}
-                            valid="Last Name or description of this User."
+                            valid="Name of this Shopping List."
                         />
                     </Row>
 
-                    <Row className="mb-3" id="usernamePasswordRow">
+                    <Row className="mb-3" id="notesRow">
                         <TextField
                             errors={errors}
-                            label="Username:"
-                            name="username"
+                            label="Notes:"
+                            name="notes"
                             register={register}
-                            valid="Login username for this User (must be unique)."
-                        />
-                        <TextField
-                            errors={errors}
-                            label="Password:"
-                            name="password"
-                            register={register}
-                            valid="Enter ONLY for a new User or if you want to change the password for an existing User."
-                        />
-                    </Row>
-
-                    <Row className="mb-3" id="emailScopeRow">
-                        <TextField
-                            errors={errors}
-                            label="Email Address:"
-                            name="email"
-                            register={register}
-                            valid="Email address of this User."
-                        />
-                        <TextField
-                            errors={errors}
-                            label="Scope:"
-                            name="scope"
-                            register={register}
-                            valid="Permission(s) granted to this User."
+                            valid="Optional notes about this Shopping List."
                         />
                     </Row>
 
@@ -227,17 +172,19 @@ const UserForm = (props: Props) => {
                                 Save
                             </Button>
                         </Col>
-                        <Col className="text-right">
-                            <Button
-                                disabled={adding || !props.handleRemove}
-                                onClick={onConfirm}
-                                size="sm"
-                                type="button"
-                                variant="danger"
-                            >
-                                Remove
-                            </Button>
-                        </Col>
+                        {(props.handleRemove) ? (
+                            <Col className="text-right">
+                                <Button
+                                    disabled={adding || !props.handleRemove}
+                                    onClick={onConfirm}
+                                    size="sm"
+                                    type="button"
+                                    variant="danger"
+                                >
+                                    Remove
+                                </Button>
+                            </Col>
+                        ) : null }
                     </Row>
 
                 </Form>
@@ -259,12 +206,12 @@ const UserForm = (props: Props) => {
                 </Modal.Header>
                 <Modal.Body>
                     <p>
-                        Removing this User is not reversible, and
+                        Removing this List is not reversible, and
                         <strong>
                             &nbsp;will also remove ALL related information.
                         </strong>.
                     </p>
-                    <p>Consider marking this User as inactive instead.</p>
+                    <p>Consider marking this List as inactive instead.</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -287,8 +234,8 @@ const UserForm = (props: Props) => {
             </Modal>
 
         </>
-
     )
+
 }
 
-export default UserForm;
+export default ListForm;

@@ -43,9 +43,9 @@ export const CATEGORIES = (categories: Category[]): Category[] => {
 
 export const ITEMS = (items: Item[]): Item[] => {
     return items.sort(function (a, b) {
-        if (a.listId > b.listId) {
+        if (a.categoryName && b.categoryName && (a.categoryName > b.categoryName)) {
             return 1;
-        } else if (a.listId < b.listId) {
+        } else if (a.categoryName && b.categoryName && (a.categoryName < b.categoryName)) {
             return -1;
         } else if (a.name > b.name) {
             return 1;

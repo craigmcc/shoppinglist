@@ -5,6 +5,7 @@
 // External Modules ----------------------------------------------------------
 
 import React, {useContext, useEffect, useState} from "react";
+import {MutatingProgress} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
 
@@ -16,7 +17,6 @@ import useMutateUser from "../../hooks/useMutateUser";
 import User from "../../models/User";
 import * as Abridgers from "../../util/Abridgers";
 import logger from "../../util/ClientLogger";
-import {MutatingProgress} from "@craigmcc/shared-react";
 
 // Component Details ---------------------------------------------------------
 
@@ -66,7 +66,7 @@ const UserView = () => {
             scope: null,
             username: null,
         });
-        logger.info({
+        logger.debug({
             context: "UserView.handleAdd",
             user: theUser,
         });

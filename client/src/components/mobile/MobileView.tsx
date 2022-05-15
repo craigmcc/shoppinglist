@@ -36,11 +36,11 @@ const MobileView = () => {
     useEffect(() => {
         logger.info({
             context: "MobileView.useEffect",
-            username: loginContext.data.username,
             loggedIn: loginContext.data.loggedIn,
+            username: loginContext.data.username,
             view: view.toString(),
         });
-    }, [loginContext.data.username, loginContext.data.loggedIn, view]);
+    }, [loginContext.data.loggedIn, loginContext.data.username, view]);
 
     const handleCreateAccount: HandleAction = () => {
         setView(View.CREATE_ACCOUNT);

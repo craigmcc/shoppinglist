@@ -173,8 +173,10 @@ class UserServices extends BaseParentServices<User> {
 
     public async lists(userId: string, query?: any): Promise<List[]> {
         const user = await this.read("UserServices.lists", userId);
-        // TODO : options
-        return user.$get("lists"/*, options*/);
+        const options: FindOptions = ListServices.appendMatchOptions({
+            order: SortOrder.LISTS,
+        })
+        return user.$get("lists", options);
     }
 
     public async listsExclude(userId: string, listId: string): Promise<List> {
@@ -184,7 +186,7 @@ class UserServices extends BaseParentServices<User> {
         return list;
     }
 
-    public async listsInclude(userId: string, listId: string, admin?: boolean): Promise<List> {
+    public async listsInclude(userId: string, listId: string, admin?: boolean, options?: any): Promise<List> {
         const user = await this.read("UserServices.listsInclude", userId);
         const list = await ListServices.read("UserServices.listsInclude", listId);
         // @ts-ignore
@@ -192,8 +194,46 @@ class UserServices extends BaseParentServices<User> {
             admin: (admin !== undefined) ? admin : true,
             listId: listId,
             userId: userId,
-        });
+        }, options);
         return list;
+    }
+
+    public async listsInsert(userId: string, list: Partial<List>): Promise<List> {
+
+        let transaction: Transaction;
+        try {
+
+            // Start a transaction
+            transaction = await Database.transaction();
+
+            // Create the new List
+            const insertee: Partial<List> = {
+                ...list,
+                id: list.id ? list.id : uuid.v4(),
+            }
+            // @ts-ignore
+            const inserted = await List.create(insertee, {transaction});
+
+            // Associate it with the specified User
+            const upsertee: Partial<UserList> = {
+                admin: true,
+                listId: inserted.id,
+                userId: userId,
+            }
+            // @ts-ignore
+            await UserList.upsert(upsertee, {transaction});
+
+            // Commit transaction and return the result
+            await transaction.commit();
+            return inserted;
+
+        } catch (error) {
+            // @ts-ignore
+            if (transaction) {
+                await transaction.rollback();
+            }
+            throw error;
+        }
     }
 
     // Public Helpers --------------------------------------------------------

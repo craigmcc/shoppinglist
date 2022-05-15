@@ -81,6 +81,8 @@ class ListServices extends BaseParentServices<List> {
 
     /**
      * Supported include query parameters:
+     * * withCategories                 Include configured Categories
+     * * withItems                      Include configured Items
      * * withUsers                      Include authorized Users
      */
     public appendIncludeOptions(options: FindOptions, query?: any): FindOptions {
@@ -89,6 +91,12 @@ class ListServices extends BaseParentServices<List> {
         }
         options = appendPaginationOptions(options, query);
         const include: any = options.include ? options.include : [];
+        if ("" === query.withCategories) {
+            include.push(Category);
+        }
+        if ("" === query.withItems) {
+            include.push(Item);
+        }
         if ("" === query.withUsers) {
             include.push(User);
         }
