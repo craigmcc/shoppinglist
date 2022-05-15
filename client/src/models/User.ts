@@ -5,6 +5,7 @@
 // Internal Modules ----------------------------------------------------------
 
 import AccessToken from "./AccessToken";
+import List from "./List";
 import RefreshToken from "./RefreshToken";
 import * as ToModel from "../util/ToModel";
 
@@ -48,10 +49,12 @@ class User extends UserData {
     constructor(data: any = {}) {
         super(data);
         this.accessTokens = data.accessTokens ? ToModel.ACCESS_TOKENS(data.accessTokens) : undefined;
+        this.lists = data.lists ? ToModel.LISTS(data.lists) : undefined;
         this.refreshTokens = data.refreshTokens ? ToModel.REFRESH_TOKENS(data.refreshTokens) : undefined;
     }
 
     accessTokens?: AccessToken[];
+    lists?: List[];
     refreshTokens?: RefreshToken[];
 
 }

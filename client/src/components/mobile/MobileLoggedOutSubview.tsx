@@ -48,15 +48,15 @@ const MobileLoggedOutSubview = (props: Props) => {
             });
             const tokenResponse: TokenResponse =
                 (await OAuth.post("/token", tokenRequest)).data;
-            loginContext.handleLogin(credentials.username, tokenResponse);
+            await loginContext.handleLogin(credentials.username, tokenResponse);
             logger.debug({
-                context: "LoggedInUser.handleLogin",
+                context: "MobileLoggedOutSubview.handleLogin",
                 msg: "Successfully logged in",
                 tokenResponse: JSON.stringify(tokenResponse),
             });
             props.handleLoggedIn();
         } catch (error) {
-            ReportError("LoggedInUser.handleLogin", error, {
+            ReportError("MobileLoggedOutSubview.handleLogin", error, {
                 username: credentials.username,
                 password: "*REDACTED*",
             });

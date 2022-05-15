@@ -10,11 +10,14 @@ import React, {createContext, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {LOGIN_CONTEXT_DATA_KEY} from "../../constants";
+import {LOGIN_CONTEXT_DATA_KEY, LOGIN_CONTEXT_USER_KEY} from "../../constants";
 import {Scope} from "../../types";
+import OAuth from "../../clients/OAuth";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import TokenResponse from "../../models/TokenResponse";
+import User from "../../models/User";
 import logger from "../../util/ClientLogger";
+import * as ToModel from "../../util/ToModel";
 
 // Context Properties --------------------------------------------------------
 
@@ -38,21 +41,32 @@ const LOGIN_DATA: LoginData = {
     username: null,
 };
 
+// Dummy initial values for User
+const LOGIN_USER: User = new User({
+    active: false,
+    firstName: "-----",
+    lastName: "-----"
+});
+
 // Context state (including data) visible to LoginContext children
 
 export interface LoginState {
     data: LoginData;                    // Externally visible information
+    user: User;                         // Currently logged in User (if any)
     handleLogin: (username: string, tokenResponse: TokenResponse) => void;
     handleLogout: () => void;
+    refreshUser: (data?: LoginData) => Promise<void>; // Refresh user data
     validateScope: (scope: string) => boolean;
 }
 
 const LoginContext = createContext<LoginState>({
     data: LOGIN_DATA,
+    user: LOGIN_USER,
     handleLogin: (username, tokenResponse) => {},
     handleLogout: () => {},
+    refreshUser: (data) => {},
     validateScope: (scope: string): boolean => { return false; }
-});
+} as LoginState);
 
 // Logging level constants
 
@@ -66,6 +80,7 @@ export const LoginContextProvider = ({ children }) => {
 
     const [alloweds, setAlloweds] = useState<string[]>([]);
     const [data, setData] = useLocalStorage<LoginData>(LOGIN_CONTEXT_DATA_KEY, LOGIN_DATA);
+    const [user, setUser] = useLocalStorage<User>(LOGIN_CONTEXT_USER_KEY, LOGIN_USER);
 
     /**
      * Handle a successful login.
@@ -109,6 +124,9 @@ export const LoginContextProvider = ({ children }) => {
         }
         setData(theData);
 
+        // Refresh the current User information
+        await refreshUser(theData);
+
     }
 
     /**
@@ -134,7 +152,32 @@ export const LoginContextProvider = ({ children }) => {
             username: null,
         };
         setData(theData);
+        setUser(LOGIN_USER);
 
+    }
+
+    /**
+     * Refresh the User object (will be null if a user is not logged on).
+     *
+     * @param theData                   Optional LoginData (needed during handleLogin
+     *                                  but can be omitted if calling this independently)
+     */
+    const refreshUser = async (theData?: LoginData): Promise<void> => {
+        const useData: LoginData = theData ? theData : data;
+        logger.debug({
+            context: "LoginContext.refreshUser",
+            data: useData,
+        });
+        if (useData.loggedIn) {
+            const user: User = ToModel.USER((await OAuth.get("/me")).data);
+            logger.debug({
+                context: "LoginContext.refreshUser",
+                user: user,
+            });
+            setUser(user);
+        } else {
+            setUser(LOGIN_USER);
+        }
     }
 
     /**
@@ -183,8 +226,10 @@ export const LoginContextProvider = ({ children }) => {
     // Prepare and return the initial context values
     const loginContext: LoginState = {
         data: data,
+        user: user,
         handleLogin: handleLogin,
         handleLogout: handleLogout,
+        refreshUser: refreshUser,
         validateScope: validateScope,
     };
 
