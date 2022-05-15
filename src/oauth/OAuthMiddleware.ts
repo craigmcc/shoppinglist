@@ -19,6 +19,7 @@ import {
 
 import OAuthOrchestrator from "./OAuthOrchestrator";
 import AccessToken from "../models/AccessToken";
+import List from "../models/List";
 import User from "../models/User";
 import {Forbidden} from "../util/HttpErrors";
 import logger from "../util/ServerLogger";
@@ -336,14 +337,18 @@ export const requireUser: RequestHandler =
         // WARNING: This depends on using the same mechanisms
         // that the authorizeToken() mechanism uses to relate
         // an AccessToken to a User.
+        res.locals.user = null;
         const accessToken = await AccessToken.findOne({
-            include: [ User ],
             where: { token: token }
         });
-        if (accessToken && accessToken.user) {
-            res.locals.user = accessToken.user;
-        } else {
-            res.locals.user = null;
+        if (accessToken) {
+            const user = await User.findOne({
+                include: [ List ],
+                where: { id: accessToken.userId }
+            });
+            if (user) {
+                res.locals.user = user;
+            }
         }
 
         // Pass control to the next middleware, as usual

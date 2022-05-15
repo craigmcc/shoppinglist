@@ -36,7 +36,7 @@ const MobileLoggedInSubview = (props: Props) => {
                 <Col className="text-left">
                     <strong>
                         <span>Welcome&nbsp;</span>
-                        <span className="text-info">{loginContext.data.username?.toUpperCase()}</span>
+                        <span className="text-info">{loginContext.user.firstName}</span>
                         <span>&nbsp;!</span>
                     </strong>
                 </Col>
