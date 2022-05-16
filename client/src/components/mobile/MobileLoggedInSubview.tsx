@@ -42,11 +42,11 @@ const MobileLoggedInSubview = (props: Props) => {
         <Container fluid id="MobileLoggedInSubview">
 
             <Row className="mt-2 mb-3">
-                <Col className="text-left">
+                <Col className="text-start">
                     <strong>
                         <span>Welcome&nbsp;</span>
                         <span className="text-info">{loginContext.user.firstName}</span>
-                        <span>&nbsp;!</span>
+                        <span>!</span>
                     </strong>
                 </Col>
                 <Col className="text-end">
@@ -54,13 +54,13 @@ const MobileLoggedInSubview = (props: Props) => {
                         onClick={props.handleLoggedOut}
                         size="sm"
                         type="button"
-                        variant="primary"
+                        variant="outline-dark"
                     >Log Out</Button>
                 </Col>
             </Row>
 
             <Row>
-                <hr/>
+                <hr style={{border: "double"}}/>
             </Row>
 
             {(view === View.LIST) ? (

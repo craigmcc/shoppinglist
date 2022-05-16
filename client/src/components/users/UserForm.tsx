@@ -217,7 +217,7 @@ const UserForm = (props: Props) => {
                     </Row>
 
                     <Row className="mb-3">
-                        <Col className="text-left">
+                        <Col className="text-start">
                             <Button
                                 disabled={!props.handleInsert && !props.handleUpdate}
                                 size="sm"
@@ -227,7 +227,7 @@ const UserForm = (props: Props) => {
                                 Save
                             </Button>
                         </Col>
-                        <Col className="text-right">
+                        <Col className="text-end">
                             <Button
                                 disabled={adding || !props.handleRemove}
                                 onClick={onConfirm}

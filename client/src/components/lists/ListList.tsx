@@ -6,10 +6,10 @@
 
 import React, {useContext, useEffect} from "react";
 import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
+import Dropdown from "react-bootstrap/Dropdown";
 import Row from "react-bootstrap/Row";
-import Table from "react-bootstrap/Table";
+import {Plus, ThreeDots} from "react-bootstrap-icons";
 
 // Internal Modules ----------------------------------------------------------
 
@@ -50,12 +50,16 @@ const ListList = (props: Props) => {
     const handleAdd: HandleAction = () => {
         if (props.handleAdd) {
             props.handleAdd();
+        } else {
+            alert("You are not allowed to add a new List");
         }
     }
 
     const handleEdit: HandleList = (theList) => {
         if (props.handleEdit) {
             props.handleEdit(theList);
+        } else {
+            alert("You are not allowed to edit an existing List");
         }
     }
 
@@ -66,90 +70,69 @@ const ListList = (props: Props) => {
     const handleShare: HandleList = (theList) => {
         if (props.handleShare) {
             props.handleShare(theList);
+        } else {
+            alert("You are not allowed to share an existing List");
         }
     }
 
-    // TODO - somewhere we need an Add button.
     return (
-        <Container fluid id="ListList">
+        <>
 
             <Row className="mb-3">
-                <Col className="text-center">
-{/*
-                    <span>Click on a List to begin adding Items, or click&nbsp;</span>
-                    <span className="text-info">Add</span>
-                    <span>&nbsp;or&nbsp;</span>
-                    <span className="text-info">Edit</span>
-                    <span>&nbsp;to manage your Lists</span>
-*/}
-                    <span><strong>Manage Lists</strong></span>
+                <Col className="text-left">
+                    <span><strong>My Lists</strong></span>
                 </Col>
                 <Col className="text-end">
                     <Button
-                        disabled={!props.handleAdd}
-                        onClick={handleAdd}
-                        size="sm"
-                        variant="primary"
-                    >Add</Button>
+                        variant="success"
+                    >
+                        <Plus
+                            onClick={handleAdd}
+                            size={32}
+                        />
+                    </Button>
                 </Col>
             </Row>
-
-            <Row className="mb-3">
-                <Table
-                    bordered={true}
-                    hover={true}
-                    size="sm"
-                    striped={true}
-                >
-
-                    <thead>
-                    <tr className="table-secondary">
-                        <th scope="col">List Name</th>
-                        <th scope="col">Notes</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    {fetchLists.lists.map((list) => (
-                        <tr
-                            className="table-default"
-                            key={`LL-${list.id}`}
-                        >
-                            <td onClick={(() => handleSelect(list))}>
-                                {list.name}
-                            </td>
-                            <td onClick={(() => handleSelect(list))}>
-                                {list.notes}
-                            </td>
-                            <td>
-                                {(props.handleEdit) ? (
-                                    <Button
-                                        className="me-1"
-                                        onClick={() => handleEdit(list)}
-                                        size="sm"
-                                        type="button"
-                                        variant="primary"
-                                    >Edit</Button>
-                                ) : null }
-                                {(props.handleShare) ? (
-                                    <Button
-                                        className="me-1"
-                                        onClick={() => handleShare(list)}
-                                        size="sm"
-                                        type="button"
-                                        variant="success"
-                                    >Share</Button>
-                                ) : null }
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-
-                </Table>
+            <Row>
+                <hr style={{border: "double"}}/>
             </Row>
 
-        </Container>
+            {fetchLists.lists.map((list) => (
+                <>
+                <Row className="mb-2" key={`LL-${list.id}`}>
+                    <Col className="col-9 text-start" onClick={() => handleSelect(list)}>
+                        {(list.active) ? (
+                            <p>{list.name}</p>
+                        ) : (
+                            <p><del>{list.name}</del></p>
+                        )}
+                        {(list.notes) ? (
+                            <p className="fw-lighter"><small>&nbsp;&nbsp;&nbsp;&nbsp;{list.notes}</small></p>
+                        ) : null }
+                    </Col>
+                    <Col className="text-end">
+                        <Dropdown>
+                            <Dropdown.Toggle variant="outline-primary">
+                                <ThreeDots size={16}/>
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                                <Dropdown.Item onClick={() => {handleEdit(list)}}>
+                                    Edit
+                                </Dropdown.Item>
+                                <Dropdown.Item onClick={() => {handleShare(list)}}>
+                                    Share
+                                </Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </Col>
+                </Row>
+                <Row>
+                    <hr/>
+                </Row>
+                </>
+            ))}
+
+        </>
 
     )
 

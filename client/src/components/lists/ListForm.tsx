@@ -162,7 +162,7 @@ const ListForm = (props: Props) => {
                     </Row>
 
                     <Row className="mb-3">
-                        <Col className="text-left">
+                        <Col className="text-start">
                             <Button
                                 disabled={!props.handleInsert && !props.handleUpdate}
                                 size="sm"
@@ -173,7 +173,7 @@ const ListForm = (props: Props) => {
                             </Button>
                         </Col>
                         {(props.handleRemove) ? (
-                            <Col className="text-right">
+                            <Col className="text-end">
                                 <Button
                                     disabled={adding || !props.handleRemove}
                                     onClick={onConfirm}
