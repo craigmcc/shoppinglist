@@ -39,12 +39,10 @@ const ListList = (props: Props) => {
     });
 
     useEffect(() => {
-
         logger.debug({
             context: "ListList.useEffect",
             user: Abridgers.USER(loginContext.user),
         });
-
     }, [loginContext.data.loggedIn, loginContext.user]);
 
     const handleAdd: HandleAction = () => {
@@ -79,17 +77,16 @@ const ListList = (props: Props) => {
         <>
 
             <Row className="mb-3">
-                <Col className="text-left">
+                <Col className="text-start">
                     <span><strong>My Lists</strong></span>
                 </Col>
                 <Col className="text-end">
                     <Button
+                        onClick={handleAdd}
+                        size="sm"
                         variant="success"
                     >
-                        <Plus
-                            onClick={handleAdd}
-                            size={32}
-                        />
+                        <Plus size={32}/>
                     </Button>
                 </Col>
             </Row>

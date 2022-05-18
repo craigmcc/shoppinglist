@@ -4,6 +4,7 @@
 
 // Internal Modules ----------------------------------------------------------
 
+import Item from "./Item";
 import List from "./List";
 import * as ToModel from "../util/ToModel";
 
@@ -35,9 +36,11 @@ class Category extends CategoryData {
 
     constructor(data: any = {}) {
         super(data);
+        this.items = data.items ? ToModel.ITEMS(data.items) : undefined;
         this.list = data.list ? ToModel.LIST(data.list) : undefined;
     }
 
+    items?: Item[];
     list?: List;
 
 }

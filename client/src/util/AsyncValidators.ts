@@ -15,12 +15,27 @@
 // Internal Modules ----------------------------------------------------------
 
 import Api from "../clients/Api";
+import Category, {CATEGORIES_BASE} from "../models/Category";
 import List from "../models/List";
 import User, {USERS_BASE} from "../models/User";
 import {queryParameters} from "./QueryParameters";
 import * as ToModel from "./ToModel";
 
 // Public Objects ------------------------------------------------------------
+
+export const validateCategoryNameUnique = async (list: List, category: Category): Promise<boolean> => {
+    if (list && list.id && category && category.name) {
+        try {
+            const result = (await Api.get(CATEGORIES_BASE
+                + `/${list.id}/exact/${category.name}`)).data;
+            return (result.id === category.id);
+        } catch (error) {
+            return true;    // Definitely unique
+        }
+    } else {
+        return true;
+    }
+}
 
 // List names must be unique for the specified User, not globally unique
 export const validateListNameUnique = async (user: User, list: List): Promise<boolean> => {

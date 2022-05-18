@@ -10,6 +10,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
+import {ArrowUp} from "react-bootstrap-icons";
 import {SubmitHandler, useForm} from "react-hook-form"
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -96,9 +97,10 @@ const CreateAccountForm = (props: Props) => {
                     <Button
                         onClick={() => props.handleBack()}
                         size="sm"
-                        type="button"
                         variant="secondary"
-                    >Back</Button>
+                    >
+                        <ArrowUp size={32}/>
+                    </Button>
                 </Col>
             </Row>
 

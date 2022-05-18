@@ -11,6 +11,7 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
+import {ArrowUp, Plus} from "react-bootstrap-icons";
 import {CheckBox, FetchingProgress, Pagination} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
@@ -119,8 +120,10 @@ const UserList = (props: Props) => {
                         disabled={!props.handleAdd}
                         onClick={props.handleAdd}
                         size="sm"
-                        variant="primary"
-                    >Add</Button>
+                        variant="success"
+                    >
+                        <Plus size={32}/>
+                    </Button>
                 </Col>
             </Row>
 
@@ -172,14 +175,14 @@ const UserList = (props: Props) => {
             </Row>
 
             <Row className="mb-3 ms-1 me-1">
-                <Col className="text-end">
-                    <Button
-                        disabled={!props.handleAdd}
-                        onClick={props.handleAdd}
-                        size="sm"
-                        variant="primary"
-                    >Add</Button>
-                </Col>
+                <Button
+                    disabled={!props.handleAdd}
+                    onClick={props.handleAdd}
+                    size="sm"
+                    variant="success"
+                >
+                    <Plus size={32}/>
+                </Button>
             </Row>
 
         </Container>

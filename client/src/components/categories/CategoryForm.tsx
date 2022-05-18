@@ -1,17 +1,16 @@
-// ListForm ------------------------------------------------------------------
+// CategoryForm --------------------------------------------------------------
 
-// Detail editing form for List objects.
+// Detail editing form for Category objects.
 
 // External Modules ----------------------------------------------------------
 
-import React, {useContext, useState} from "react";
+import React, {useState} from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
-import {ArrowUp} from "react-bootstrap-icons";
 import {SubmitHandler, useForm} from "react-hook-form"
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -19,31 +18,31 @@ import {CheckBoxField, TextField} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
 
-import LoginContext from "../login/LoginContext";
-import {HandleAction, HandleList} from "../../types";
-import List, {ListData} from "../../models/List";
-import {validateListNameUnique} from "../../util/AsyncValidators";
+import {HandleAction, HandleCategory} from "../../types";
+import Category, {CategoryData} from "../../models/Category";
+import List from "../../models/List";
+import {validateCategoryNameUnique} from "../../util/AsyncValidators";
 import logger from "../../util/ClientLogger";
 import * as ToModel from "../../util/ToModel";
+import {ArrowUp} from "react-bootstrap-icons";
 
 // Incoming Properties -------------------------------------------------------
 
 export interface Props {
     autoFocus?: boolean;                // Should the first element receive autoFocus? [false]
+    category: Category;                 // Initial values (id===null for adding)
     handleBack: HandleAction;           // Handle return to previous view
-    handleInsert?: HandleList;          // Handle List insert request [not allowed]
-    handleRemove?: HandleList;          // Handle List remove request [not allowed]
-    handleUpdate?: HandleList;          // Handle List update request [not allowed]
-    list: List;                         // Initial values (id===null for adding)
+    handleInsert?: HandleCategory;      // Handle Category insert request [not allowed]
+    handleRemove?: HandleCategory;      // Handle Category remove request [not allowed]
+    handleUpdate?: HandleCategory;      // Handle Category update request [not allowed]
+    list: List;                         // Parent List for this Category
 }
 
 // Component Details ---------------------------------------------------------
 
-const ListForm = (props: Props) => {
+const CategoryForm = (props: Props) => {
 
-    const loginContext = useContext(LoginContext);
-
-    const [adding] = useState<boolean>(!props.list.id);
+    const [adding] = useState<boolean>(!props.category.id);
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
     const onConfirm = (): void => {
@@ -57,24 +56,24 @@ const ListForm = (props: Props) => {
     const onConfirmPositive = (): void => {
         setShowConfirm(false);
         if (props.handleRemove) {
-            props.handleRemove(props.list);
+            props.handleRemove(props.category);
         }
     }
 
-    const onSubmit: SubmitHandler<ListData> = (values) => {
-        const theList = new List({
-            ...props.list,
+    const onSubmit: SubmitHandler<CategoryData> = (values) => {
+        const theCategory = new Category({
+            ...props.category,
             ...values,
         });
         logger.debug({
-            context: "ListForm.onSubmit",
+            context: "CategoryForm.onSubmit",
             adding: adding,
-            list: theList,
+            category: theCategory,
         });
         if (adding && props.handleInsert) {
-            props.handleInsert(theList);
+            props.handleInsert(theCategory);
         } else if (!adding && props.handleUpdate) {
-            props.handleUpdate(theList);
+            props.handleUpdate(theCategory);
         }
     }
 
@@ -85,7 +84,7 @@ const ListForm = (props: Props) => {
             .test("unique-name",
                 "That list name is already in use",
                 async function (this) {
-                    return validateListNameUnique(loginContext.user, ToModel.LIST(this.parent));
+                    return validateCategoryNameUnique(props.list, ToModel.CATEGORY(this.parent));
                 }),
         notes: Yup.string()
             .nullable(),
@@ -93,8 +92,8 @@ const ListForm = (props: Props) => {
             .nullable(),
     });
 
-    const {formState: {errors}, handleSubmit, register} = useForm<ListData>({
-        defaultValues: new ListData(props.list),
+    const {formState: {errors}, handleSubmit, register} = useForm<CategoryData>({
+        defaultValues: new CategoryData(props.category),
         mode: "onBlur",
         resolver: yupResolver(validationSchema),
     });
@@ -103,17 +102,18 @@ const ListForm = (props: Props) => {
         <>
 
             {/* Details Form */}
-            <Container id="ListForm">
+            <Container id="CategoryForm">
 
                 <Row className="mb-3">
-                    <Col className="text-start">
+                    <Col className="text-center">
                         <strong>
                             {(adding)? (
                                 <span>Add New</span>
                             ) : (
                                 <span>Edit Existing</span>
                             )}
-                            &nbsp;List
+                            <span>&nbsp;Category for List&nbsp;</span>
+                            <span className="text-info">{props.list.name}</span>
                         </strong>
                     </Col>
                     <Col className="text-end">
@@ -128,7 +128,7 @@ const ListForm = (props: Props) => {
                 </Row>
 
                 <Form
-                    id="ListFormDetails"
+                    id="CategoryFormDetails"
                     noValidate
                     onSubmit={handleSubmit(onSubmit)}
                 >
@@ -140,7 +140,7 @@ const ListForm = (props: Props) => {
                             label="Name:"
                             name="name"
                             register={register}
-                            valid="Name of this Shopping List."
+                            valid="Name of this Category."
                         />
                     </Row>
 
@@ -150,7 +150,7 @@ const ListForm = (props: Props) => {
                             label="Notes:"
                             name="notes"
                             register={register}
-                            valid="Optional notes about this Shopping List."
+                            valid="Optional notes about this Category."
                         />
                     </Row>
 
@@ -208,12 +208,12 @@ const ListForm = (props: Props) => {
                 </Modal.Header>
                 <Modal.Body>
                     <p>
-                        Removing this List is not reversible, and
+                        Removing this Category is not reversible, and
                         <strong>
                             &nbsp;will also remove ALL related information.
                         </strong>.
                     </p>
-                    <p>Consider marking this List as inactive instead.</p>
+                    <p>Consider marking this Category as inactive instead.</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -240,4 +240,4 @@ const ListForm = (props: Props) => {
 
 }
 
-export default ListForm;
+export default CategoryForm;

@@ -9,6 +9,7 @@ import {MutatingProgress} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
 
+import MobileCategorySubview from "./MobileCategorySubview";
 import ListForm from "../lists/ListForm";
 import ListList from "../lists/ListList";
 import LoginContext from "../login/LoginContext";
@@ -28,6 +29,7 @@ export interface Props {
 const MobileListSubview = (props: Props) => {
 
     enum View {
+        CATEGORIES = "Categorie",
         FORM = "Form",
         LIST = "List",
     }
@@ -111,9 +113,15 @@ const MobileListSubview = (props: Props) => {
         setView(View.LIST);
     }
 
-    // Handle selection of a List to manage Items
+    // Handle return to this subview
+    const handleReturn: HandleAction = () => {
+        setView(View.LIST);
+    }
+
+    // Handle selection of a List to manage Categories
     const handleSelect: HandleList = (theList) => {
-        alert("handleSelect() has not yet been implemented");
+        setList(theList);
+        setView(View.CATEGORIES);
     }
 
     // Handle share of a List
@@ -140,6 +148,13 @@ const MobileListSubview = (props: Props) => {
                 executing={mutateList.executing}
                 message={message}
             />
+
+            {(view === View.CATEGORIES) ? (
+                <MobileCategorySubview
+                    handleReturn={handleReturn}
+                    list={list}
+                />
+            ) : null }
 
             {(view === View.FORM) ? (
                 <ListForm

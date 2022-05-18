@@ -88,3 +88,14 @@ CategoryRouter.put("/:listId/:categoryId",
         ));
     });
 
+// Model-Specific Routes (with listId) ---------------------------------------
+
+CategoryRouter.put("/:listId/:categoryId/items",
+    requireAdmin,
+    async (req: Request, res: Response) => {
+        res.send(await CategoryServices.items(
+            req.params.listId,
+            req.params.categoryId,
+            req.query
+        ));
+    });

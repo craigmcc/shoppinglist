@@ -4,10 +4,11 @@
 
 // External Module -----------------------------------------------------------
 
-import {BelongsTo, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
+import {BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table} from "sequelize-typescript";
 
 // Internal Modules ----------------------------------------------------------
 
+import Item from "./Item";
 import List from "./List";
 import {validateCategoryNameUnique} from "../util/AsyncValidators";
 import {BadRequest} from "../util/HttpErrors";
@@ -52,6 +53,10 @@ class Category extends Model<Category> {
     })
     // Is this Category active?
     active!: boolean;
+
+    @HasMany(() => Item)
+    // Items owned by this Category
+    items!: Item[];
 
     @BelongsTo(() => List, {
         foreignKey: {

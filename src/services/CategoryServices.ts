@@ -9,7 +9,9 @@ import {FindOptions, Op} from "sequelize";
 // Internal Modules ----------------------------------------------------------
 
 import BaseChildServices from "./BaseChildServices";
+import ItemServices from "./ItemServices";
 import Category from "../models/Category";
+import Item from "../models/Item";
 import List from "../models/List";
 import {NotFound} from "../util/HttpErrors";
 import {appendPaginationOptions} from "../util/QueryParameters";
@@ -48,10 +50,19 @@ class CategoryServices extends BaseChildServices<Category, List> {
         }
     }
 
+    public async items(listId: string, categoryId: string, query?: any): Promise<Item[]> {
+        const category = await this.read("CategoryServices.items", listId, categoryId);
+        const options: FindOptions = ItemServices.appendMatchOptions({
+            order: SortOrder.ITEMS,
+        }, query);
+        return category.$get("items", options);
+    }
+
     // Public Helpers --------------------------------------------------------
 
     /**
      * Supported include query parameters:
+     * * withItems                      Include child Items
      * * withList                       Include parent List
      */
     public appendIncludeOptions(options: FindOptions, query?: any): FindOptions {
@@ -60,6 +71,9 @@ class CategoryServices extends BaseChildServices<Category, List> {
         }
         options = appendPaginationOptions(options, query);
         const include: any = options.include ? options.include : [];
+        if ("" === query.withItems) {
+            include.push(Item);
+        }
         if ("" === query.withList) {
             include.push(List);
         }

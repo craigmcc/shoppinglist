@@ -11,6 +11,7 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
+import {ArrowUp} from "react-bootstrap-icons";
 import {SubmitHandler, useForm} from "react-hook-form"
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -129,7 +130,7 @@ const UserForm = (props: Props) => {
             <Container id="UserForm">
 
                 <Row className="mb-3">
-                    <Col className="text-center">
+                    <Col className="text-start">
                         <strong>
                             {(adding)? (
                                 <span>Add New</span>
@@ -143,9 +144,10 @@ const UserForm = (props: Props) => {
                         <Button
                             onClick={() => props.handleBack()}
                             size="sm"
-                            type="button"
                             variant="secondary"
-                        >Back</Button>
+                        >
+                            <ArrowUp size={32}/>
+                        </Button>
                     </Col>
                 </Row>
 
