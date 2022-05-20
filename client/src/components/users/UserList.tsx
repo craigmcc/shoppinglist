@@ -11,7 +11,7 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
-import {ArrowUp, Plus} from "react-bootstrap-icons";
+import {Plus} from "react-bootstrap-icons";
 import {CheckBox, FetchingProgress, Pagination} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------

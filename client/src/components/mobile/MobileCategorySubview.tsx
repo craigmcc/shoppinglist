@@ -1,6 +1,6 @@
 // MobileCategorySubview ---------------------------------------------------------
 
-// Subview displayed to logged in User for managing Categories
+// Subview displayed to logged-in User for managing Categories.
 
 // External Modules ----------------------------------------------------------
 
@@ -9,6 +9,7 @@ import {MutatingProgress} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
 
+import MobileItemSubview from "./MobileItemSubview";
 import CategoryForm from "../categories/CategoryForm";
 import CategoryList from "../categories/CategoryList";
 import {HandleAction, HandleCategory} from "../../types";
@@ -31,7 +32,8 @@ const MobileCategorySubview = (props: Props) => {
 
     enum View {
         FORM = "Form",
-        LIST = "Category",
+        ITEMS = "Items",
+        LIST = "List",
     }
 
     const [canInsert, setCanInsert] = useState<boolean>(false);
@@ -49,8 +51,8 @@ const MobileCategorySubview = (props: Props) => {
     useEffect(() => {
         logger.info({
             context: "MobileCategoriesView.useEffect",
-            list: Abridgers.LIST(props.list),
             category: Abridgers.CATEGORY(category),
+            list: Abridgers.LIST(props.list),
             view: view.toString(),
         });
         setCanInsert(true);
@@ -112,9 +114,19 @@ const MobileCategorySubview = (props: Props) => {
         setView(View.LIST);
     }
 
+    // Handle return to this subview
+    const handleReturn: HandleAction = () => {
+        setView(View.LIST);
+    }
+
     // Handle selection of a Category to manage Items
     const handleSelect: HandleCategory = (theCategory) => {
-        alert("handleSelect() has not yet been implemented");
+        logger.info({
+            context: "MobileCategorySubview.handleSelect",
+            category: Abridgers.CATEGORY(theCategory),
+        });
+        setCategory(theCategory);
+        setView(View.ITEMS);
     }
 
     // Handle update of an existing Category
@@ -145,6 +157,14 @@ const MobileCategorySubview = (props: Props) => {
                     handleInsert={(canInsert) ? handleInsert : undefined}
                     handleRemove={(canRemove) ? handleRemove : undefined}
                     handleUpdate={(canUpdate) ? handleUpdate : undefined}
+                    list={props.list}
+                />
+            ) : null }
+
+            {(view === View.ITEMS) ? (
+                <MobileItemSubview
+                    category={category}
+                    handleReturn={handleReturn}
                     list={props.list}
                 />
             ) : null }

@@ -1,6 +1,6 @@
 // MobileListSubview ---------------------------------------------------------
 
-// Subview displayed to logged in User for managing Lists
+// Subview displayed to logged-in User for managing Lists
 
 // External Modules ----------------------------------------------------------
 
@@ -29,7 +29,7 @@ export interface Props {
 const MobileListSubview = (props: Props) => {
 
     enum View {
-        CATEGORIES = "Categorie",
+        CATEGORIES = "Categories",
         FORM = "Form",
         LIST = "List",
     }

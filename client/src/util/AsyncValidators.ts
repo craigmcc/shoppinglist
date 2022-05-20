@@ -16,6 +16,7 @@
 
 import Api from "../clients/Api";
 import Category, {CATEGORIES_BASE} from "../models/Category";
+import Item, {ITEMS_BASE} from "../models/Item";
 import List from "../models/List";
 import User, {USERS_BASE} from "../models/User";
 import {queryParameters} from "./QueryParameters";
@@ -29,6 +30,20 @@ export const validateCategoryNameUnique = async (list: List, category: Category)
             const result = (await Api.get(CATEGORIES_BASE
                 + `/${list.id}/exact/${category.name}`)).data;
             return (result.id === category.id);
+        } catch (error) {
+            return true;    // Definitely unique
+        }
+    } else {
+        return true;
+    }
+}
+
+export const validateItemNameUnique = async (list: List, item: Item): Promise<boolean> => {
+    if (list && list.id && item && item.name) {
+        try {
+            const result = (await Api.get(ITEMS_BASE
+                + `/${list.id}/exact/${item.name}`)).data;
+            return (result.id === item.id);
         } catch (error) {
             return true;    // Definitely unique
         }

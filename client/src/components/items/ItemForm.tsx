@@ -1,27 +1,29 @@
-// CategoryForm --------------------------------------------------------------
+// ItemForm ------------------------------------------------------------------
 
-// Detail editing form for Category objects.
+// Detail editing form for Item objects.
 
 // External Modules ----------------------------------------------------------
 
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
-import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import {SubmitHandler, useForm} from "react-hook-form"
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import {CheckBoxField, TextField} from "@craigmcc/shared-react";
+import {CheckBoxField, SelectField, SelectOption, TextField} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {HandleAction, HandleCategory} from "../../types";
-import Category, {CategoryData} from "../../models/Category";
+import {HandleAction, HandleItem} from "../../types";
+import useFetchCategories from "../../hooks/useFetchCategories";
+import Category from "../../models/Category";
+import Item, {ItemData} from "../../models/Item";
 import List from "../../models/List";
-import {validateCategoryNameUnique} from "../../util/AsyncValidators";
+import * as Abridgers from "../../util/Abridgers";
+import {validateItemNameUnique} from "../../util/AsyncValidators";
 import logger from "../../util/ClientLogger";
 import * as ToModel from "../../util/ToModel";
 import {ArrowUp} from "react-bootstrap-icons";
@@ -30,20 +32,54 @@ import {ArrowUp} from "react-bootstrap-icons";
 
 export interface Props {
     autoFocus?: boolean;                // Should the first element receive autoFocus? [false]
-    category: Category;                 // Initial values (id===null for adding)
+    category?: Category;                // Optional parent Category for this Item
+    item: Item;                         // Initial values (id===null for adding)
     handleBack: HandleAction;           // Handle return to previous view
-    handleInsert?: HandleCategory;      // Handle Category insert request [not allowed]
-    handleRemove?: HandleCategory;      // Handle Category remove request [not allowed]
-    handleUpdate?: HandleCategory;      // Handle Category update request [not allowed]
-    list: List;                         // Parent List for this Category
+    handleInsert?: HandleItem;          // Handle Item insert request [not allowed]
+    handleRemove?: HandleItem;          // Handle Item remove request [not allowed]
+    handleUpdate?: HandleItem;          // Handle Item update request [not allowed]
+    list: List;                         // Parent List for this Item
 }
 
 // Component Details ---------------------------------------------------------
 
-const CategoryForm = (props: Props) => {
+const INVALID_CATEGORY_ID = "INVALID";
 
-    const [adding] = useState<boolean>(!props.category.id);
+const ItemForm = (props: Props) => {
+
+    const [adding] = useState<boolean>(!props.item.id);
+    const [categoryOptions, setCategoryOptions] = useState<SelectOption[]>([]);
     const [showConfirm, setShowConfirm] = useState<boolean>(false);
+
+    const fetchCategories = useFetchCategories({
+        alertPopup: false,
+        list: props.list,
+    });
+
+    useEffect(() => {
+
+        logger.info({
+            context: "ItemForm.useEffect",
+            category: props.category ? props.category : undefined,
+            item: props.item,
+            list: Abridgers.LIST(props.list),
+        });
+
+        const theCategoryOptions: SelectOption[] = [];
+        theCategoryOptions.push({
+            label: "(Select Category)",
+            value: INVALID_CATEGORY_ID,
+        });
+        fetchCategories.categories.forEach(category => {
+            const result: SelectOption = {
+                label: category.name,
+                value: category.id,
+            };
+            theCategoryOptions.push(result);
+        });
+        setCategoryOptions(theCategoryOptions);
+
+    }, [props.category, props.item, props.list, fetchCategories.categories]);
 
     const onConfirm = (): void => {
         setShowConfirm(true);
@@ -56,35 +92,42 @@ const CategoryForm = (props: Props) => {
     const onConfirmPositive = (): void => {
         setShowConfirm(false);
         if (props.handleRemove) {
-            props.handleRemove(props.category);
+            props.handleRemove(props.item);
         }
     }
 
-    const onSubmit: SubmitHandler<CategoryData> = (values) => {
-        const theCategory = new Category({
-            ...props.category,
+    const onSubmit: SubmitHandler<ItemData> = (values) => {
+        const theItem = new Item({
+            ...props.item,
             ...values,
         });
         logger.debug({
-            context: "CategoryForm.onSubmit",
+            context: "ItemForm.onSubmit",
             adding: adding,
-            category: theCategory,
+            item: theItem,
         });
         if (adding && props.handleInsert) {
-            props.handleInsert(theCategory);
+            props.handleInsert(theItem);
         } else if (!adding && props.handleUpdate) {
-            props.handleUpdate(theCategory);
+            props.handleUpdate(theItem);
         }
     }
 
     const validationSchema = Yup.object().shape({
         active: Yup.boolean(),
+        categoryId: Yup.string()
+            .required("Category is required")
+            .test("valid-category",
+                "You must select a valid category",
+                function (value) {
+                    return (value !== INVALID_CATEGORY_ID);
+                }),
         name: Yup.string()
             .required("Name is required")
             .test("unique-name",
                 "That list name is already in use",
                 async function (this) {
-                    return validateCategoryNameUnique(props.list, ToModel.CATEGORY(this.parent));
+                    return validateItemNameUnique(props.list, ToModel.ITEM(this.parent));
                 }),
         notes: Yup.string()
             .nullable(),
@@ -92,8 +135,8 @@ const CategoryForm = (props: Props) => {
             .nullable(),
     });
 
-    const {formState: {errors}, handleSubmit, register} = useForm<CategoryData>({
-        defaultValues: new CategoryData(props.category),
+    const {formState: {errors}, handleSubmit, register} = useForm<ItemData>({
+        defaultValues: new ItemData(props.item),
         mode: "onBlur",
         resolver: yupResolver(validationSchema),
     });
@@ -106,11 +149,17 @@ const CategoryForm = (props: Props) => {
                 <Col className="text-start">
                     <strong>
                         {(adding)? (
-                            <span>Add </span>
+                            <span>Add Item</span>
                         ) : (
-                            <span>Edit </span>
+                            <span>Edit Item</span>
                         )}
-                        <span>Category in </span>
+                        {(props.category) ? (
+                            <>
+                                <span>&nbsp;in&nbsp;</span>
+                                <span className="text-info">{props.category.name}</span>
+                            </>
+                        ) : null }
+                        <span>&nbsp;for&nbsp;</span>
                         <span className="text-info">{props.list.name}</span>
                     </strong>
                 </Col>
@@ -126,7 +175,7 @@ const CategoryForm = (props: Props) => {
             </Row>
 
             <Form
-                id="CategoryFormDetails"
+                id="ItemFormDetails"
                 noValidate
                 onSubmit={handleSubmit(onSubmit)}
             >
@@ -138,9 +187,22 @@ const CategoryForm = (props: Props) => {
                         label="Name:"
                         name="name"
                         register={register}
-                        valid="Name of this Category."
+                        valid="Name of this Item."
                     />
                 </Row>
+
+                {(!props.category) ? (
+                    <Row className="mb-3" id="categoryRow">
+                        <SelectField
+                            errors={errors}
+                            label="Category:"
+                            name="categoryId"
+                            options={categoryOptions}
+                            register={register}
+                            valid="Category this Item belongs to."
+                        />
+                    </Row>
+                ) : null }
 
                 <Row className="mb-3" id="notesRow">
                     <TextField
@@ -148,7 +210,7 @@ const CategoryForm = (props: Props) => {
                         label="Notes:"
                         name="notes"
                         register={register}
-                        valid="Optional notes about this Category."
+                        valid="Optional notes about this Item."
                     />
                 </Row>
 
@@ -204,12 +266,12 @@ const CategoryForm = (props: Props) => {
                 </Modal.Header>
                 <Modal.Body>
                     <p>
-                        Removing this Category is not reversible, and
+                        Removing this Item is not reversible, and
                         <strong>
                             &nbsp;will also remove ALL related information.
                         </strong>.
                     </p>
-                    <p>Consider marking this Category as inactive instead.</p>
+                    <p>Consider marking this Item as inactive instead.</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -236,4 +298,4 @@ const CategoryForm = (props: Props) => {
 
 }
 
-export default CategoryForm;
+export default ItemForm;

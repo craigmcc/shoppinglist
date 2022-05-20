@@ -103,95 +103,91 @@ const ListForm = (props: Props) => {
         <>
 
             {/* Details Form */}
-            <Container id="ListForm">
+            <Row className="mb-3">
+                <Col className="text-start">
+                    <strong>
+                        {(adding) ? (
+                            <span>Add </span>
+                        ) : (
+                            <span>Edit </span>
+                        )}
+                        <span>List</span>
+                    </strong>
+                </Col>
+                <Col className="text-end">
+                    <Button
+                        onClick={() => props.handleBack()}
+                        size="sm"
+                        variant="secondary"
+                    >
+                        <ArrowUp size={32}/>
+                    </Button>
+                </Col>
+            </Row>
+
+            <Form
+                id="ListFormDetails"
+                noValidate
+                onSubmit={handleSubmit(onSubmit)}
+            >
+
+                <Row className="mb-3" id="nameRow">
+                    <TextField
+                        autoFocus={(props.autoFocus !== undefined) ? props.autoFocus : undefined}
+                        errors={errors}
+                        label="Name:"
+                        name="name"
+                        register={register}
+                        valid="Name of this Shopping List."
+                    />
+                </Row>
+
+                <Row className="mb-3" id="notesRow">
+                    <TextField
+                        errors={errors}
+                        label="Notes:"
+                        name="notes"
+                        register={register}
+                        valid="Optional notes about this Shopping List."
+                    />
+                </Row>
+
+                <Row className="mb-3" id="activeRow">
+                    <CheckBoxField
+                        errors={errors}
+                        label="Active?"
+                        name="active"
+                        register={register}
+                    />
+                </Row>
 
                 <Row className="mb-3">
                     <Col className="text-start">
-                        <strong>
-                            {(adding)? (
-                                <span>Add New</span>
-                            ) : (
-                                <span>Edit Existing</span>
-                            )}
-                            &nbsp;List
-                        </strong>
-                    </Col>
-                    <Col className="text-end">
                         <Button
-                            onClick={() => props.handleBack()}
+                            disabled={!props.handleInsert && !props.handleUpdate}
                             size="sm"
-                            variant="secondary"
+                            type="submit"
+                            variant="primary"
                         >
-                            <ArrowUp size={32}/>
+                            Save
                         </Button>
                     </Col>
-                </Row>
-
-                <Form
-                    id="ListFormDetails"
-                    noValidate
-                    onSubmit={handleSubmit(onSubmit)}
-                >
-
-                    <Row className="mb-3" id="nameRow">
-                        <TextField
-                            autoFocus={(props.autoFocus !== undefined) ? props.autoFocus : undefined}
-                            errors={errors}
-                            label="Name:"
-                            name="name"
-                            register={register}
-                            valid="Name of this Shopping List."
-                        />
-                    </Row>
-
-                    <Row className="mb-3" id="notesRow">
-                        <TextField
-                            errors={errors}
-                            label="Notes:"
-                            name="notes"
-                            register={register}
-                            valid="Optional notes about this Shopping List."
-                        />
-                    </Row>
-
-                    <Row className="mb-3" id="activeRow">
-                        <CheckBoxField
-                            errors={errors}
-                            label="Active?"
-                            name="active"
-                            register={register}
-                        />
-                    </Row>
-
-                    <Row className="mb-3">
-                        <Col className="text-start">
+                    {(props.handleRemove) ? (
+                        <Col className="text-end">
                             <Button
-                                disabled={!props.handleInsert && !props.handleUpdate}
+                                disabled={adding || !props.handleRemove}
+                                onClick={onConfirm}
                                 size="sm"
-                                type="submit"
-                                variant="primary"
+                                type="button"
+                                variant="danger"
                             >
-                                Save
+                                Remove
                             </Button>
                         </Col>
-                        {(props.handleRemove) ? (
-                            <Col className="text-end">
-                                <Button
-                                    disabled={adding || !props.handleRemove}
-                                    onClick={onConfirm}
-                                    size="sm"
-                                    type="button"
-                                    variant="danger"
-                                >
-                                    Remove
-                                </Button>
-                            </Col>
-                        ) : null }
-                    </Row>
+                    ) : null }
+                </Row>
 
-                </Form>
-
-            </Container>
+            </Form>
 
             {/* Remove Confirm Modal */}
             <Modal

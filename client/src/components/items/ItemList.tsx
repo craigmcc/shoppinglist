@@ -1,6 +1,6 @@
-// CategoryList --------------------------------------------------------------
+// ItemList --------------------------------------------------------------
 
-// List Categories for the specified List.
+// List Items for the specified List.
 
 // External Modules ----------------------------------------------------------
 
@@ -13,8 +13,9 @@ import {ArrowUp, Plus, ThreeDots} from "react-bootstrap-icons";
 
 // Internal Modules ----------------------------------------------------------
 
-import {HandleAction, HandleCategory} from "../../types";
-import useFetchCategories from "../../hooks/useFetchCategories";
+import {HandleAction, HandleItem} from "../../types";
+import useFetchItems from "../../hooks/useFetchItems";
+import Category from "../../models/Category";
 import List from "../../models/List";
 import * as Abridgers from "../../util/Abridgers";
 import logger from "../../util/ClientLogger";
@@ -22,47 +23,45 @@ import logger from "../../util/ClientLogger";
 // Incoming Properties -------------------------------------------------------
 
 export interface Props {
-    handleAdd?: HandleAction;           // Handle request to add a Category [not allowed]
-    handleEdit?: HandleCategory;        // Handle request to edit a Category [not allowed]
+    category?: Category;                // Optional parent Category for these items
+    handleAdd?: HandleAction;           // Handle request to add an Item [not allowed]
+    handleEdit?: HandleItem;            // Handle request to edit an Item [not allowed]
     handleReturn: HandleAction;         // Handle return to parent subview
-    handleSelect: HandleCategory;       // Handle request to select a Category
-    list: List;                         // Parent List for these Categories
+    list: List;                         // Parent List for these Items
 }
 
 // Component Details ---------------------------------------------------------
 
-const CategoryList = (props: Props) => {
+const ItemList = (props: Props) => {
 
-    const fetchCategories = useFetchCategories({
+    const fetchItems = useFetchItems({
         alertPopup: false,
+        category: props.category ? props.category : undefined,
         list: props.list,
     });
 
     useEffect(() => {
-        logger.debug({
-            context: "CategoryList.useEffect",
+        logger.info({
+            context: "ItemList.useEffect",
+            category: props.category ? Abridgers.CATEGORY(props.category) : undefined,
             list: Abridgers.LIST(props.list),
         });
-    }, [props.list]);
+    }, [props.category, props.list]);
 
     const handleAdd: HandleAction = () => {
         if (props.handleAdd) {
             props.handleAdd();
         } else {
-            alert("You are not allowed to add a new Category");
+            alert("You are not allowed to add a new Item");
         }
     }
 
-    const handleEdit: HandleCategory = (theCategory) => {
+    const handleEdit: HandleItem = (theItem) => {
         if (props.handleEdit) {
-            props.handleEdit(theCategory);
+            props.handleEdit(theItem);
         } else {
-            alert("You are not allowed to edit an existing Category");
+            alert("You are not allowed to edit an existing Item");
         }
-    }
-
-    const handleSelect: HandleCategory = (theCategory) => {
-        props.handleSelect(theCategory);
     }
 
     return (
@@ -71,7 +70,14 @@ const CategoryList = (props: Props) => {
             <Row className="mb-3">
                 <Col className="text-start">
                     <strong>
-                        <span>Categories for </span>
+                        <span>Items </span>
+                        {(props.category) ? (
+                            <>
+                                <span>for </span>
+                                <span className="text-info">{props.category.name}</span>
+                            </>
+                        ) : null }
+                        <span> in </span>
                         <span className="text-info">{props.list.name}</span>
                     </strong>
                 </Col>
@@ -98,17 +104,17 @@ const CategoryList = (props: Props) => {
                 <hr style={{border: "double"}}/>
             </Row>
 
-            {fetchCategories.categories.map((category) => (
+            {fetchItems.items.map((item) => (
                 <>
-                    <Row className="mb-2" key={`LL-${category.id}`}>
-                        <Col className="col-9 text-start" onClick={() => handleSelect(category)}>
-                            {(category.active) ? (
-                                <p>{category.name}</p>
+                    <Row className="mb-2" key={`LL-${item.id}`}>
+                        <Col className="col-9 text-start">
+                            {(item.active) ? (
+                                <p>{item.name}</p>
                             ) : (
-                                <p><del>{category.name}</del></p>
+                                <p><del>{item.name}</del></p>
                             )}
-                            {(category.notes) ? (
-                                <p className="fw-lighter"><small>&nbsp;&nbsp;&nbsp;&nbsp;{category.notes}</small></p>
+                            {(item.notes) ? (
+                                <p className="fw-lighter"><small>&nbsp;&nbsp;&nbsp;&nbsp;{item.notes}</small></p>
                             ) : null }
                         </Col>
                         <Col className="text-end">
@@ -117,7 +123,7 @@ const CategoryList = (props: Props) => {
                                     <ThreeDots size={16}/>
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item onClick={() => {handleEdit(category)}}>
+                                    <Dropdown.Item onClick={() => {handleEdit(item)}}>
                                         Edit
                                     </Dropdown.Item>
                                 </Dropdown.Menu>
@@ -136,4 +142,4 @@ const CategoryList = (props: Props) => {
 
 }
 
-export default CategoryList;
+export default ItemList;

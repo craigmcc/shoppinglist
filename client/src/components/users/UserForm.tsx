@@ -133,11 +133,11 @@ const UserForm = (props: Props) => {
                     <Col className="text-start">
                         <strong>
                             {(adding)? (
-                                <span>Add New</span>
+                                <span>Add </span>
                             ) : (
-                                <span>Edit Existing</span>
+                                <span>Edit </span>
                             )}
-                            &nbsp;User
+                            <span>User</span>
                         </strong>
                     </Col>
                     <Col className="text-end">

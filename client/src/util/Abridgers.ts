@@ -30,6 +30,7 @@ export const CATEGORIES = (categories: Category[]): object[] => {
 export const ITEM = (item: Item): object => {
     return {
         id: item.id,
+        categoryId: item.categoryId,
         listId: item.id,
         name: item.name,
     };

@@ -1,6 +1,6 @@
-// useMutateCategory ---------------------------------------------------------
+// useMutateItem -------------------------------------------------------------
 
-// Custom hook to encapsulate mutation operations on a Category.
+// Custom hook to encapsulate mutation operations on an Item.
 
 // External Modules ----------------------------------------------------------
 
@@ -8,9 +8,9 @@ import {useEffect, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {ProcessCategory} from "../types";
+import {ProcessItem} from "../types";
 import Api from "../clients/Api";
-import Category, {CATEGORIES_BASE} from "../models/Category";
+import Item, {ITEMS_BASE} from "../models/Item";
 import List from "../models/List";
 import * as Abridgers from "../util/Abridgers";
 import logger from "../util/ClientLogger";
@@ -21,20 +21,20 @@ import * as ToModel from "../util/ToModel";
 
 export interface Props {
     alertPopup?: false,                 // Pop up browser alert on error? [true]
-    list: List;                         // Parent List for this Category
+    list: List;                         // Parent List for this Item
 }
 
 export interface State {
     error: Error | null;                // I/O error (if any)
     executing: boolean;                 // Are we currently executing?
-    insert: ProcessCategory;            // Function to insert a new Category
-    remove: ProcessCategory;            // Function to remove an existing Category
-    update: ProcessCategory;            // Function to update an existing Category
+    insert: ProcessItem;                // Function to insert a new Item
+    remove: ProcessItem;                // Function to remove an existing Item
+    update: ProcessItem;                // Function to update an existing Item
 }
 
 // Component Details ---------------------------------------------------------
 
-const useMutateCategory = (props: Props): State => {
+const useMutateItem = (props: Props): State => {
 
     const [alertPopup] = useState<boolean>((props.alertPopup !== undefined) ? props.alertPopup : true);
     const [error, setError] = useState<Error | null>(null);
@@ -42,30 +42,30 @@ const useMutateCategory = (props: Props): State => {
 
     useEffect(() => {
         logger.debug({
-            context: "useMutateCategory.useEffect",
+            context: "useMutateItem.useEffect",
         });
     });
 
-    const insert: ProcessCategory = async (theCategory) => {
+    const insert: ProcessItem = async (theItem) => {
 
-        const url = `${CATEGORIES_BASE}/${props.list.id}`;
-        let inserted = new Category();
+        const url = `${ITEMS_BASE}/${props.list.id}`;
+        let inserted = new Item();
         setError(null);
         setExecuting(true);
 
         try {
-            inserted = ToModel.CATEGORY((await Api.post(url, theCategory)).data);
+            inserted = ToModel.ITEM((await Api.post(url, theItem)).data);
             logger.debug({
-                context: "useMutateCategory.insert",
+                context: "useMutateItem.insert",
                 list: Abridgers.LIST(props.list),
-                category: Abridgers.CATEGORY(inserted),
+                item: Abridgers.ITEM(inserted),
                 url: url,
             });
         } catch (anError) {
             setError(anError as Error);
-            ReportError("useMutateCategory.insert", anError, {
+            ReportError("useMutateItem.insert", anError, {
                 list: Abridgers.LIST(props.list),
-                category: Abridgers.CATEGORY(theCategory),
+                item: Abridgers.ITEM(theItem),
                 url: url,
             }, alertPopup);
         }
@@ -75,26 +75,26 @@ const useMutateCategory = (props: Props): State => {
 
     }
 
-    const remove: ProcessCategory = async (theCategory) => {
+    const remove: ProcessItem = async (theItem) => {
 
-        const url = `${CATEGORIES_BASE}/${props.list.id}/${theCategory.id}`;
-        let removed = new Category();
+        const url = `${ITEMS_BASE}/${props.list.id}/${theItem.id}`;
+        let removed = new Item();
         setError(null);
         setExecuting(true);
 
         try {
-            removed = ToModel.CATEGORY((await Api.delete(url)).data);
+            removed = ToModel.ITEM((await Api.delete(url)).data);
             logger.debug({
-                context: "useMutateCategory.remove",
+                context: "useMutateItem.remove",
                 list: Abridgers.LIST(props.list),
-                category: Abridgers.CATEGORY(theCategory),
+                item: Abridgers.ITEM(theItem),
                 url: url,
             });
         } catch (anError) {
             setError(anError as Error);
-            ReportError("useMutateCategory.remove", anError, {
+            ReportError("useMutateItem.remove", anError, {
                 list: Abridgers.LIST(props.list),
-                category: Abridgers.CATEGORY(theCategory),
+                item: Abridgers.ITEM(theItem),
                 url: url,
             }, alertPopup);
         }
@@ -104,26 +104,26 @@ const useMutateCategory = (props: Props): State => {
 
     }
 
-    const update: ProcessCategory = async (theCategory) => {
+    const update: ProcessItem = async (theItem) => {
 
-        const url = `${CATEGORIES_BASE}/${props.list.id}/${theCategory.id}`;
-        let updated = new Category();
+        const url = `${ITEMS_BASE}/${props.list.id}/${theItem.id}`;
+        let updated = new Item();
         setError(null);
         setExecuting(true);
 
         try {
-            updated = ToModel.CATEGORY((await Api.put(url, theCategory)).data);
+            updated = ToModel.ITEM((await Api.put(url, theItem)).data);
             logger.debug({
-                context: "useMutateCategory.update",
+                context: "useMutateItem.update",
                 list: Abridgers.LIST(props.list),
-                category: Abridgers.CATEGORY(theCategory),
+                item: Abridgers.ITEM(theItem),
                 url: url,
             });
         } catch (anError) {
             setError(anError as Error);
-            ReportError("useMutateCategory.update", anError, {
+            ReportError("useMutateItem.update", anError, {
                 list: Abridgers.LIST(props.list),
-                category: Abridgers.CATEGORY(theCategory),
+                item: Abridgers.ITEM(theItem),
                 url: url,
             }, alertPopup);
         }
@@ -143,4 +143,4 @@ const useMutateCategory = (props: Props): State => {
 
 }
 
-export default useMutateCategory;
+export default useMutateItem;
