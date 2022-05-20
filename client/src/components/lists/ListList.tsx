@@ -99,12 +99,14 @@ const ListList = (props: Props) => {
                 <Row className="mb-2" key={`LL-${list.id}`}>
                     <Col className="col-9 text-start" onClick={() => handleSelect(list)}>
                         {(list.active) ? (
-                            <p>{list.name}</p>
+                            <p style={{marginBottom: "0.1rem"}}>{list.name}</p>
                         ) : (
-                            <p><del>{list.name}</del></p>
+                            <p style={{marginBottom: "0.1rem"}}><del>{list.name}</del></p>
                         )}
                         {(list.notes) ? (
-                            <p className="fw-lighter"><small>&nbsp;&nbsp;&nbsp;&nbsp;{list.notes}</small></p>
+                            <p className="fw-lighter" style={{marginBottom: "0.1rem"}}>
+                                <small>&nbsp;&nbsp;&nbsp;&nbsp;{list.notes}</small>
+                            </p>
                         ) : null }
                     </Col>
                     <Col className="text-end">

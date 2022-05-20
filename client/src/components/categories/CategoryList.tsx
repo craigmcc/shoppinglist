@@ -103,12 +103,14 @@ const CategoryList = (props: Props) => {
                     <Row className="mb-2" key={`LL-${category.id}`}>
                         <Col className="col-9 text-start" onClick={() => handleSelect(category)}>
                             {(category.active) ? (
-                                <p>{category.name}</p>
+                                <p style={{marginBottom: "0.1rem"}}>{category.name}</p>
                             ) : (
-                                <p><del>{category.name}</del></p>
+                                <p style={{marginBottom: "0.1rem"}}><del>{category.name}</del></p>
                             )}
                             {(category.notes) ? (
-                                <p className="fw-lighter"><small>&nbsp;&nbsp;&nbsp;&nbsp;{category.notes}</small></p>
+                                <p className="fw-lighter" style={{marginBottom: "0.1rem"}}>
+                                    <small>&nbsp;&nbsp;&nbsp;&nbsp;{category.notes}</small>
+                                </p>
                             ) : null }
                         </Col>
                         <Col className="text-end">

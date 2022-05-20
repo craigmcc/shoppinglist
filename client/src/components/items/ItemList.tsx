@@ -109,12 +109,14 @@ const ItemList = (props: Props) => {
                     <Row className="mb-2" key={`LL-${item.id}`}>
                         <Col className="col-9 text-start">
                             {(item.active) ? (
-                                <p>{item.name}</p>
+                                <p style={{marginBottom: "0.1rem"}}>{item.name}</p>
                             ) : (
-                                <p><del>{item.name}</del></p>
+                                <p style={{marginBottom: "0.1rem"}}><del>{item.name}</del></p>
                             )}
                             {(item.notes) ? (
-                                <p className="fw-lighter"><small>&nbsp;&nbsp;&nbsp;&nbsp;{item.notes}</small></p>
+                                <p className="fw-lighter" style={{marginBottom: "0.1rem"}}>
+                                    <small>&nbsp;&nbsp;&nbsp;&nbsp;{item.notes}</small>
+                                </p>
                             ) : null }
                         </Col>
                         <Col className="text-end">
