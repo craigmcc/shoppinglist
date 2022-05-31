@@ -15,7 +15,13 @@ import Row from "react-bootstrap/Row";
 
 import HomeHeader from "./HomeHeader";
 import LoginContext from "../login/LoginContext";
+import {HandleCredentials} from "../../types";
+import LoginForm from "../login/LoginForm";
+import OAuth from "../../clients/OAuth";
+import PasswordTokenRequest from "../../models/PasswordTokenRequest";
+import TokenResponse from "../../models/TokenResponse";
 import logger from "../../util/ClientLogger";
+import ReportError from "../../util/ReportError";
 
 // Incoming Properties -------------------------------------------------------
 
@@ -34,6 +40,29 @@ function HomeView(props: Props) {
     const loginContext = useContext(LoginContext);
 
     const [mode, setMode] = useState<Mode>(Mode.LOGGED_OUT);
+
+    const handleLogin: HandleCredentials = async (credentials) => {
+        const tokenRequest: PasswordTokenRequest = {
+            grant_type: "password",
+            password: credentials.password,
+            username: credentials.username,
+        }
+        try {
+            logger.info({
+                context: "HomeView.handleLogin",
+                username: credentials.username,
+                password: "*REDACTED*",
+            });
+            const tokenResponse: TokenResponse =
+                (await OAuth.post("/token", tokenRequest)).data;
+            await loginContext.handleLogin(credentials.username, tokenResponse);
+        } catch (error) {
+            ReportError("HomeView.handleLogin", error, {
+                username: credentials.username,
+                password: "*REDACTED*",
+            });
+        }
+    }
 
     useEffect(() => {
         const theMode: Mode =
@@ -57,9 +86,23 @@ function HomeView(props: Props) {
                 ) : null }
 
                 {(mode === Mode.LOGGED_OUT) ? (
-                    <Row><Col>
-                        <span>TODO - logged out content</span>
-                    </Col></Row>
+                    <Container className="g-3">
+                        <Row>
+                            <Col className="text-center">
+                                Please Log In
+                            </Col>
+                        </Row>
+                        <Row>
+                            <LoginForm
+                                autoFocus
+                                handleLogin={handleLogin}
+                            />
+                        </Row>
+                        <Row>
+                            <Col className="text-start">Register</Col>
+                            <Col className="text-end">Forgot My Password</Col>
+                        </Row>
+                    </Container>
                 ) : null }
             </Container>
 
