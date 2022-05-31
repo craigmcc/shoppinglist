@@ -24,7 +24,7 @@ import logger from "../../util/ClientLogger";
 export interface Props {
     handleAdd?: HandleAction;           // Handle request to add a List [not allowed]
     handleEdit?: HandleList;            // Handle request to edit a List [not allowed]
-    handleSelect: HandleList;           // Handle request to select a List
+    handleSelect?: HandleList;          // Handle request to select a List [not allowed]
     handleShare?: HandleList;           // Handle request to share a List
 }
 
@@ -62,7 +62,9 @@ const ListList = (props: Props) => {
     }
 
     const handleSelect: HandleList = (theList) => {
-        props.handleSelect(theList);
+        if (props.handleSelect) {
+            props.handleSelect(theList);
+        }
     }
 
     const handleShare: HandleList = (theList) => {

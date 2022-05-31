@@ -25,7 +25,7 @@ export interface Props {
     handleAdd?: HandleAction;           // Handle request to add a Category [not allowed]
     handleEdit?: HandleCategory;        // Handle request to edit a Category [not allowed]
     handleReturn: HandleAction;         // Handle return to parent subview
-    handleSelect: HandleCategory;       // Handle request to select a Category
+    handleSelect?: HandleCategory;      // Handle request to select a Category [not allowed]
     list: List;                         // Parent List for these Categories
 }
 
@@ -62,7 +62,9 @@ const CategoryList = (props: Props) => {
     }
 
     const handleSelect: HandleCategory = (theCategory) => {
-        props.handleSelect(theCategory);
+        if (props.handleSelect) {
+            props.handleSelect(theCategory);
+        }
     }
 
     return (

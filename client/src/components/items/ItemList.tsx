@@ -27,6 +27,7 @@ export interface Props {
     handleAdd?: HandleAction;           // Handle request to add an Item [not allowed]
     handleEdit?: HandleItem;            // Handle request to edit an Item [not allowed]
     handleReturn: HandleAction;         // Handle return to parent subview
+    handleSelect?: HandleItem;          // Handle request to select an Item [not allowed]
     list: List;                         // Parent List for these Items
 }
 
@@ -61,6 +62,12 @@ const ItemList = (props: Props) => {
             props.handleEdit(theItem);
         } else {
             alert("You are not allowed to edit an existing Item");
+        }
+    }
+
+    const handleSelect: HandleItem = (theItem) => {
+        if (props.handleSelect) {
+            props.handleSelect(theItem);
         }
     }
 
@@ -107,7 +114,7 @@ const ItemList = (props: Props) => {
             {fetchItems.items.map((item) => (
                 <>
                     <Row className="mb-2" key={`LL-${item.id}`}>
-                        <Col className="col-9 text-start">
+                        <Col className="col-9 text-start" onClick={() => handleSelect(item)}>
                             {(item.active) ? (
                                 <p style={{marginBottom: "0.1rem"}}>{item.name}</p>
                             ) : (
