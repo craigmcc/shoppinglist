@@ -41,7 +41,7 @@ function UserWidget(props: Props) {
     useEffect(() => {
         const theMode: Mode =
             (loginContext.data.loggedIn) ? Mode.LOGGED_IN : Mode.LOGGED_OUT;
-        logger.info({
+        logger.debug({
             context: "UserWidget.useEffect",
             mode: theMode.toString(),
         });
@@ -79,7 +79,7 @@ function UserWidget(props: Props) {
     }
 
     const handleProfile: HandleAction = () => {
-        alert("User clicked 'Edit Profile'");
+        navigate("/profile");
     }
 
     return (

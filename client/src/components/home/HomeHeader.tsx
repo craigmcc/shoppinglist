@@ -54,7 +54,7 @@ function HomeHeader(props: Props) {
                 </Row>
             </Container>
         </>
-    )
+    );
 
 }
 

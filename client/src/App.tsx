@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import {LoginContextProvider} from "./components/login/LoginContext";
 import HomeView from "./components/home/HomeView";
+import ProfileView from "./components/profile/ProfileView";
 
 // Component Details ---------------------------------------------------------
 
@@ -38,6 +39,7 @@ function App() {
                 <Routes>
                     <Route path="/">
                         <Route path="" element={<HomeView/>}/>
+                        <Route path="/profile" element={<ProfileView/>}/>
                     </Route>
                 </Routes>
             </Router>

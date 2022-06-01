@@ -41,6 +41,16 @@ function HomeView(props: Props) {
 
     const [mode, setMode] = useState<Mode>(Mode.LOGGED_OUT);
 
+    useEffect(() => {
+        const theMode: Mode =
+            (loginContext.data.loggedIn) ? Mode.LOGGED_IN : Mode.LOGGED_OUT;
+        logger.debug({
+            context: "HomeView.useEffect",
+            mode: theMode.toString(),
+        });
+        setMode(theMode);
+    }, [loginContext.data.loggedIn, Mode]);
+
     const handleLogin: HandleCredentials = async (credentials) => {
         const tokenRequest: PasswordTokenRequest = {
             grant_type: "password",
@@ -63,16 +73,6 @@ function HomeView(props: Props) {
             });
         }
     }
-
-    useEffect(() => {
-        const theMode: Mode =
-            (loginContext.data.loggedIn) ? Mode.LOGGED_IN : Mode.LOGGED_OUT;
-        logger.info({
-            context: "HomeView.useEffect",
-            mode: theMode.toString(),
-        });
-        setMode(theMode);
-    }, [loginContext.data.loggedIn, Mode]);
 
     return (
         <>
