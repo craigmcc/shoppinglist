@@ -95,7 +95,7 @@ function UserWidget(props: Props) {
                                 className="px-0"
                                 variant="secondary-outline"
                             >
-                                <PersonCircle size={16}/>
+                                <PersonCircle size={32}/>
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.Item onClick={handlePassword}>Change Password</Dropdown.Item>
