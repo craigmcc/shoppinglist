@@ -8,7 +8,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import Container from "react-bootstrap/Container";
 import Dropdown from "react-bootstrap/Dropdown";
-import {ThreeDotsVertical} from "react-bootstrap-icons";
+import {PersonCircle} from "react-bootstrap-icons";
 import {useNavigate, Outlet} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
@@ -84,15 +84,18 @@ function UserWidget(props: Props) {
 
     return (
         <>
-            <Container>
+            <Container className='px-0'>
 
                 {(mode === Mode.LOGGED_IN) ? (
                     <>
                     <span className="align-middle">
                         {/*Welcome {loginContext.user.firstName}*/}
                         <Dropdown>
-                            <Dropdown.Toggle id="logged-in-actions" variant="secondary">
-                                <ThreeDotsVertical size={16}/>
+                            <Dropdown.Toggle
+                                className="px-0"
+                                variant="secondary-outline"
+                            >
+                                <PersonCircle size={16}/>
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.Item onClick={handlePassword}>Change Password</Dropdown.Item>
