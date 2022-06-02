@@ -1,6 +1,6 @@
-// ProfileHeader -------------------------------------------------------------
+// RegisterHeader ------------------------------------------------------------
 
-// Header banner for ProfileView.
+// Header banner for RegisterView.
 
 // External Modules ----------------------------------------------------------
 
@@ -23,7 +23,7 @@ export interface Props {
 
 // Component Details ---------------------------------------------------------
 
-const ProfileHeader = (props: Props) => {
+const RegisterHeader = (props: Props) => {
 
     const navigate = useNavigate();
 
@@ -42,7 +42,7 @@ const ProfileHeader = (props: Props) => {
                             size={48}/>
                     </Col>
                     <Col className="text-center">
-                        <span className="align-middle"><strong>Edit Your Profile</strong></span>
+                        <span className="align-middle"><strong>Enter Registration Information</strong></span>
                     </Col>
                     <Col className="text-end">
                         <UserWidget/>
@@ -54,4 +54,4 @@ const ProfileHeader = (props: Props) => {
 
 }
 
-export default ProfileHeader;
+export default RegisterHeader;

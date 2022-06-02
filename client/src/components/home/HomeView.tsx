@@ -7,15 +7,17 @@
 // External Modules ----------------------------------------------------------
 
 import React, {useContext, useEffect, useState} from "react";
+import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import {Outlet, useNavigate} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
 
 import HomeHeader from "./HomeHeader";
 import LoginContext from "../login/LoginContext";
-import {HandleCredentials} from "../../types";
+import {HandleAction, HandleCredentials} from "../../types";
 import LoginForm from "../login/LoginForm";
 import OAuth from "../../clients/OAuth";
 import PasswordTokenRequest from "../../models/PasswordTokenRequest";
@@ -38,6 +40,7 @@ function HomeView(props: Props) {
     }
 
     const loginContext = useContext(LoginContext);
+    const navigate = useNavigate();
 
     const [mode, setMode] = useState<Mode>(Mode.LOGGED_OUT);
 
@@ -50,6 +53,10 @@ function HomeView(props: Props) {
         });
         setMode(theMode);
     }, [loginContext.data.loggedIn, Mode]);
+
+    const handleForgotPassword: HandleAction = () => {
+        alert("handleForgotPassword is not yet implemented.");
+    }
 
     const handleLogin: HandleCredentials = async (credentials) => {
         const tokenRequest: PasswordTokenRequest = {
@@ -72,6 +79,10 @@ function HomeView(props: Props) {
                 password: "*REDACTED*",
             });
         }
+    }
+
+    const handleRegister: HandleAction = () => {
+        navigate("/register");
     }
 
     return (
@@ -99,13 +110,28 @@ function HomeView(props: Props) {
                             />
                         </Row>
                         <Row>
-                            <Col className="text-start">Register</Col>
-                            <Col className="text-end">Forgot My Password</Col>
+                            <Col className="text-start">
+                                <Button
+                                    onClick={handleRegister}
+                                    size="sm"
+                                    type="button"
+                                    variant="success"
+                                >Register</Button>
+                            </Col>
+                            <Col className="text-end">
+                                <Button
+                                    onClick={handleForgotPassword}
+                                    size="sm"
+                                    type="button"
+                                    variant="info"
+                                >Forgot My Password</Button>
+                            </Col>
                         </Row>
                     </Container>
                 ) : null }
             </Container>
 
+            <Outlet/>
 
         </>
     )
