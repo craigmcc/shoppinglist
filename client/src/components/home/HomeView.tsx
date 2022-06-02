@@ -16,6 +16,7 @@ import {Outlet, useNavigate} from "react-router-dom";
 // Internal Modules ----------------------------------------------------------
 
 import HomeHeader from "./HomeHeader";
+import HomeLists from "./HomeLists";
 import LoginContext from "../login/LoginContext";
 import {HandleAction, HandleCredentials} from "../../types";
 import LoginForm from "../login/LoginForm";
@@ -91,9 +92,7 @@ function HomeView(props: Props) {
 
             <Container>
                 {(mode === Mode.LOGGED_IN) ? (
-                    <Row><Col>
-                        <span>TODO - logged in content</span>
-                    </Col></Row>
+                    <HomeLists/>
                 ) : null }
 
                 {(mode === Mode.LOGGED_OUT) ? (
