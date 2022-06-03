@@ -65,6 +65,7 @@ const RegisterView = (props: Props) => {
             <Container>
                 {!loginContext.data.loggedIn ? (
                     <RegisterForm
+                        autoFocus
                         handleCreateAccount={handleCreateAccount}
                         createAccount={EMPTY_CREATE_ACCOUNT}/>
                 ) : (

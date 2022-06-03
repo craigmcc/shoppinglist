@@ -4,24 +4,24 @@
 
 // External Modules ----------------------------------------------------------
 
-import {/*useContext, */useEffect} from "react";
+import {useEffect} from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Dropdown from "react-bootstrap/Dropdown";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 import {PlusCircleFill, ThreeDots} from "react-bootstrap-icons";
-//import {Outlet, useNavigate} from "react-router-dom";
+import {Outlet, useNavigate} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
 
-//import LoginContext from "../login/LoginContext";
+import {CURRENT_LIST_KEY} from "../../constants";
 import {HandleAction, HandleList} from "../../types";
 import useFetchLists from "../../hooks/useFetchLists";
-//import List from "../../models/List";
+import useLocalStorage from "../../hooks/useLocalStorage";
+import List from "../../models/List";
 import * as Abridgers from "../../util/Abridgers";
 import logger from "../../util/ClientLogger";
-//import ReportError from "../../util/ReportError";
 
 // Incoming Properties -------------------------------------------------------
 
@@ -32,35 +32,54 @@ export interface Props {
 
 const HomeLists = (props: Props) => {
 
+    const [list, setList] = useLocalStorage(CURRENT_LIST_KEY);
+
     const fetchLists = useFetchLists({
         alertPopup: false,
         withCategories: false,
         withItems: false,
     });
-//    const loginContext = useContext(LoginContext);
-//    const navigate = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        logger.info({
+        logger.debug({
             context: "HomeLists.useEffect",
+            list: Abridgers.LIST(list),
             lists: Abridgers.LISTS(fetchLists.lists),
         })
-    }, [fetchLists.lists]);
+    }, [list, fetchLists.lists]);
 
     const handleAdd: HandleAction = () => {
-        alert("Add List is not yet implemented");
+        logger.debug({
+            context: "HomeLists.handleAdd",
+        });
+        setList(new List());
+        navigate("/list");
+    }
+
+    const handleCategories: HandleList = (list) => {
+        alert(`TODO: Manage Categories for '${list.name}' is not yet implemented`);
     }
 
     const handleEdit: HandleList = (list) => {
-        alert(`Edit Settings for '${list.name}' is not yet implemented`);
+        logger.debug({
+            context: "HomeLists.handleEdit",
+            list: list,
+        });
+        setList(list);
+        navigate("/list");
+    }
+
+    const handleItems: HandleList = (list) => {
+        alert(`TODO: Manage Items for '${list.name}' is not yet implemented`);
     }
 
     const handleSelect: HandleList = (list) => {
-        alert(`Select List for '${list.name}' is not yet implemented`);
+        alert(`TODO: Select List for '${list.name}' is not yet implemented`);
     }
 
     const handleShare: HandleList = (list) => {
-        alert(`Share List for '${list.name}' is not yet implemented`);
+        alert(`TODO: Share List for '${list.name}' is not yet implemented`);
     }
 
     return (
@@ -100,6 +119,13 @@ const HomeLists = (props: Props) => {
                                                 onClick={() => handleEdit(list)}
                                             >Edit Settings</Dropdown.Item>
                                             <Dropdown.Item
+                                                onClick={() => handleCategories(list)}
+                                            >Manage Categories</Dropdown.Item>
+                                            <Dropdown.Item
+                                                onClick={() => handleItems(list)}
+                                            >Manage Items</Dropdown.Item>
+                                            <Dropdown.Divider/>
+                                            <Dropdown.Item
                                                 onClick={(() => handleShare(list))}
                                             >Share List</Dropdown.Item>
                                         </Dropdown.Menu>
@@ -120,6 +146,7 @@ const HomeLists = (props: Props) => {
                     </Col>
                 </Row>
             </Container>
+            <Outlet/>
         </>
     )
 

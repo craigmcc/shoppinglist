@@ -14,6 +14,15 @@ export const validateGroupScope = (scope: string | undefined): boolean => {
     return scope.match(GROUP_SCOPE_PATTERN) !== null;
 }
 
+export const validateUuid = (uuid: string): boolean => {
+    if (uuid) {
+        return UUID_PATTERN.test(uuid);
+    } else {
+        return true;
+    }
+}
+
 // Private Objects -----------------------------------------------------------
 
 export const GROUP_SCOPE_PATTERN: RegExp = /^[a-zA-Z0-9]+$/;
+export const UUID_PATTERN: RegExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;

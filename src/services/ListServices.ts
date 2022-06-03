@@ -4,6 +4,7 @@
 
 
 import {FindOptions, Op} from "sequelize";
+const uuid = require("uuid");
 
 // Internal Modules ----------------------------------------------------------
 
@@ -16,6 +17,7 @@ import UserList from "../models/UserList";
 import CategoryServices from "./CategoryServices";
 import ItemServices from "./ItemServices";
 import UserServices from "../services/UserServices";
+import {validateUuid} from "../util/ApplicationValidators";
 import {appendPaginationOptions} from "../util/QueryParameters";
 import * as SortOrder from "../util/SortOrder";
 
@@ -109,6 +111,7 @@ class ListServices extends BaseParentServices<List> {
     /**
      * Supported match query parameters:
      * * active                         Select active Lists
+     * * listId={listId}                Select List with specified id
      * * name={wildcard}                Select Lists with name matching {wildcard}
      */
     public appendMatchOptions(options: FindOptions, query?: any): FindOptions {
@@ -119,6 +122,10 @@ class ListServices extends BaseParentServices<List> {
         const where: any = options.where ? options.where : {};
         if ("" === query.active) {
             where.active = true;
+        }
+        if (query.listId) {
+            // Guarantee a no-match if invalid UUID format
+            where.id = validateUuid(query.listId) ? query.listId : uuid.v4();
         }
         if (query.name) {
             where.name = { [Op.iLike]: `%${query.name}%`};

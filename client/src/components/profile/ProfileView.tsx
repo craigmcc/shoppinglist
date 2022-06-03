@@ -66,6 +66,7 @@ const ProfileView = (props: Props) => {
             <Container>
                 {loginContext.data.loggedIn ? (
                     <ProfileForm
+                        autoFocus
                         handleUpdate={handleUpdate}
                         user={loginContext.user}/>
                 ) : (

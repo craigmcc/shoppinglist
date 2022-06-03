@@ -175,8 +175,8 @@ class UserServices extends BaseParentServices<User> {
         const user = await this.read("UserServices.lists", userId);
         const options: FindOptions = ListServices.appendMatchOptions({
             order: SortOrder.LISTS,
-        })
-        return user.$get("lists", options);
+        }, query);
+        return await user.$get("lists", options);
     }
 
     public async listsExclude(userId: string, listId: string): Promise<List> {

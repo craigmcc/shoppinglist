@@ -34,7 +34,7 @@ export interface State {
 
 // Component Details ---------------------------------------------------------
 
-const useMutateList = (props: Props): State => {
+const useMutateList = (props: Props = {}): State => {
 
     const loginContext = useContext(LoginContext);
 

@@ -23,6 +23,7 @@ import * as ToModel from "../util/ToModel";
 export interface Props {
     active?: boolean;                   // Select only active Lists? [false]
     alertPopup?: boolean;               // Pop up browser alert on error? [true]
+    listId?: string;                    // Select list with this id [no filter]
     name?: string;                      // Select Lists with matching names [no filter]
     withCategories?: boolean;           // Include configured Categories? [false]
     withItems?: boolean;                // Include configured Items? [false]
@@ -56,6 +57,7 @@ const useFetchLists = (props: Props): State => {
 
             const parameters = {
                 active: props.active ? "" : undefined,
+                listId: props.listId ? props.listId : undefined,
                 name: props.name ? props.name : undefined,
                 withCategories: props.withCategories ? "" : undefined,
                 withItems: props.withItems ? "" : undefined,
@@ -99,7 +101,7 @@ const useFetchLists = (props: Props): State => {
 
     }, [loginContext,
         alertPopup,
-        props.active, props.name,
+        props.active, props.listId, props.name,
         props.withCategories, props.withItems, props.withUsers])
 
     return {
