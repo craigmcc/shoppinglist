@@ -17,6 +17,7 @@ import {LoginContextProvider} from "./components/login/LoginContext";
 import CategoriesView from "./components/categories/CategoriesView";
 import CategoryView from "./components/category/CategoryView";
 import HomeView from "./components/home/HomeView";
+import ItemView from "./components/item/ItemView";
 import ItemsView from "./components/items/ItemsView";
 import ListView from "./components/list/ListView";
 import ProfileView from "./components/profile/ProfileView";
@@ -46,6 +47,7 @@ function App() {
                         <Route path="" element={<HomeView/>}/>
                         <Route path="/categories" element={<CategoriesView/>}/>
                         <Route path="/category" element={<CategoryView/>}/>
+                        <Route path="/item" element={<ItemView/>}/>
                         <Route path="/items" element={<ItemsView/>}/>
                         <Route path="/list" element={<ListView/>}/>
                         <Route path="/profile" element={<ProfileView/>}/>
