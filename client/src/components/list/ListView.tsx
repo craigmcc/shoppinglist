@@ -4,11 +4,11 @@
 
 // External Modules ----------------------------------------------------------
 
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect} from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import {Outlet, useNavigate, useParams} from "react-router-dom";
+import {Outlet, useNavigate} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
 
@@ -34,13 +34,13 @@ const ListView = (props: Props) => {
 
     const loginContext = useContext(LoginContext);
 
-    const [list, setList] = useLocalStorage(CURRENT_LIST_KEY);
+    const [list] = useLocalStorage(CURRENT_LIST_KEY);
 
     const mutateList = useMutateList();
     const navigate = useNavigate();
 
     useEffect(() => {
-        logger.info({
+        logger.debug({
             context: "ListView.useEffect",
             list: list,
         });
@@ -55,7 +55,7 @@ const ListView = (props: Props) => {
             } else {
                 saved = await mutateList.insert(theList);
             }
-            logger.info({
+            logger.debug({
                 context: "ListView.handleSave",
                 list: saved,
             });

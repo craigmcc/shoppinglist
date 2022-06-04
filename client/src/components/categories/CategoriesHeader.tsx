@@ -1,6 +1,6 @@
-// ListHeader ----------------------------------------------------------------
+// CategoriesHeader ----------------------------------------------------------
 
-// Header banner for ListView.
+// Header banner for CategoriesView.
 
 // External Modules ----------------------------------------------------------
 
@@ -14,19 +14,21 @@ import {useNavigate} from "react-router-dom";
 // Internal Modules ----------------------------------------------------------
 
 import UserWidget from "../login/UserWidget";
+import {CURRENT_LIST_KEY} from "../../constants";
 import {HandleAction} from "../../types";
+import useLocalStorage from "../../hooks/useLocalStorage";
 import List from "../../models/List";
 
 // Incoming Properties -------------------------------------------------------
 
 export interface Props {
-    list: List;                         // List being edited (id=null for new)
 }
 
 // Component Details ---------------------------------------------------------
 
-const ListHeader = (props: Props) => {
+const CategoriesHeader = (props: Props) => {
 
+    const [list] = useLocalStorage<List>(CURRENT_LIST_KEY);
     const navigate = useNavigate();
 
     const handleBack: HandleAction = () => {
@@ -44,16 +46,10 @@ const ListHeader = (props: Props) => {
                 </Col>
                 <Col className="text-center">
                         <span className="align-middle"><strong>
-                            {props.list.id ? (
-                                <>
-                                    <span>Edit List&nbsp;</span>
-                                    <span className="text-info">
-                                        {props.list.name}
-                                    </span>
-                                </>
-                            ) : (
-                                <span>Create New List</span>
-                            )}
+                            Manage Categories for&nbsp;
+                            <span className="text-info">
+                                {list.name}
+                            </span>
                         </strong></span>
                 </Col>
                 <Col className="text-end">
@@ -61,8 +57,8 @@ const ListHeader = (props: Props) => {
                 </Col>
             </Row>
         </Container>
-    );
+    )
 
 }
 
-export default ListHeader;
+export default CategoriesHeader;

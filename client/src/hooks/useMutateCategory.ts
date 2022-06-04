@@ -20,7 +20,7 @@ import * as ToModel from "../util/ToModel";
 // Incoming Properties and Outgoing State ------------------------------------
 
 export interface Props {
-    alertPopup?: false,                 // Pop up browser alert on error? [true]
+    alertPopup?: boolean,               // Pop up browser alert on error? [true]
     list: List;                         // Parent List for this Category
 }
 

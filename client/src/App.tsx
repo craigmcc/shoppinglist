@@ -14,6 +14,8 @@ import "react-toastify/dist/ReactToastify.css";
 // Internal Modules ----------------------------------------------------------
 
 import {LoginContextProvider} from "./components/login/LoginContext";
+import CategoriesView from "./components/categories/CategoriesView";
+import CategoryView from "./components/category/CategoryView";
 import HomeView from "./components/home/HomeView";
 import ListView from "./components/list/ListView";
 import ProfileView from "./components/profile/ProfileView";
@@ -41,6 +43,8 @@ function App() {
                 <Routes>
                     <Route path="/">
                         <Route path="" element={<HomeView/>}/>
+                        <Route path="/categories" element={<CategoriesView/>}/>
+                        <Route path="/category" element={<CategoryView/>}/>
                         <Route path="/list" element={<ListView/>}/>
                         <Route path="/profile" element={<ProfileView/>}/>
                         <Route path="/register" element={<RegisterView/>}/>

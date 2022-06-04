@@ -46,7 +46,7 @@ const HomeLists = (props: Props) => {
             context: "HomeLists.useEffect",
             list: Abridgers.LIST(list),
             lists: Abridgers.LISTS(fetchLists.lists),
-        })
+        });
     }, [list, fetchLists.lists]);
 
     const handleAdd: HandleAction = () => {
@@ -58,7 +58,12 @@ const HomeLists = (props: Props) => {
     }
 
     const handleCategories: HandleList = (list) => {
-        alert(`TODO: Manage Categories for '${list.name}' is not yet implemented`);
+        logger.debug({
+            context: "HomeLists.handleCategories",
+            list: Abridgers.LIST(list),
+        });
+        setList(list);
+        navigate("/categories");
     }
 
     const handleEdit: HandleList = (list) => {
@@ -85,14 +90,14 @@ const HomeLists = (props: Props) => {
     return (
         <>
             <Container>
-                <Row>
+                <Row className="mb-3">
                     <Table
                         hover
                         size="sm"
                     >
                         <tbody>
                         {fetchLists.lists.map(list => (
-                            <tr>
+                            <tr key={`L-{list.id}`}>
                                 <td
                                     className="text-start"
                                     onClick={() => handleSelect(list)}
@@ -136,7 +141,7 @@ const HomeLists = (props: Props) => {
                         </tbody>
                     </Table>
                 </Row>
-                <Row className="mt-2">
+                <Row>
                     <Col className="text-center">
                         <PlusCircleFill
                             color="primary"
