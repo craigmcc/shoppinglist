@@ -11,7 +11,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 import {PlusCircleFill, ThreeDots} from "react-bootstrap-icons";
-import {Outlet, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
 
@@ -88,71 +88,68 @@ const HomeLists = (props: Props) => {
     }
 
     return (
-        <>
-            <Container>
-                <Row className="mb-3">
-                    <Table
-                        hover
-                        size="sm"
-                    >
-                        <tbody>
-                        {fetchLists.lists.map(list => (
-                            <tr key={`L-{list.id}`}>
-                                <td
-                                    className="text-start"
-                                    onClick={() => handleSelect(list)}
-                                >
-                                    {list.active ? (
-                                        <span>{list.name}</span>
-                                    ) : (
-                                        <span><del>{list.name}</del></span>
-                                    )}
-                                    {list.notes ? (
-                                        <p><small>&nbsp;&nbsp;{list.notes}</small></p>
-                                    ) : null}
-                                </td>
-                                <td className="text-end">
-                                    <Dropdown>
-                                        <Dropdown.Toggle
-                                            className="px-0"
-                                            variant="success-outline"
-                                        >
-                                            <ThreeDots size={16}/>
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item
-                                                onClick={() => handleEdit(list)}
-                                            >Edit Settings</Dropdown.Item>
-                                            <Dropdown.Item
-                                                onClick={() => handleCategories(list)}
-                                            >Manage Categories</Dropdown.Item>
-                                            <Dropdown.Item
-                                                onClick={() => handleItems(list)}
-                                            >Manage Items</Dropdown.Item>
-                                            <Dropdown.Divider/>
-                                            <Dropdown.Item
-                                                onClick={(() => handleShare(list))}
-                                            >Share List</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </Table>
-                </Row>
-                <Row>
-                    <Col className="text-center">
-                        <PlusCircleFill
-                            color="primary"
-                            onClick={handleAdd}
-                            size={48}
-                        />
-                    </Col>
-                </Row>
-            </Container>
-            <Outlet/>
-        </>
+        <Container>
+            <Row className="mb-3">
+                <Table
+                    hover
+                    size="sm"
+                >
+                    <tbody>
+                    {fetchLists.lists.map(list => (
+                        <tr key={`L-{list.id}`}>
+                            <td
+                                className="text-start"
+                                onClick={() => handleSelect(list)}
+                            >
+                                {list.active ? (
+                                    <span>{list.name}</span>
+                                ) : (
+                                    <span><del>{list.name}</del></span>
+                                )}
+                                {list.notes ? (
+                                    <p><small>&nbsp;&nbsp;{list.notes}</small></p>
+                                ) : null}
+                            </td>
+                            <td className="text-end">
+                                <Dropdown>
+                                    <Dropdown.Toggle
+                                        className="px-0"
+                                        variant="success-outline"
+                                    >
+                                        <ThreeDots size={16}/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item
+                                            onClick={() => handleEdit(list)}
+                                        >Edit Settings</Dropdown.Item>
+                                        <Dropdown.Item
+                                            onClick={() => handleCategories(list)}
+                                        >Manage Categories</Dropdown.Item>
+                                        <Dropdown.Item
+                                            onClick={() => handleItems(list)}
+                                        >Manage Items</Dropdown.Item>
+                                        <Dropdown.Divider/>
+                                        <Dropdown.Item
+                                            onClick={(() => handleShare(list))}
+                                        >Share List</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </Table>
+            </Row>
+            <Row>
+                <Col className="text-center">
+                    <PlusCircleFill
+                        color="primary"
+                        onClick={handleAdd}
+                        size={48}
+                    />
+                </Col>
+            </Row>
+        </Container>
     )
 
 }

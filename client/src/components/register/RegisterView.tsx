@@ -8,7 +8,7 @@ import React, {useContext} from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import {Outlet, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
 
@@ -78,7 +78,6 @@ const RegisterView = (props: Props) => {
                     </Row>
                 )}
             </Container>
-            <Outlet/>
 
         </>
     )

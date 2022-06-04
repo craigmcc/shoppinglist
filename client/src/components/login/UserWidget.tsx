@@ -9,7 +9,7 @@ import React, {useContext, useEffect, useState} from "react";
 import Container from "react-bootstrap/Container";
 import Dropdown from "react-bootstrap/Dropdown";
 import {PersonCircle} from "react-bootstrap-icons";
-import {useNavigate, Outlet} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
 
@@ -83,11 +83,10 @@ function UserWidget(props: Props) {
     }
 
     return (
-        <>
-            <Container className='px-0'>
+        <Container className='px-0'>
 
-                {(mode === Mode.LOGGED_IN) ? (
-                    <>
+            {(mode === Mode.LOGGED_IN) ? (
+                <>
                     <span className="align-middle">
                         {/*Welcome {loginContext.user.firstName}*/}
                         <Dropdown>
@@ -98,23 +97,24 @@ function UserWidget(props: Props) {
                                 <PersonCircle size={32}/>
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
-                                <Dropdown.Item onClick={handlePassword}>Change Password</Dropdown.Item>
-                                <Dropdown.Item onClick={handleProfile}>Edit Profile</Dropdown.Item>
+                                <Dropdown.Item
+                                    onClick={handlePassword}>Change Password</Dropdown.Item>
+                                <Dropdown.Item
+                                    onClick={handleProfile}>Edit Profile</Dropdown.Item>
                                 <Dropdown.Divider/>
-                                <Dropdown.Item onClick={handleLogout}>Log Out</Dropdown.Item>
+                                <Dropdown.Item
+                                    onClick={handleLogout}>Log Out</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </span>
-                    </>
-                ) : null }
+                </>
+            ) : null }
 
-                {(mode === Mode.LOGGED_OUT) ? (
-                    <span className="align-middle">Please Log In or Register.</span>
-                ) : null }
+            {(mode === Mode.LOGGED_OUT) ? (
+                <span className="align-middle">Please Log In or Register.</span>
+            ) : null }
 
-            </Container>
-            <Outlet/>
-        </>
+        </Container>
     )
 
 }

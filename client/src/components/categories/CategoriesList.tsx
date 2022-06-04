@@ -11,7 +11,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 import {PlusCircleFill, ThreeDots} from "react-bootstrap-icons";
-import {Outlet, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
 
@@ -48,9 +48,10 @@ const CategoriesList = (props: Props) => {
         logger.debug({
             context: "CategoriesList.useEffect",
             list: Abridgers.LIST(list),
+            category: category,
             categories: Abridgers.CATEGORIES(fetchCategories.categories),
         });
-    }, [list, fetchCategories.categories]);
+    }, [category, list, fetchCategories.categories]);
 
     const handleAdd: HandleAction = () => {
         logger.debug({
@@ -72,58 +73,55 @@ const CategoriesList = (props: Props) => {
     }
 
     return (
-        <>
-            <Container>
-                <Row className="mb-3">
-                    <Table
-                        hover
-                        size="sm"
-                    >
-                        <tbody>
-                        {fetchCategories.categories.map(category => (
-                            <tr key={`C-{category.id}`}>
-                                <td className="text-start">
-                                    {category.active ? (
-                                        <span>{category.name}</span>
-                                    ) : (
-                                        <span><del>{category.name}</del></span>
-                                    )}
-                                    {category.notes ? (
-                                        <p><small>&nbsp;&nbsp;{category.notes}</small></p>
-                                    ) : null }
-                                </td>
-                                <td className="text-end">
-                                    <Dropdown>
-                                        <Dropdown.Toggle
-                                            className="px-0"
-                                            variant="success-outline"
-                                        >
-                                            <ThreeDots size={16}/>
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item
-                                                onClick={() => handleEdit(category)}
-                                            >Edit Settings</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </Table>
-                </Row>
-                <Row>
-                    <Col className="text-center">
-                        <PlusCircleFill
-                            color="primary"
-                            onClick={handleAdd}
-                            size={48}
-                        />
-                    </Col>
-                </Row>
-            </Container>
-            <Outlet/>
-        </>
+        <Container>
+            <Row className="mb-3">
+                <Table
+                    hover
+                    size="sm"
+                >
+                    <tbody>
+                    {fetchCategories.categories.map(category => (
+                        <tr key={`C-{category.id}`}>
+                            <td className="text-start">
+                                {category.active ? (
+                                    <span>{category.name}</span>
+                                ) : (
+                                    <span><del>{category.name}</del></span>
+                                )}
+                                {category.notes ? (
+                                    <p><small>&nbsp;&nbsp;{category.notes}</small></p>
+                                ) : null }
+                            </td>
+                            <td className="text-end">
+                                <Dropdown>
+                                    <Dropdown.Toggle
+                                        className="px-0"
+                                        variant="success-outline"
+                                    >
+                                        <ThreeDots size={16}/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item
+                                            onClick={() => handleEdit(category)}
+                                        >Edit Settings</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </Table>
+            </Row>
+            <Row>
+                <Col className="text-center">
+                    <PlusCircleFill
+                        color="primary"
+                        onClick={handleAdd}
+                        size={48}
+                    />
+                </Col>
+            </Row>
+        </Container>
     )
 
 }

@@ -5,7 +5,7 @@
 // External Modules ----------------------------------------------------------
 
 import React, {useEffect} from "react";
-import {Outlet, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
 
@@ -69,17 +69,12 @@ const CategoryView = (props: Props) => {
 
     return (
         <>
-            {(category) ? (
-                <>
-                    <CategoryHeader category={category}/>
-                    <CategoryForm
-                        autoFocus
-                        category={category}
-                        handleSave={handleSave}
-                    />
-                </>
-            ) : null }
-            <Outlet/>
+            <CategoryHeader category={category}/>
+            <CategoryForm
+                autoFocus
+                category={category}
+                handleSave={handleSave}
+            />
         </>
     )
 
