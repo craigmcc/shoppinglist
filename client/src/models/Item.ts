@@ -43,11 +43,16 @@ class Item extends ItemData {
     constructor(data: any = {}) {
         super(data);
         this.category = data.category ? ToModel.CATEGORY(data.category) : undefined;
+        if (this.category) {
+            this.categoryName = this.category.name;
+        } else {
+            this.categoryName = undefined;
+        }
         this.list = data.list ? ToModel.LIST(data.list) : undefined;
     }
 
     category?: Category;
-    categoryName?: string; // Artificially inserted for sorting
+    categoryName?: string;
     list?: List;
 
 }

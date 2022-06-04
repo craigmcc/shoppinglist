@@ -76,7 +76,12 @@ const HomeLists = (props: Props) => {
     }
 
     const handleItems: HandleList = (list) => {
-        alert(`TODO: Manage Items for '${list.name}' is not yet implemented`);
+        logger.debug({
+            context: "HomeLists.handleItems",
+            list: Abridgers.LIST(list),
+        });
+        setList(list);
+        navigate("/items");
     }
 
     const handleSelect: HandleList = (list) => {
