@@ -81,7 +81,7 @@ const CategoriesList = (props: Props) => {
                 >
                     <tbody>
                     {fetchCategories.categories.map(category => (
-                        <tr key={`C-{category.id}`}>
+                        <tr key={`C-${category.id}`}>
                             <td className="text-start">
                                 {category.active ? (
                                     <span>{category.name}</span>

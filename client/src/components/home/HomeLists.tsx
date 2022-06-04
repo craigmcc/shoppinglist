@@ -101,7 +101,7 @@ const HomeLists = (props: Props) => {
                 >
                     <tbody>
                     {fetchLists.lists.map(list => (
-                        <tr key={`L-{list.id}`}>
+                        <tr key={`L-${list.id}`}>
                             <td
                                 className="text-start"
                                 onClick={() => handleSelect(list)}

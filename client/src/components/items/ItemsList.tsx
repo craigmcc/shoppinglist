@@ -88,7 +88,7 @@ const ItemsList = (props: Props) => {
                     </thead>
                     <tbody>
                     {fetchItems.items.map(item => (
-                        <tr key={`C-{item.id}`}>
+                        <tr key={`I-${item.id}`}>
                             <td className="text-start">
                                 {item.active ? (
                                     <span>{item.name}</span>
@@ -100,7 +100,7 @@ const ItemsList = (props: Props) => {
                                 ) : null }
                             </td>
                             <td className={"text-start"}>
-                                {item.category?.name}
+                                <span>{item.categoryName}</span>
                             </td>
                             <td className="text-end">
                                 <Dropdown>
