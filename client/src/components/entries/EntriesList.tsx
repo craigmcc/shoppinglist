@@ -10,7 +10,7 @@ import Container from "react-bootstrap/Container";
 import Dropdown from "react-bootstrap/Dropdown";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
-import {PlusCircleFill, ThreeDots} from "react-bootstrap-icons";
+import {Pencil, PlusCircleFill, ThreeDots} from "react-bootstrap-icons";
 import {SearchBar} from "@craigmcc/shared-react"
 
 // Internal Modules ----------------------------------------------------------
@@ -35,7 +35,8 @@ export interface Props {
 
 const EntriesList = (props: Props) => {
 
-    const [items, setItems] = useState<Item[]>([]);
+    const [categoryItems, setCategoryItems] = useState<Item[][]>([]);
+    const [categoryNames, setCategoryNames] = useState<string[]>([]);
     const [list] = useLocalStorage<List>(CURRENT_LIST_KEY);
 
     const fetchItems = useFetchItems({
@@ -52,17 +53,37 @@ const EntriesList = (props: Props) => {
 
     useEffect(() => {
 
-        logger.info({
+        logger.debug({
             context: "EntriesList.useEffect",
             list: Abridgers.LIST(list),
             items: Abridgers.ITEMS(fetchItems.items),
         });
 
-        // Sort and save the selected Items
+        // Sort, categorize, and save the selected Items
         let theItems: Item[] = Sorters.ITEMS(fetchItems.items);
-        setItems(theItems);
+        const theCategoryNames: string[] = [];
+        const theCategoryItems: Item[][] = [];
+        let currentCategoryName: string = "";
+        let currentCategoryItems: Item[] = [];
+        theItems.forEach(theItem => {
+            if (theItem.categoryName !== currentCategoryName) {
+                if (currentCategoryName !== "") {
+                    theCategoryNames.push(currentCategoryName);
+                    theCategoryItems.push(currentCategoryItems);
+                }
+                currentCategoryName = theItem.categoryName as string;
+                currentCategoryItems = [];
+            }
+            currentCategoryItems.push(theItem);
+        });
+        if (currentCategoryName !== "") {
+            theCategoryNames.push(currentCategoryName);
+            theCategoryItems.push(currentCategoryItems);
+        }
+        setCategoryNames(theCategoryNames);
+        setCategoryItems(theCategoryItems);
 
-    }, [items, list, fetchItems.items]);
+    }, [list, fetchItems.items]);
 
     // Handle adding a new Item and then selecting it
     const handleAdd: HandleAction = () => {
@@ -89,6 +110,15 @@ const EntriesList = (props: Props) => {
             context: "EntriesList.handleClear",
         });
         // TODO - clear all selected flags
+    }
+
+    // Handle request to edit a note on an Item
+    const handleEdit: HandleItem = (item) => {
+        logger.info({
+            context: "EntriesList.handleEdit",
+            item: item,
+        });
+        // TODO - handleEdit
     }
 
     // Handle a character by character change in the search criteria
@@ -159,32 +189,41 @@ const EntriesList = (props: Props) => {
             </Row>
             <Row className="mb-3">
                 <Table hover size="sm">
-                    <thead>
-                    <tr>
-                        <th>Category Name</th>
-                        <th>Item Name</th>
-                    </tr>
-                    </thead>
                     <tbody>
-                    {items.map(item => (
-                        <tr key={`E-${item.id}`}>
-                            <td className="text-start">
-                                {item.categoryName}
-                            </td>
+                    {categoryNames.map((categoryName, index) => (
+                        <>
+                        <tr key={`C-${categoryName}`}>
                             <td
-                                className="text-start"
-                                onClick={() => handleChecked(item)}
+                                className="text-center bg-info"
+                                colSpan={2}
                             >
-                                {!item.checked ? (
-                                    <span>{item.name}</span>
-                                ) : (
-                                    <span><del>{item.name}</del></span>
-                                )}
-                                {item.notes ? (
-                                    <p><small>&nbsp;&nbsp;{item.notes}</small></p>
-                                ) : null }
+                                <strong>{categoryName}</strong>
                             </td>
                         </tr>
+                            {categoryItems[index].map(categoryItem => (
+                                <tr key={`I-${categoryItem.id}`}>
+                                    <td
+                                        className="text-start"
+                                        onClick={() => handleChecked(categoryItem)}
+                                    >
+                                        {!categoryItem.checked ? (
+                                            <span>{categoryItem.name}</span>
+                                        ) : (
+                                            <span><del>{categoryItem.name}</del></span>
+                                        )}
+                                        {categoryItem.notes ? (
+                                            <p><small>&nbsp;&nbsp;{categoryItem.notes}</small></p>
+                                        ) : null }
+                                    </td>
+                                    <td
+                                        className="text-end"
+                                        onClick={() => handleEdit(categoryItem)}
+                                    >
+                                        <Pencil className="me-2" size={16}/>
+                                    </td>
+                                </tr>
+                            ))}
+                        </>
                     ))}
                     </tbody>
                 </Table>
