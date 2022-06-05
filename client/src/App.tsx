@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {LoginContextProvider} from "./components/login/LoginContext";
 import CategoriesView from "./components/categories/CategoriesView";
 import CategoryView from "./components/category/CategoryView";
+import EntriesView from "./components/entries/EntriesView";
 import HomeView from "./components/home/HomeView";
 import ItemView from "./components/item/ItemView";
 import ItemsView from "./components/items/ItemsView";
@@ -47,6 +48,7 @@ function App() {
                         <Route path="" element={<HomeView/>}/>
                         <Route path="/categories" element={<CategoriesView/>}/>
                         <Route path="/category" element={<CategoryView/>}/>
+                        <Route path="/entries" element={<EntriesView/>}/>
                         <Route path="/item" element={<ItemView/>}/>
                         <Route path="/items" element={<ItemsView/>}/>
                         <Route path="/list" element={<ListView/>}/>

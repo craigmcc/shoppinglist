@@ -26,6 +26,7 @@ export interface Props {
     category?: Category;                // Optional Category owning these items [use List]
     list: List;                         // List owning these Items
     name?: string;                      // Select Items matching pattern [none]
+    selected?: boolean;                 // Select only selected Items? [false]
     withCategory?: boolean;             // Include parent Category? [false]
     withList?: boolean;                 // Include parent List? [false]
 }
@@ -56,6 +57,7 @@ const useFetchItems = (props: Props): State => {
             const parameters = {
                 active: props.active ? "" : undefined,
                 name: props.name ? props.name : undefined,
+                selected: props.selected ? "" : undefined,
                 withCategory: props.withCategory  ? "" : undefined,
                 withList: props.withList ? "" : undefined,
             }
@@ -98,7 +100,7 @@ const useFetchItems = (props: Props): State => {
         fetchItems();
 
     }, [props.active, props.category, props.list, props.name,
-        props.withCategory, props.withList, alertPopup]);
+        props.selected, props.withCategory, props.withList, alertPopup]);
 
 
     return {

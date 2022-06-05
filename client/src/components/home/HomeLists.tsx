@@ -85,7 +85,12 @@ const HomeLists = (props: Props) => {
     }
 
     const handleSelect: HandleList = (list) => {
-        alert(`TODO: Select List for '${list.name}' is not yet implemented`);
+        logger.debug({
+            context: "HomeLists.handleSelect",
+            list: Abridgers.LIST(list),
+        });
+        setList(list);
+        navigate("/entries");
     }
 
     const handleShare: HandleList = (list) => {
