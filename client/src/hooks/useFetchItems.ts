@@ -67,7 +67,7 @@ const useFetchItems = (props: Props): State => {
             try {
                 if (props.list.id) {
                     theItems = ToModel.ITEMS((await Api.get(url)).data);
-                    logger.info({
+                    logger.debug({
                         context: "useFetchItems.fetchItems",
                         category: props.category ? Abridgers.CATEGORY(props.category) : undefined,
                         items: Abridgers.ITEMS(theItems),

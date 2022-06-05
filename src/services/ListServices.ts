@@ -2,6 +2,7 @@
 
 // Services implementation for List models.
 
+// External Modules ----------------------------------------------------------
 
 import {FindOptions, Op} from "sequelize";
 const uuid = require("uuid");
@@ -18,6 +19,7 @@ import CategoryServices from "./CategoryServices";
 import ItemServices from "./ItemServices";
 import UserServices from "../services/UserServices";
 import {validateUuid} from "../util/ApplicationValidators";
+import {InitialListData} from "../util/InitialListData";
 import {appendPaginationOptions} from "../util/QueryParameters";
 import * as SortOrder from "../util/SortOrder";
 
@@ -50,6 +52,52 @@ class ListServices extends BaseParentServices<List> {
             order: SortOrder.ITEMS,
         }, query);
         return list.$get("items", options);
+    }
+
+    /**
+     * Populate Categories and Items for the specified List (which should have none).
+     * Then, return the List with its new nested elements.
+     *
+     * TODO: Do we need a flag to request deleting all existing Categories and Items?
+     */
+    public async populate(listId: string): Promise<List> {
+
+        const categories: Category[] = [];
+        const items: Item[] = [];
+
+        // Populate the categories we are creating
+        InitialListData.forEach(element => {
+            // @ts-ignore
+            categories.push({
+                id: uuid.v4(),
+                listId: listId,
+                name: element[0],
+            });
+        });
+        await Category.bulkCreate(categories);
+
+        // Populate the items we are creating
+        InitialListData.forEach((element, i) => {
+            if (element.length > 1) {
+                for (let j = 1; j < element.length; j++) {
+                    // @ts-ignore
+                    items.push({
+                        id: uuid.v4(),
+                        categoryId: categories[i].id,
+                        listId: listId,
+                        name: element[j],
+                    });
+                }
+            }
+        });
+        await Item.bulkCreate(items);
+
+        // Return this List with its nested Categories and Items
+        return await this.find(listId, {
+            withCategories: "",
+            withItems: "",
+        });
+
     }
 
     public async users(listId: string, query?: any): Promise<User[]> {

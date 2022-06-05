@@ -59,6 +59,14 @@ ListRouter.put("/:listId",
         res.send(await ListServices.update(req.params.listId, req.body));
     });
 
+// List Custom Routes --------------------------------------------------------
+
+// POST /:listId/populate - Populate Categories and Items for this List
+ListRouter.post("/:listId/populate",
+    async (req: Request, res: Response) => {
+        res.send(await ListServices.populate(req.params.listId))
+    });
+
 // List-Child Routes ---------------------------------------------------------
 
 // GET /:listId/categories - Find Categories for this List
