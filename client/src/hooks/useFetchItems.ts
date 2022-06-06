@@ -8,6 +8,7 @@ import {useEffect, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
+import {HandleAction} from "../types";
 import Api from "../clients/Api";
 import Item from "../models/Item";
 import Category, {CATEGORIES_BASE} from "../models/Category";
@@ -33,8 +34,9 @@ export interface Props {
 
 export interface State {
     error: Error | null;                // I/O error (if any)
-    loading: boolean;                   // Are we currently loading?
+    handleRefresh: HandleAction;        // Method to request refresh
     items: Item[];                      // Fetched Items
+    loading: boolean;                   // Are we currently loading?
 }
 
 // Hook Details --------------------------------------------------------------
@@ -45,6 +47,7 @@ const useFetchItems = (props: Props): State => {
     const [error, setError] = useState<Error | null>(null);
     const [items, setItems] = useState<Item[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [refresh, setRefresh] = useState<boolean>(false);
 
     useEffect(() => {
 
@@ -100,11 +103,17 @@ const useFetchItems = (props: Props): State => {
         fetchItems();
 
     }, [props.active, props.category, props.list, props.name,
-        props.selected, props.withCategory, props.withList, alertPopup]);
+        props.selected, props.withCategory, props.withList,
+        alertPopup, refresh]);
 
+
+    const handleRefresh: HandleAction = () => {
+        setRefresh(true);
+    }
 
     return {
         error: error ? error : null,
+        handleRefresh: handleRefresh,
         items: items,
         loading: loading,
     }

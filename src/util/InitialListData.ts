@@ -28,7 +28,7 @@ export const InitialListData: string[][] = [
     [ "Other", ],
     [ "Paper Products", "Kleenex Large", "Kleenex Small", "Napkins", "Paper Towels", "Toilet Tissue", ],
     [ "Pet Supplies", "Bird Seed", "Cat Food Cans", "Cat Food Dry", "Cat Grass", "Dog Food", "Litter"],
-    [ "Produce", "Cabbage", "Celery", "Cole Slaw", "Green Onions", "Lettuce", "Mixed Vegetables", "Mushrooms", "Red Peppers", "Salad Bag", "Spinach", "Tomatoes", ],
+    [ "Produce", "Bananas", "Cabbage", "Celery", "Cole Slaw", "Green Onions", "Lettuce", "Mixed Vegetables", "Mushrooms", "Red Peppers", "Salad Bag", "Spinach", "Strawberries", "Tomatoes", ],
     [ "Seafood", "Cod", "Halibut", "Salmon", ],
     [ "Snacks", "Candy", "Cookies", "Tic Tacs", ],
 ];
