@@ -5,20 +5,18 @@
 // External Modules ----------------------------------------------------------
 
 import React, {useEffect, useState} from "react";
-import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
-import Dropdown from "react-bootstrap/Dropdown";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
-import {Pencil, PlusCircleFill, ThreeDots} from "react-bootstrap-icons";
-import {SearchBar} from "@craigmcc/shared-react"
+import {Pencil} from "react-bootstrap-icons";
 
 // Internal Modules ----------------------------------------------------------
 
+import EntriesSearch from "./EntriesSearch";
 import ItemForm from "../item/ItemForm";
 import {CURRENT_LIST_KEY} from "../../constants";
-import {HandleAction, HandleItem, HandleValue} from "../../types";
+import {HandleAction, HandleItem} from "../../types";
 import useFetchCategories from "../../hooks/useFetchCategories";
 import useFetchItems from "../../hooks/useFetchItems";
 import useMutateItem from "../../hooks/useMutateItem";
@@ -96,7 +94,7 @@ const EntriesList = (props: Props) => {
 
     // Handle request to add a new Item and then select it
     const handleAdd: HandleAction = () => {
-        logger.info({
+        logger.debug({
             context: "EntriesList.handleAdd",
         });
         setItem(new Item());
@@ -105,7 +103,7 @@ const EntriesList = (props: Props) => {
 
     // Handle saving of an added item
     const handleAddSave: HandleItem = async (item) => {
-        logger.info({
+        logger.debug({
             context: "EntriesList.handleAddSave",
             item: item,
         });
@@ -119,7 +117,7 @@ const EntriesList = (props: Props) => {
 
     // Handle checking or unchecking a selected Item
     const handleChecked: HandleItem = async (item) => {
-        logger.info({
+        logger.debug({
             context: "EntriesList.handleChecked",
             old: item.checked,
             new: !item.checked,
@@ -130,15 +128,16 @@ const EntriesList = (props: Props) => {
 
     // Handle clearing all selections
     const handleClear: HandleAction = () => {
-        logger.info({
+        logger.debug({
             context: "EntriesList.handleClear",
         });
         // TODO - clear all selected flags
+        alert("handleClear has not yet been implemented");
     }
 
     // Handle request to edit a note on an Item
     const handleEdit: HandleItem = (item) => {
-        logger.info({
+        logger.debug({
             context: "EntriesList.handleEdit",
             item: item,
         });
@@ -148,7 +147,7 @@ const EntriesList = (props: Props) => {
 
     // Handle saving of an added item
     const handleEditSave: HandleItem = async (item) => {
-        logger.info({
+        logger.debug({
             context: "EntriesList.handleEditSave",
             item: item,
         });
@@ -159,78 +158,34 @@ const EntriesList = (props: Props) => {
 
     // Handle cancellation of an Add/Edit Item request
     const handleItemCancel: HandleAction = () => {
-        logger.info({
+        logger.debug({
             context: "EntriesList.handleItemCancel",
         });
         setShowItem(false);
     }
 
-    // Handle a character by character change in the search criteria
-    const handleSearchChange: HandleValue = (value) => {
-        logger.info({
-            context: "EntriesList.handleSearchChange",
-            value: value,
+    // Handle selection of an Item to be added
+    const handleSelect: HandleItem = async (item) => {
+        logger.debug({
+            context: "EntriesList.handleSelect",
+            item: Abridgers.ITEM(item),
         });
-        // TODO - handleSearchChange
-    }
-
-    const handleSearchValue: HandleValue = (value) => {
-        logger.info({
-            context: "EntriesList.handleSearchValue",
-            value: value,
-        });
-        // TODO - handleSearchValue
-    }
-
-    // Handle selecting or unselecting an Item
-    const handleSelected: HandleItem = async (item) => {
-        logger.info({
-            context: "EntriesList.handleSelected",
-            old: item.selected,
-            new: !item.selected,
-        });
-        item.selected = !item.selected;
+        item.selected = true;
         await mutateItem.update(item);
+        fetchItems.handleRefresh();
     }
 
-    // TODO - top row controls probably need their own component and/or modal?
     return (
         <>
 
             <Container>
-                <Row className="mb-3">
-                    <Col>
-                        <SearchBar
-                            autoFocus
-                            handleChange={handleSearchChange}
-                            handleValue={handleSearchValue}
-                            //htmlSize={40}
-                            name="itemName"
-                            placeholder="Item Name"
-                        />
-                    </Col>
-                    <Col className="text-center">
-                        <PlusCircleFill
-                            color="primary"
-                            onClick={handleAdd}
-                            size={48}
-                        />
-                    </Col>
-                    <Col className="text-end">
-                        <Dropdown>
-                            <Dropdown.Toggle
-                                className="px-0"
-                                variant="success-outline"
-                            >
-                                <ThreeDots size={16}/>
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                <Dropdown.Item
-                                    onClick={handleClear}
-                                >Clear Entries</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </Col>
+                <Row>
+                    <EntriesSearch
+                        handleAdd={handleAdd}
+                        handleClear={handleClear}
+                        handleSelect={handleSelect}
+                        list={list}
+                    />
                 </Row>
                 <Row className="mb-3">
                     <Table hover size="sm">
