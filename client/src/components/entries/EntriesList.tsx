@@ -199,12 +199,12 @@ const EntriesList = (props: Props) => {
 
             <Container>
                 <Row className="mb-3">
-                    <Col className="col-6">
+                    <Col>
                         <SearchBar
                             autoFocus
                             handleChange={handleSearchChange}
                             handleValue={handleSearchValue}
-                            htmlSize={40}
+                            //htmlSize={40}
                             name="itemName"
                             placeholder="Item Name"
                         />
@@ -286,7 +286,7 @@ const EntriesList = (props: Props) => {
             >
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {item.id ? (
+                        {!item.id ? (
                             <span>Add and Select New Item</span>
                         ) : (
                             <span>Edit Existing Item</span>
