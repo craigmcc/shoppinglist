@@ -97,6 +97,7 @@ const useFetchItems = (props: Props): State => {
 
             setLoading(false);
             setItems(theItems);
+            setRefresh(false);
 
         }
 
