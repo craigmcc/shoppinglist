@@ -18,7 +18,7 @@ export const UserRouter = Router({
     strict: true,
 });
 
-// TODO - superuser access required for all routes
+// NOTE - superuser access required for all routes
 UserRouter.use(requireSuperuser);
 
 export default UserRouter;

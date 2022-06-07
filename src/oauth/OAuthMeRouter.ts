@@ -11,7 +11,7 @@ import {Request, Response, Router} from "express";
 import {requireUser} from "./OAuthMiddleware";
 import User from "../models/User";
 import {BadRequest, Forbidden} from "../util/HttpErrors";
-//import UserServices from "../services/UserServices";
+import UserServices from "../services/UserServices";
 
 // Public Objects ------------------------------------------------------------
 
@@ -53,17 +53,13 @@ OAuthMeRouter.put("/",
         const update: Partial<User> = req.body;
         delete update.id;
         delete update.active;
-        delete update.email;
         delete update.scope;
-        delete update.username;
 
         // Perform the restricted update and return the result
-/*
         res.send(await UserServices.update(
             user.id,
             update
         ));
-*/
 
     });
 

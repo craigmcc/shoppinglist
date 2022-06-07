@@ -68,38 +68,6 @@ describe("ListRouter Functional Tests", () => {
 
         const PATH = "/api/lists";
 
-        it("should fail on authenticated admin", async () => {
-
-            const INPUT: Partial<List> = {
-                name: "Inserted List",
-            }
-
-            const response = await chai.request(app)
-                .post(PATH)
-                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN))
-                .send(INPUT);
-            expect(response).to.have.status(FORBIDDEN);
-            expect(response).to.be.json;
-            expect(response.body.message).to.include("Required scope not authorized");
-
-        })
-
-        it("should fail on authenticated regular", async () => {
-
-            const INPUT: Partial<List> = {
-                name: "Inserted List",
-            }
-
-            const response = await chai.request(app)
-                .post(PATH)
-                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_REGULAR))
-                .send(INPUT);
-            expect(response).to.have.status(FORBIDDEN);
-            expect(response).to.be.json;
-            expect(response.body.message).to.include("Required scope not authorized");
-
-        })
-
         it("should fail on unauthenticated request", async () => {
 
             const INPUT: Partial<List> = {
@@ -112,6 +80,38 @@ describe("ListRouter Functional Tests", () => {
             expect(response).to.have.status(FORBIDDEN);
             expect(response).to.be.json;
             expect(response.body.message).to.equal("No access token presented");
+
+        })
+
+        it("should pass on authenticated admin", async () => {
+
+            const INPUT: Partial<List> = {
+                name: "Inserted List",
+            }
+
+            const response = await chai.request(app)
+                .post(PATH)
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN))
+                .send(INPUT);
+            expect(response).to.have.status(CREATED);
+            expect(response).to.be.json;
+            compareLists(response.body, INPUT);
+
+        })
+
+        it("should pass on authenticated regular", async () => {
+
+            const INPUT: Partial<List> = {
+                name: "Inserted List",
+            }
+
+            const response = await chai.request(app)
+                .post(PATH)
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_REGULAR))
+                .send(INPUT);
+            expect(response).to.have.status(CREATED);
+            expect(response).to.be.json;
+            compareLists(response.body, INPUT);
 
         })
 

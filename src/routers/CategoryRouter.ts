@@ -91,7 +91,7 @@ CategoryRouter.put("/:listId/:categoryId",
 // Model-Specific Routes (with listId) ---------------------------------------
 
 CategoryRouter.get("/:listId/:categoryId/items",
-    requireAdmin,
+    requireRegular,
     async (req: Request, res: Response) => {
         res.send(await CategoryServices.items(
             req.params.listId,

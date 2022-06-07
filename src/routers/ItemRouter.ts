@@ -48,7 +48,7 @@ ItemRouter.get("/:listId",
 
 // POST /:listId/ - Insert a new Item
 ItemRouter.post("/:listId",
-    requireAdmin,
+    requireRegular,
     async (req: Request, res: Response) => {
         res.status(CREATED).send(await ItemServices.insert(
             req.params.listId,
@@ -79,7 +79,7 @@ ItemRouter.get("/:listId/:itemId",
 
 // PUT /:listId/:itemId - Update Item by ID
 ItemRouter.put("/:listId/:itemId",
-    requireAdmin,
+    requireRegular,
     async (req: Request, res: Response) => {
         res.send(await ItemServices.update(
             req.params.listId,
