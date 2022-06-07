@@ -61,10 +61,16 @@ ListRouter.put("/:listId",
 
 // List Custom Routes --------------------------------------------------------
 
+// POST /:listId/clear - Clear checked and selected flags for all List Items
+ListRouter.post("/:listId/clear",
+    async (req: Request, res: Response) => {
+        res.send(await ListServices.clear(req.params.listId));
+    });
+
 // POST /:listId/populate - Populate Categories and Items for this List
 ListRouter.post("/:listId/populate",
     async (req: Request, res: Response) => {
-        res.send(await ListServices.populate(req.params.listId))
+        res.send(await ListServices.populate(req.params.listId));
     });
 
 // List-Child Routes ---------------------------------------------------------

@@ -20,6 +20,7 @@ import {HandleAction, HandleItem} from "../../types";
 import useFetchCategories from "../../hooks/useFetchCategories";
 import useFetchItems from "../../hooks/useFetchItems";
 import useMutateItem from "../../hooks/useMutateItem";
+import useMutateList from "../../hooks/useMutateList";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import Item from "../../models/Item";
 import List from "../../models/List";
@@ -56,6 +57,9 @@ const EntriesList = (props: Props) => {
     const mutateItem = useMutateItem({
         alertPopup: true,
         list: list,
+    });
+    const mutateList = useMutateList({
+        alertPopup: true,
     });
 
     useEffect(() => {
@@ -127,12 +131,12 @@ const EntriesList = (props: Props) => {
     }
 
     // Handle clearing all selections
-    const handleClear: HandleAction = () => {
+    const handleClear: HandleAction = async () => {
         logger.debug({
             context: "EntriesList.handleClear",
         });
-        // TODO - clear all selected flags
-        alert("handleClear has not yet been implemented");
+        await mutateList.clear(list);
+        fetchItems.handleRefresh();
     }
 
     // Handle request to edit a note on an Item

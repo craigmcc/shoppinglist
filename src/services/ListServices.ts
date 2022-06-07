@@ -46,6 +46,24 @@ class ListServices extends BaseParentServices<List> {
         return list.$get("categories", options);
     }
 
+    /**
+     * Clear the checked and selected flags for all Items belonging to this List.
+     *
+     * @param listId                    ID of the List whose Items are to be cleared
+     */
+    public async clear(listId: string): Promise<List> {
+        const list = await this.read("ListServices.clear", listId);
+        await Item.update({
+            checked: false,
+            selected: false,
+        }, {
+            where: {
+                listId: listId,
+            }
+        });
+        return list;
+    }
+
     public async items(listId: string, query?: any): Promise<Item[]> {
         const list = await this.read("ListServices.items", listId);
         const options: FindOptions = ItemServices.appendMatchOptions({

@@ -25,6 +25,7 @@ export interface Props {
 }
 
 export interface State {
+    clear: ProcessList;                 // Function to clear selected and checked flags
     error: Error | null;                // I/O error (if any)
     executing: boolean;                 // Are we currently executing?
     insert: ProcessList;                // Function to insert a new List
@@ -49,6 +50,34 @@ const useMutateList = (props: Props = {}): State => {
             username: loginContext.data.username,
         });
     }, [loginContext.data.loggedIn, loginContext.data.username]);
+
+    const clear: ProcessList = async (theList) => {
+
+        setError(null);
+        setExecuting(true);
+
+        let cleared = new List();
+        const url = LISTS_BASE + `/${theList.id}/clear`;
+
+        try {
+            cleared = ToModel.LIST((await Api.post(url)).data);
+            logger.debug({
+                context: "useMutateList.clear",
+                url,
+                list: Abridgers.LIST(cleared),
+            });
+        } catch (e) {
+            setError(e as Error);
+            ReportError("useMutateList.clear", e, {
+                url: url,
+                list: theList,
+            }, alertPopup);
+        }
+
+        setExecuting(false);
+        return cleared;
+
+    }
 
     const insert: ProcessList = async (theList) => {
 
@@ -136,6 +165,7 @@ const useMutateList = (props: Props = {}): State => {
     }
 
     return {
+        clear: clear,
         error: error,
         executing: executing,
         insert: insert,
