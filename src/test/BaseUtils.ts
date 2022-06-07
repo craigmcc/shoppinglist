@@ -14,7 +14,6 @@ import Item from "../models/Item";
 import List from "../models/List";
 import RefreshToken from "../models/RefreshToken";
 import User from "../models/User";
-import {clearMapping} from "../oauth/OAuthMiddleware";
 import {hashPassword} from "../oauth/OAuthUtils";
 
 // Public Objects ------------------------------------------------------------
@@ -45,9 +44,6 @@ export abstract class BaseUtils {
         await Database.sync({
             force: true,
         });
-
-        // Clear any previous OAuth mapping for Library id -> scope
-        clearMapping();
 
         // Load users (and tokens) if requested
         let users: User[] = [];

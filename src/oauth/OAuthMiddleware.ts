@@ -28,9 +28,8 @@ const ADMIN_PERMISSION = "admin";
 const AUTHORIZATION_HEADER = "Authorization";
 const DATABASE_TOKEN = process.env.DATABASE_TOKEN ? process.env.DATABASE_TOKEN : "";
 const NODE_ENV: string | undefined = process.env.NODE_ENV;
-const REGULAR_PERMISSION = "regular";
+const REGULAR_PERMISSION = "list";
 const SUPERUSER_SCOPE = process.env.SUPERUSER_SCOPE ? process.env.SUPERUSER_SCOPE : "superuser";
-const TOP_LEVEL_OBJECT_ID = "groupId"; // Top level object ID for this application
 
 let oauthEnabled: boolean = true;
 if (process.env.OAUTH_ENABLED !== undefined) {
@@ -44,17 +43,6 @@ logger.info({
 })
 
 // Public Objects ------------------------------------------------------------
-
-/**
- * Clear the current mappings of top level permissions.  This will trigger a
- * reload of the mappings the next time permissions are checked.
- *
- * This should ONLY be called by a Service object that mutates the current scope
- * of any top level object (including adding or removing such an object).
- */
-export const clearMapping = () : void => {
-    mapping.clear();
-}
 
 /**
  * Dump request details (for debugging only).
@@ -110,7 +98,7 @@ export const handleOAuthError: ErrorRequestHandler =
 
 /**
  * Pass this request on if the currently logged in User has "admin"
- * permissions for the libraryId specified in the request.
+ * permissions for the listId specified in the request.
  *
  * @param req                           Current HTTP request
  * @param res                           Current HTTP response
@@ -128,8 +116,7 @@ export const requireAdmin: RequestHandler =
                     "OAuthMiddleware.requireAdmin"
                 );
             }
-            const topLevelScope = await mapTopLevelID(req);
-            const required = `${topLevelScope}:${ADMIN_PERMISSION}`;
+            const required = `${ADMIN_PERMISSION}:${req.params.listId}`;
             await authorizeToken(token, required);
             res.locals.token = token;
             next();
@@ -236,8 +223,8 @@ export const requireNotProduction: RequestHandler =
     }
 
 /**
- * Pass this request on if the currently logged in User has "admin"
- * permissions for the libraryId specified in the request.
+ * Pass this request on if the currently logged in User has "regular"
+ * permissions for the listId specified in the request.
  *
  * @param req                           Current HTTP request
  * @param res                           Current HTTP response
@@ -255,13 +242,13 @@ export const requireRegular: RequestHandler =
                     "OAuthMiddleware.requireRegular"
                 );
             }
-            const topLevelScope = await mapTopLevelID(req);
-            const required = `${topLevelScope}:${REGULAR_PERMISSION}`;
+            const required1 = `${REGULAR_PERMISSION}:${req.params.listId}`;
+            const required2 = `${ADMIN_PERMISSION}:${req.params.listId}`;
             try {
-                await authorizeToken(token, required);
+                await authorizeToken(token, required1);
             } catch (error) {
                 if (error instanceof InvalidScopeError) {
-                    await authorizeToken(token, required.replace("regular","admin"));
+                    await authorizeToken(token, required2);
                 } else {
                     throw error;
                 }
@@ -359,14 +346,6 @@ export const requireUser: RequestHandler =
 // Private Objects -----------------------------------------------------------
 
 /**
- * Mapping of top level IDs to the scope prefix required to access this set
- * of objects.  Populated when checked if currently empty.  Cleared when
- * clearMapping() is called.
- */
-const mapping = new Map<string, string>();
-
-
-/**
  * for the specified required scope.  Returns normally if successful.
  *
  * @param token         The access token to be authorized
@@ -402,40 +381,4 @@ const extractToken = (req: Request) : string | null => {
         return null;
     }
     return fields[1];
-}
-
-/**
- * Load the mapping table of top level object IDs to the corresponding
- * scope prefix required for operations on this object.
- */
-const loadMapping = async (): Promise<void> => {
-    mapping.clear();
-/*
-    const groups = await GroupServices.all();
-    groups.forEach(group => {
-        mapping.set(group.id, group.scope.trim());
-    });
-*/
-}
-
-/**
- * Map the top level object ID parameter for this request to a corresponding
- * scope value that must be authorized for the request's access token.
- *
- * @param req           The HTTP request being processed
- *
- * @returns             Scope value to be included (if any)
- */
-const mapTopLevelID = async (req: Request): Promise<string | undefined> => {
-    if (mapping.size === 0) {
-        await loadMapping();
-    }
-    const objectId: string | null = req.params[TOP_LEVEL_OBJECT_ID]
-        ? req.params[TOP_LEVEL_OBJECT_ID]
-        : null;
-    if (!objectId) {
-        return undefined;
-    } else {
-        return mapping.get(objectId);
-    }
 }

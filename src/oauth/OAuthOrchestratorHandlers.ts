@@ -20,6 +20,7 @@ import {
 
 import {generateRandomToken, verifyPassword} from "./OAuthUtils";
 import OAuthAccessToken from "../models/AccessToken";
+import OAuthList from "../models/List";
 import OAuthRefreshToken from "../models/RefreshToken";
 import OAuthUser from "../models/User";
 
@@ -29,6 +30,7 @@ const authenticateUser: AuthenticateUser
     = async (username: string, password: string) =>
 {
     const user = await OAuthUser.findOne({
+        include: [ OAuthList ],
         where: { username: username }
     });
     if (user) {
@@ -46,8 +48,23 @@ const authenticateUser: AuthenticateUser
                 "OAuthOrchestratorHandlers.authenticateUser"
             );
         }
+        // Accumulate scopes from the User and related Lists
+        const scopes: string[] = user.scope.split(" ");
+        if (user.lists) {
+            user.lists.forEach(list => {
+                let isAdmin = false;
+                if (list.UserList && list.UserList.admin) {
+                    isAdmin = list.UserList.admin;
+                }
+                if (isAdmin) {
+                    scopes.push(`admin:${list.id}`);
+                } else {
+                    scopes.push(`list:${list.id}`);
+                }
+            });
+        }
         return {
-            scope: user.scope,
+            scope: scopes.join(" "),
             userId: user.id
         }
     } else {
