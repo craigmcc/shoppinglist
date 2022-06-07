@@ -147,7 +147,7 @@ const EntriesSearch = (props: Props) => {
                         </thead>
                         <tbody>
                         {fetchItems.items.map(item => (
-                            <tr>
+                            <tr key={`S-${item.id}`}>
                                 <td
                                     className="text-start"
                                     onClick={() => handleSelect(item)}
