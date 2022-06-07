@@ -49,7 +49,7 @@
     "nyc": "^15.1.0",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
-    "pino": "^7.11.0",
+    "pino": "^8.0.0",
     "rotating-file-stream": "^3.0.4",
     "sequelize": "^6.20.1",
     "sequelize-typescript": "^2.1.3"
