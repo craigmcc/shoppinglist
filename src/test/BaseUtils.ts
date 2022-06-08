@@ -88,6 +88,12 @@ export abstract class BaseUtils {
         }
 
         // If both Users and Lists were loaded, link them
+        // What this does: create UserList links between
+        // the two Users that have "First" as a first name,
+        // to the List that has "First" in it -- and then the
+        // same for "Second" and "Third".  The admin flag is
+        // set to true for the admin User, and false for
+        // the regular User.
         if (options.withUsers && options.withLists) {
             let userLists: Partial<UserList>[] = [];
             users.forEach(async user => {

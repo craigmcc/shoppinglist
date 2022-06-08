@@ -35,11 +35,27 @@ export class ServicesUtils extends BaseUtils {
         if (previous) {
             return previous;
         }
-        const user = await this.lookupUser(username);
+        const user = await this.lookupUser(username, true);
+        // Accumulate scopes from the User and related Lists
+        const scopes: string[] = user.scope.split(" ");
+        if (user.lists) {
+            user.lists.forEach(list => {
+                let isAdmin = false;
+                if (list.UserList && list.UserList.admin) {
+                    isAdmin = list.UserList.admin;
+                }
+                if (isAdmin) {
+                    scopes.push(`admin:${list.id}`);
+                } else {
+                    scopes.push(`list:${list.id}`);
+                }
+            });
+        }
+
         const request: PasswordTokenRequest = {
             grant_type: "password",
             password: user.username, // For tests, we hashed the username as the password
-            scope: user.scope,
+            scope: scopes.join(" "), // Include List-based calculated scopes
             username: user.username,
         }
         const response = await OAuthOrchestrator.token(request);
@@ -114,11 +130,13 @@ export class ServicesUtils extends BaseUtils {
      * Look up and return the specified User from the database.
      *
      * @param username                  Username of the requested User
+     * @param withLists                 Include authorized Lists? [false]
      *
      * @throws NotFound                 If no such User exists
      */
-    public async lookupUser(username: string): Promise<User> {
+    public async lookupUser(username: string, withLists?: boolean): Promise<User> {
         const result = await User.findOne({
+            include: withLists ? [ List ] : undefined,
             where: { username: username }
         });
         if (result) {
