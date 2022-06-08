@@ -9,7 +9,6 @@ const expect = chai.expect;
 
 // Internal Modules ----------------------------------------------------------
 
-import ListServices from "./ListServices";
 import UserServices from "./UserServices";
 import User from "../models/User";
 import * as SeedData from "../test/SeedData";
@@ -221,18 +220,16 @@ describe("UserServices Functional Tests", () => {
         it("should see an association when it is present", async () => {
 
             const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_THIRD_REGULAR);
-            const INPUTS = await ListServices.all();
-            await UserServices.listsInclude(USER.id, INPUTS[0].id);
 
-            const OUTPUTS = await UserServices.lists(USER.id);
-            expect(OUTPUTS.length).to.equal(1);
-            expect(OUTPUTS[0].id).to.equal(INPUTS[0].id);
+            const LISTS = await UserServices.lists(USER.id);
+            expect(LISTS.length).to.equal(1);
+            expect(LISTS[0].name).to.include(USER.firstName);
 
         });
 
         it("should see no associations when none are present", async () => {
 
-            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_THIRD_ADMIN);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_SUPERUSER);
 
             const OUTPUTS = await UserServices.lists(USER.id);
             expect(OUTPUTS.length).to.equal(0);
@@ -245,16 +242,13 @@ describe("UserServices Functional Tests", () => {
 
         it("should see an excluded association go away", async () => {
 
-            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_SECOND_REGULAR);
-            const INPUTS = await ListServices.all();
-            await UserServices.listsInclude(USER.id, INPUTS[0].id);
-            let OUTPUTS = await UserServices.lists(USER.id);
-            expect(OUTPUTS.length).to.equal(1);
-            expect(OUTPUTS[0].id).to.equal(INPUTS[0].id);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_FIRST_ADMIN);
+            let LISTS = await UserServices.lists(USER.id);
+            expect(LISTS.length).to.equal(1);
 
-            await UserServices.listsExclude(USER.id, INPUTS[0].id);
-            OUTPUTS = await UserServices.lists(USER.id);
-            expect(OUTPUTS.length).to.equal(0);
+            await UserServices.listsExclude(USER.id, LISTS[0].id);
+            LISTS = await UserServices.lists(USER.id);
+            expect(LISTS.length).to.equal(0);
 
         });
 
@@ -265,61 +259,52 @@ describe("UserServices Functional Tests", () => {
 
         it("should see List after inclusion (admin=false)", async () => {
 
-            const INPUT = await UTILS.lookupUser(SeedData.USER_USERNAME_FIRST_ADMIN);
-            const LISTS = await ListServices.all();
-            await UserServices.listsInclude(INPUT.id, LISTS[0].id, false);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_SUPERUSER);
+            let LISTS = await UserServices.lists(USER.id);
+            expect(LISTS.length).to.equal(0);
 
-            const OUTPUT = await UserServices.find(INPUT.id, {
-                withLists: "",
-            });
-            expect(OUTPUT.lists).to.exist;
-            expect(OUTPUT.lists.length).to.equal(1);
-            const LIST = OUTPUT.lists[0];
-            expect(LIST.id).to.equal(LISTS[0].id);
-            expect(LIST.UserList).to.exist;
-            expect(LIST.UserList.admin).to.be.false;
-            expect(LIST.UserList.listId).to.equal(LIST.id);
-            expect(LIST.UserList.userId).to.equal(INPUT.id);
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            await UserServices.listsInclude(USER.id, LIST.id, false);
+            LISTS = await UserServices.lists(USER.id);
+            expect(LISTS.length).to.equal(1);
+            expect(LISTS[0].UserList).to.exist;
+            expect(LISTS[0].id).to.equal(LIST.id);
+            // @ts-ignore
+            expect(LISTS[0].UserList.admin).to.be.false;
 
         });
 
         it("should see List after inclusion (admin=true)", async () => {
 
-            const INPUT = await UTILS.lookupUser(SeedData.USER_USERNAME_SECOND_ADMIN);
-            const LISTS = await ListServices.all();
-            await UserServices.listsInclude(INPUT.id, LISTS[0].id, true);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_SUPERUSER);
+            let LISTS = await UserServices.lists(USER.id);
+            expect(LISTS.length).to.equal(0);
 
-            const OUTPUT = await UserServices.find(INPUT.id, {
-                withLists: "",
-            });
-            expect(OUTPUT.lists).to.exist;
-            expect(OUTPUT.lists.length).to.equal(1);
-            const LIST = OUTPUT.lists[0];
-            expect(LIST.id).to.equal(LISTS[0].id);
-            expect(LIST.UserList).to.exist;
-            expect(LIST.UserList.admin).to.be.true;
-            expect(LIST.UserList.listId).to.equal(LIST.id);
-            expect(LIST.UserList.userId).to.equal(INPUT.id);
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+            await UserServices.listsInclude(USER.id, LIST.id, true);
+            LISTS = await UserServices.lists(USER.id);
+            expect(LISTS.length).to.equal(1);
+            expect(LISTS[0].UserList).to.exist;
+            expect(LISTS[0].id).to.equal(LIST.id);
+            // @ts-ignore
+            expect(LISTS[0].UserList.admin).to.be.true;
 
         });
 
         it("should see List after inclusion (admin=undefined)", async () => {
 
-            const INPUT = await UTILS.lookupUser(SeedData.USER_USERNAME_THIRD_REGULAR);
-            const LISTS = await ListServices.all();
-            await UserServices.listsInclude(INPUT.id, LISTS[0].id);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_SUPERUSER);
+            let LISTS = await UserServices.lists(USER.id);
+            expect(LISTS.length).to.equal(0);
 
-            const OUTPUT = await UserServices.find(INPUT.id, {
-                withLists: "",
-            });
-            expect(OUTPUT.lists).to.exist;
-            expect(OUTPUT.lists.length).to.equal(1);
-            const LIST = OUTPUT.lists[0];
-            expect(LIST.id).to.equal(LISTS[0].id);
-            expect(LIST.UserList).to.exist;
-            expect(LIST.UserList.admin).to.be.true;
-            expect(LIST.UserList.listId).to.equal(LIST.id);
-            expect(LIST.UserList.userId).to.equal(INPUT.id);
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+            await UserServices.listsInclude(USER.id, LIST.id);
+            LISTS = await UserServices.lists(USER.id);
+            expect(LISTS.length).to.equal(1);
+            expect(LISTS[0].UserList).to.exist;
+            expect(LISTS[0].id).to.equal(LIST.id);
+            // @ts-ignore
+            expect(LISTS[0].UserList.admin).to.be.true;
 
         });
 

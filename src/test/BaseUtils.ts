@@ -14,6 +14,7 @@ import Item from "../models/Item";
 import List from "../models/List";
 import RefreshToken from "../models/RefreshToken";
 import User from "../models/User";
+import UserList from "../models/UserList";
 import {hashPassword} from "../oauth/OAuthUtils";
 
 // Public Objects ------------------------------------------------------------
@@ -63,8 +64,9 @@ export abstract class BaseUtils {
         }
 
         // Load Lists (and related Categories and Items) if requested
+        let lists: List[] = [];
         if (options.withLists) {
-            const lists = await loadLists(SeedData.LISTS);
+            lists = await loadLists(SeedData.LISTS);
             if (options.withCategories) {
                 let categories: Partial<Category>[] = [];
                 lists.forEach(list => {
@@ -83,6 +85,30 @@ export abstract class BaseUtils {
                     items = await loadItems(items);
                 }
             }
+        }
+
+        // If both Users and Lists were loaded, link them
+        if (options.withUsers && options.withLists) {
+            let userLists: Partial<UserList>[] = [];
+            users.forEach(async user => {
+                let listIndex = -1;
+                if (user.firstName === "First") {
+                    listIndex = 0;
+                } else if (user.firstName === "Second") {
+                    listIndex = 1;
+                } else if (user.firstName === "Third") {
+                    listIndex = 2;
+                }
+                if (listIndex >= 0) {
+                    userLists.push({
+                        admin: user.lastName === "Admin",
+                        listId: lists[listIndex].id,
+                        userId: user.id,
+                    })
+                }
+            });
+            // @ts-ignore
+            await UserList.bulkCreate(userLists);
         }
 
     }
