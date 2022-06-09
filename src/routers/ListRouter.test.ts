@@ -243,7 +243,7 @@ describe("ListRouter Functional Tests", () => {
 
         })
 
-        xit("should pass on the right admin user", async () => {
+        it("should pass on the right admin user", async () => {
 
             const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
 
@@ -256,7 +256,7 @@ describe("ListRouter Functional Tests", () => {
 
         })
 
-        xit("should pass on the right regular user", async () => {
+        it("should pass on the right regular user", async () => {
 
             const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
 
@@ -343,7 +343,7 @@ describe("ListRouter Functional Tests", () => {
 
         })
 
-        xit("should pass on the right admin user", async () => {
+        it("should pass on the right admin user", async () => {
 
             const ORIGINAL = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
             const INPUT: Partial<List> = {

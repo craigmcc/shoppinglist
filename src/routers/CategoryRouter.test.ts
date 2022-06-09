@@ -1,4 +1,4 @@
-// CategoryRouter.test -----------------------------------------------------------
+// CategoryRouter.test -------------------------------------------------------
 
 // Functional tests for CategoryRouter.
 
@@ -309,7 +309,7 @@ describe("CategoryRouter Functional Tests", () => {
 
     });
 
-    describe("CategoryRouter DELETE /api/categories/:listId/:listId", () => {
+    describe("CategoryRouter DELETE /api/categories/:listId/:categoryId", () => {
 
         const PATH = "/api/categories/:listId/:categoryId";
 
@@ -595,4 +595,3 @@ describe("CategoryRouter Functional Tests", () => {
     });
 
 });
-

@@ -13,6 +13,7 @@ chai.use(chaiHttp);
 
 import app from "./ExpressApplication";
 import Item from "../models/Item";
+import CategoryServices from "../services/CategoryServices";
 import ItemServices from "../services/ItemServices";
 import RouterUtils, {AUTHORIZATION} from "../test/RouterUtils";
 import * as SeedData from "../test/SeedData";
@@ -22,7 +23,7 @@ const UTILS = new RouterUtils();
 
 // Test Specifications -------------------------------------------------------
 
-xdescribe("ItemRouter Functional Tests", () => {
+describe("ItemRouter Functional Tests", () => {
 
     // Test Hooks ------------------------------------------------------------
 
@@ -41,27 +42,11 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         const PATH = "/api/items/:listId/exact/:name";
 
-        it("should fail on incorrect list user", async () => {
+        it("should fail (404) with invalid name", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
-            const USER_USERNAME = SeedData.USER_USERNAME_THIRD_ADMIN;
-            const ITEM_NAME = SeedData.ITEM_NAME_SECOND;
-
-            const response = await chai.request(app)
-                .get(PATH.replace(":listId", LIST.id)
-                    .replace(":name", ITEM_NAME))
-                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME));
-            expect(response).to.have.status(FORBIDDEN);
-            expect(response).to.be.json;
-            expect(response.body.message).to.include("Required scope not authorized");
-
-        });
-
-        it("should fail on invalid name", async () => {
-
-            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
-            const USER_USERNAME = SeedData.USER_USERNAME_THIRD_REGULAR;
-            const ITEM_NAME = "Invalid Name";
+            const USER_USERNAME = SeedData.USER_USERNAME_FIRST_REGULAR;
+            const ITEM_NAME = "Invalid Item Name";
 
             const response = await chai.request(app)
                 .get(PATH.replace(":listId", LIST.id)
@@ -73,9 +58,9 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         });
 
-        it("should fail on unauthenticated request", async () => {
+        it("should fail (403) with unauthenticated request", async () => {
 
-            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
             const ITEM_NAME = SeedData.ITEM_NAME_SECOND;
 
             const response = await chai.request(app)
@@ -87,27 +72,27 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         });
 
-        it("should pass on authenticated admin", async () => {
+        it("should fail (403) with wrong list User", async () => {
 
-            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
-            const ITEM_NAME = SeedData.ITEM_NAME_THIRD;
-            const USER_USERNAME = SeedData.USER_USERNAME_FIRST_ADMIN;
-
-            const response = await chai.request(app)
-                .get(PATH.replace(":listId", LIST.id)
-                    .replace(":name", ITEM_NAME))
-                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME));
-            expect(response).to.have.status(OK);
-            expect(response).to.be.json;
-            expect(response.body.name).to.equal(ITEM_NAME);
-
-        });
-
-        it("should pass on authenticated regular", async () => {
-
-            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
-            const ITEM_NAME = SeedData.ITEM_NAME_THIRD;
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
             const USER_USERNAME = SeedData.USER_USERNAME_FIRST_REGULAR;
+            const ITEM_NAME = SeedData.ITEM_NAME_THIRD;
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", LIST.id)
+                    .replace(":name", ITEM_NAME))
+                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass with authenticated admin", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const USER_USERNAME = SeedData.USER_USERNAME_FIRST_ADMIN;
+            const ITEM_NAME = SeedData.ITEM_NAME_THIRD;
 
             const response = await chai.request(app)
                 .get(PATH.replace(":listId", LIST.id)
@@ -119,11 +104,27 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         });
 
-        it("should pass on authenticated superuser", async () => {
+        it("should pass with authenticated regular", async () => {
 
-            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
-            const ITEM_NAME = SeedData.ITEM_NAME_THIRD;
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+            const USER_USERNAME = SeedData.USER_USERNAME_THIRD_REGULAR;
+            const ITEM_NAME = SeedData.ITEM_NAME_FIRST;
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", LIST.id)
+                    .replace(":name", ITEM_NAME))
+                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+            expect(response.body.name).to.equal(ITEM_NAME);
+
+        });
+
+        it("should pass with authenticated superuser", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
             const USER_USERNAME = SeedData.USER_USERNAME_SUPERUSER;
+            const ITEM_NAME = SeedData.ITEM_NAME_SECOND;
 
             const response = await chai.request(app)
                 .get(PATH.replace(":listId", LIST.id)
@@ -137,14 +138,40 @@ xdescribe("ItemRouter Functional Tests", () => {
 
     });
 
-    describe("ItemRouter GET /api/items/:listId", () => {
+    describe("ItemRouter GET /ap/items/:listId", () => {
 
         const PATH = "/api/items/:listId";
 
-        it("should pass on authenticated admin", async () => {
+        it("should fail (403) with unauthenticated request", async () => {
 
-            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
-            const USER_USERNAME = SeedData.USER_USERNAME_THIRD_ADMIN;
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", LIST.id));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("No access token presented");
+
+        });
+
+        it("should fail (403) with wrong list User", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+            const USER_USERNAME = SeedData.USER_USERNAME_FIRST_REGULAR;
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", LIST.id))
+                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass with authenticated admin", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const USER_USERNAME = SeedData.USER_USERNAME_FIRST_ADMIN;
 
             const response = await chai.request(app)
                 .get(PATH.replace(":listId", LIST.id))
@@ -152,11 +179,11 @@ xdescribe("ItemRouter Functional Tests", () => {
             expect(response).to.have.status(OK);
             expect(response).to.be.json;
             const OUTPUTS: Item[] = response.body;
-            expect(OUTPUTS.length).to.equal(SeedData.ITEMS.length);
+            expect(OUTPUTS.length).to.equal(SeedData.CATEGORIES.length);
 
         });
 
-        it("should pass on authenticated regular", async () => {
+        it("should pass with authenticated regular", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
             const USER_USERNAME = SeedData.USER_USERNAME_THIRD_REGULAR;
@@ -167,13 +194,13 @@ xdescribe("ItemRouter Functional Tests", () => {
             expect(response).to.have.status(OK);
             expect(response).to.be.json;
             const OUTPUTS: Item[] = response.body;
-            expect(OUTPUTS.length).to.equal(SeedData.ITEMS.length);
+            expect(OUTPUTS.length).to.equal(SeedData.CATEGORIES.length);
 
         });
 
-        it("should pass on authenticated superuser", async () => {
+        it("should pass with authenticated superuser", async () => {
 
-            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
             const USER_USERNAME = SeedData.USER_USERNAME_SUPERUSER;
 
             const response = await chai.request(app)
@@ -182,7 +209,7 @@ xdescribe("ItemRouter Functional Tests", () => {
             expect(response).to.have.status(OK);
             expect(response).to.be.json;
             const OUTPUTS: Item[] = response.body;
-            expect(OUTPUTS.length).to.equal(SeedData.ITEMS.length);
+            expect(OUTPUTS.length).to.equal(SeedData.CATEGORIES.length);
 
         });
 
@@ -192,9 +219,25 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         const PATH = "/api/items/:listId";
 
-        it("should fail on authenticated regular", async () => {
+        it("should fail (403) with unauthenticated request", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+            const INPUT = {
+                name: "Inserted Item",
+            }
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", LIST.id))
+                .send(INPUT);
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("No access token presented");
+
+        });
+
+        it("should fail (403) with wrong list User", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
             const USER_USERNAME = SeedData.USER_USERNAME_THIRD_REGULAR;
             const INPUT = {
                 name: "Inserted Item",
@@ -210,13 +253,13 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         });
 
-        it("should pass on authenticated admin", async () => {
+        it("should pass with authenticated admin", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
-            const CATEGORY = await UTILS.lookupCategory(LIST, SeedData.CATEGORY_NAME_FIRST);
             const USER_USERNAME = SeedData.USER_USERNAME_FIRST_ADMIN;
+            const CATEGORIES = await CategoryServices.all(LIST.id);
             const INPUT = {
-                categoryId: CATEGORY.id,
+                categoryId: CATEGORIES[0].id,
                 name: "Inserted Item",
             }
 
@@ -231,13 +274,34 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         });
 
-        it("should pass on authenticated superuser", async () => {
+        it("should pass with authenticated regular", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+            const USER_USERNAME = SeedData.USER_USERNAME_THIRD_REGULAR;
+            const CATEGORIES = await CategoryServices.all(LIST.id);
+            const INPUT = {
+                categoryId: CATEGORIES[0].id,
+                name: "Inserted Item",
+            }
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", LIST.id))
+                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME))
+                .send(INPUT);
+            expect(response).to.have.status(CREATED);
+            expect(response).to.be.json;
+            expect(response.body.id).to.exist;
+            expect(response.body.name).to.equal(INPUT.name);
+
+        });
+
+        it("should pass with authenticated superuser", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
-            const CATEGORY = await UTILS.lookupCategory(LIST, SeedData.CATEGORY_NAME_FIRST);
             const USER_USERNAME = SeedData.USER_USERNAME_SUPERUSER;
+            const CATEGORIES = await CategoryServices.all(LIST.id);
             const INPUT = {
-                categoryId: CATEGORY.id,
+                categoryId: CATEGORIES[0].id,
                 name: "Inserted Item",
             }
 
@@ -258,7 +322,7 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         const PATH = "/api/items/:listId/:itemId";
 
-        it("should fail on authenticated regular", async () => {
+        it("should fail (403) with authenticated regular", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
             const USER_USERNAME = SeedData.USER_USERNAME_THIRD_REGULAR;
@@ -275,7 +339,39 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         });
 
-        it("should pass on authenticated admin", async () => {
+        it("should fail (403) with unauthenticated request", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+            const INPUTS = await ItemServices.all(LIST.id);
+            const ITEM_ID = INPUTS[0].id;
+
+            const response = await chai.request(app)
+                .delete(PATH.replace(":listId", LIST.id)
+                    .replace(":itemId", ITEM_ID))
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("No access token presented");
+
+        });
+
+        it("should fail (403) with wrong list user", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+            const USER_USERNAME = SeedData.USER_USERNAME_FIRST_ADMIN;
+            const INPUTS = await ItemServices.all(LIST.id);
+            const ITEM_ID = INPUTS[0].id;
+
+            const response = await chai.request(app)
+                .delete(PATH.replace(":listId", LIST.id)
+                    .replace(":itemId", ITEM_ID))
+                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass with authenticated admin", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
             const USER_USERNAME = SeedData.USER_USERNAME_FIRST_ADMIN;
@@ -292,9 +388,9 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         });
 
-        it("should pass on authenticated superuser", async () => {
+        it("should pass with authenticated superuser", async () => {
 
-            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
             const USER_USERNAME = SeedData.USER_USERNAME_SUPERUSER;
             const INPUTS = await ItemServices.all(LIST.id);
             const ITEM_ID = INPUTS[0].id;
@@ -315,7 +411,39 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         const PATH = "/api/items/:listId/:itemId";
 
-        it("should pass on authenticated admin", async () => {
+        it("should fail (403) with unauthenticated request", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const INPUTS = await ItemServices.all(LIST.id);
+            const ITEM_ID = INPUTS[0].id;
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", LIST.id)
+                    .replace(":itemId", ITEM_ID));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("No access token presented");
+
+        });
+
+        it("should fail (403) with wrong list User", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+            const USER_USERNAME = SeedData.USER_USERNAME_FIRST_ADMIN;
+            const INPUTS = await ItemServices.all(LIST.id);
+            const ITEM_ID = INPUTS[0].id;
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", LIST.id)
+                    .replace(":itemId", ITEM_ID))
+                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass with authenticated admin", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
             const USER_USERNAME = SeedData.USER_USERNAME_FIRST_ADMIN;
@@ -332,7 +460,7 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         });
 
-        it("should pass on authenticated regular", async () => {
+        it("should pass with authenticated regular", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
             const USER_USERNAME = SeedData.USER_USERNAME_THIRD_REGULAR;
@@ -349,7 +477,7 @@ xdescribe("ItemRouter Functional Tests", () => {
 
         });
 
-        it("should pass on authenticated superuser", async () => {
+        it("should pass with authenticated superuser", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
             const USER_USERNAME = SeedData.USER_USERNAME_SUPERUSER;
@@ -370,27 +498,45 @@ xdescribe("ItemRouter Functional Tests", () => {
 
     describe("ItemRouter PUT /api/items/:listId/:itemId", () => {
 
-        const PATH = "/api/items/:listId/:itemId";
+        const PATH = "/api/items/:listId/:listId";
 
-        it("should fail on authenticated regular", async () => {
+        it("should fail (403) with unauthenticated request", async () => {
 
-            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
-            const USER_USERNAME = SeedData.USER_USERNAME_THIRD_REGULAR;
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
             const INPUTS = await ItemServices.all(LIST.id);
             const INPUT = INPUTS[0];
             const ITEM_ID = INPUTS[0].id;
 
             const response = await chai.request(app)
                 .put(PATH.replace(":listId", LIST.id)
-                    .replace(":itemId", ITEM_ID), INPUT)
-                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME));
+                    .replace(":listId", ITEM_ID), INPUT)
+                .send(INPUT);
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("No access token presented");
+
+        });
+
+        it("should fail (403) with wrong list User", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const USER_USERNAME = SeedData.USER_USERNAME_THIRD_ADMIN;
+            const INPUTS = await ItemServices.all(LIST.id);
+            const INPUT = INPUTS[0];
+            const ITEM_ID = INPUTS[0].id;
+
+            const response = await chai.request(app)
+                .put(PATH.replace(":listId", LIST.id)
+                    .replace(":listId", ITEM_ID), INPUT)
+                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME))
+                .send(INPUT);
             expect(response).to.have.status(FORBIDDEN);
             expect(response).to.be.json;
             expect(response.body.message).to.include("Required scope not authorized");
 
         });
 
-        it("should pass on authenticated admin", async () => {
+        it("should pass with authenticated admin", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
             const USER_USERNAME = SeedData.USER_USERNAME_FIRST_ADMIN;
@@ -400,15 +546,35 @@ xdescribe("ItemRouter Functional Tests", () => {
 
             const response = await chai.request(app)
                 .put(PATH.replace(":listId", LIST.id)
-                    .replace(":itemId", ITEM_ID), INPUT)
-                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME));
+                    .replace(":listId", ITEM_ID), INPUT)
+                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME))
+                .send(INPUT);
             expect(response).to.have.status(OK);
             expect(response).to.be.json;
             expect(response.body.id).to.equal(ITEM_ID);
 
         });
 
-        it("should pass on authenticated superuser", async () => {
+        it("should pass with authenticated regular", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+            const USER_USERNAME = SeedData.USER_USERNAME_THIRD_REGULAR;
+            const INPUTS = await ItemServices.all(LIST.id);
+            const INPUT = INPUTS[0];
+            const ITEM_ID = INPUTS[0].id;
+
+            const response = await chai.request(app)
+                .put(PATH.replace(":listId", LIST.id)
+                    .replace(":listId", ITEM_ID), INPUT)
+                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME))
+                .send(INPUT);
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+            expect(response.body.id).to.equal(ITEM_ID);
+
+        });
+
+        it("should pass with authenticated superuser", async () => {
 
             const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
             const USER_USERNAME = SeedData.USER_USERNAME_SUPERUSER;
@@ -418,8 +584,9 @@ xdescribe("ItemRouter Functional Tests", () => {
 
             const response = await chai.request(app)
                 .put(PATH.replace(":listId", LIST.id)
-                    .replace(":itemId", ITEM_ID), INPUT)
-                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME));
+                    .replace(":listId", ITEM_ID), INPUT)
+                .set(AUTHORIZATION, await UTILS.credentials(USER_USERNAME))
+                .send(INPUT);
             expect(response).to.have.status(OK);
             expect(response).to.be.json;
             expect(response.body.id).to.equal(ITEM_ID);
