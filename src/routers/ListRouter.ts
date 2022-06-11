@@ -103,7 +103,7 @@ ListRouter.get("/:listId/users",
     });
 
 // DELETE /:listId/users/:listId - Disassociate List and User
-ListRouter.delete("/:listId/users/:userId}",
+ListRouter.delete("/:listId/users/:userId",
     requireAdmin,
     async (req: Request, res: Response) => {
         res.send(await ListServices.usersExclude(req.params.listId, req.params.userId));

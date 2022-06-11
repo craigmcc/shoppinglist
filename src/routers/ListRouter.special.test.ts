@@ -17,7 +17,7 @@ import app from "./ExpressApplication";
 import List from "../models/List";
 import RouterUtils, {AUTHORIZATION} from "../test/RouterUtils";
 import * as SeedData from "../test/SeedData";
-import {CREATED, FORBIDDEN, NOT_FOUND, OK} from "../util/HttpErrors";
+import {FORBIDDEN, OK} from "../util/HttpErrors";
 
 const UTILS = new RouterUtils();
 
@@ -40,7 +40,67 @@ describe("ListRouter Special Tests", () => {
             });
         });
 
-        // TODO
+        it("should fail on the wrong admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should fail on the wrong regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass on authenticated superuser", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_SUPERUSER));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
+
+        it("should pass on the right admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
+
+        it("should pass on the right regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
 
     });
 
@@ -57,7 +117,70 @@ describe("ListRouter Special Tests", () => {
 
         const PATH = "/api/lists/:listId/clear";
 
-        // TODO
+        it("should fail on the wrong admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should fail on the wrong regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass on authenticated superuser", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_SUPERUSER));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+            compareLists(response.body, INPUT);
+
+        });
+
+        it("should pass on the right admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+            compareLists(response.body, INPUT);
+
+        });
+
+        it("should pass on the right regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+            compareLists(response.body, INPUT);
+
+        });
 
     });
 
@@ -74,7 +197,67 @@ describe("ListRouter Special Tests", () => {
 
         const PATH = "/api/lists/:listId/items";
 
-        // TODO
+        it("should fail on the wrong admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should fail on the wrong regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass on authenticated superuser", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_SUPERUSER));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
+
+        it("should pass on the right admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
+
+        it("should pass on the right regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
 
     });
 
@@ -89,7 +272,147 @@ describe("ListRouter Special Tests", () => {
 
         const PATH = "/api/lists/:listId/populate";
 
-        // TODO
+        it("should fail on the right regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should fail on the wrong admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should fail on the wrong regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass on authenticated superuser", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_SUPERUSER));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+            compareLists(response.body, INPUT);
+
+        });
+
+        it("should pass on the right admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+            compareLists(response.body, INPUT);
+
+        });
+
+    });
+
+    describe("GET /api/lists/:listId/items", () => {
+
+        beforeEach("items#beforeEach", async () => {
+            await UTILS.loadData({
+                withCategories: true,
+                withItems: true,
+                withLists: true,
+                withUsers: true,
+            });
+        });
+
+        const PATH = "/api/lists/:listId/items";
+
+        it("should fail on the wrong admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should fail on the wrong regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass on authenticated superuser", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_SUPERUSER));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
+
+        it("should pass on the right admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
+
+        it("should pass on the right regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
 
     });
 
@@ -104,7 +427,67 @@ describe("ListRouter Special Tests", () => {
 
         const PATH = "/api/lists/:listId/users";
 
-        // TODO
+        it("should fail on the wrong admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should fail on the wrong regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass on authenticated superuser", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_SUPERUSER));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
+
+        it("should pass on the right admin user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
+
+        it("should pass on the right regular user", async () => {
+
+            const INPUT = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":listId", INPUT.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
 
     });
 
@@ -119,7 +502,78 @@ describe("ListRouter Special Tests", () => {
 
         const PATH = "/api/lists/:listId/users/:userId";
 
-        // TODO
+        it("should fail on the right regular user", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_THIRD_REGULAR);
+
+            const response = await chai.request(app)
+                .delete(PATH.replace(":listId", LIST.id)
+                    .replace(":userId", USER.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should fail on the wrong admin user", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_THIRD_ADMIN);
+
+            const response = await chai.request(app)
+                .delete(PATH.replace(":listId", LIST.id)
+                    .replace(":userId", USER.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should fail on the wrong regular user", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_THIRD_REGULAR);
+
+            const response = await chai.request(app)
+                .delete(PATH.replace(":listId", LIST.id)
+                    .replace(":userId", USER.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass on authenticated superuser", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_SECOND_REGULAR);
+
+            const response = await chai.request(app)
+                .delete(PATH.replace(":listId", LIST.id)
+                    .replace(":userId", USER.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_SUPERUSER));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
+
+        it("should pass on the right admin user", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_FIRST_REGULAR);
+
+            const response = await chai.request(app)
+                .delete(PATH.replace(":listId", LIST.id)
+                    .replace(":userId", USER.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
 
     });
 
@@ -134,8 +588,89 @@ describe("ListRouter Special Tests", () => {
 
         const PATH = "/api/lists/:listId/users/:userId";
 
-        // TODO
+        it("should fail on the right regular user", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_THIRD);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_THIRD_REGULAR);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", LIST.id)
+                    .replace(":userId", USER.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should fail on the wrong admin user", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_THIRD_ADMIN);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", LIST.id)
+                    .replace(":userId", USER.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should fail on the wrong regular user", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_THIRD_REGULAR);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", LIST.id)
+                    .replace(":userId", USER.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_THIRD_REGULAR));
+            expect(response).to.have.status(FORBIDDEN);
+            expect(response).to.be.json;
+            expect(response.body.message).to.include("Required scope not authorized");
+
+        });
+
+        it("should pass on authenticated superuser", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_SECOND);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_SECOND_REGULAR);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", LIST.id)
+                    .replace(":userId", USER.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_SUPERUSER));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
+
+        it("should pass on the right admin user", async () => {
+
+            const LIST = await UTILS.lookupList(SeedData.LIST_NAME_FIRST);
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_FIRST_REGULAR);
+
+            const response = await chai.request(app)
+                .post(PATH.replace(":listId", LIST.id)
+                    .replace(":userId", USER.id))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+
+        });
 
     })
 
 });
+
+// Helper Methods ------------------------------------------------------------
+
+const compareLists = (OUTPUT: Partial<List>, INPUT: Partial<List>) => {
+    expect(OUTPUT.id).to.equal(INPUT.id ? INPUT.id : OUTPUT.id);
+    expect(OUTPUT.active).to.equal(INPUT.active ? INPUT.active : OUTPUT.active);
+    expect(OUTPUT.name).to.equal(INPUT.name ? INPUT.name : OUTPUT.name);
+    expect(OUTPUT.notes).to.equal(INPUT.notes ? INPUT.notes : OUTPUT.notes);
+    expect(OUTPUT.theme).to.equal(INPUT.theme ? INPUT.theme : OUTPUT.theme);
+}
