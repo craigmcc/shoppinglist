@@ -362,7 +362,7 @@ describe("ListRouter Functional Tests", () => {
 
     })
 
-})
+});
 
 // Helper Methods ------------------------------------------------------------
 
