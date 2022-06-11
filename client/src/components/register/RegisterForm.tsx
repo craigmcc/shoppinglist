@@ -13,7 +13,7 @@ import Row from "react-bootstrap/Row";
 import {SubmitHandler, useForm} from "react-hook-form"
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import {TextField} from "@craigmcc/shared-react";
+import {CheckBoxField, TextField} from "@craigmcc/shared-react";
 
 
 // Internal Modules ----------------------------------------------------------
@@ -65,6 +65,8 @@ const RegisterForm = (props: Props) => {
                 function (this) {
                     return (this.parent.password1 === this.parent.password2);
                 }),
+        populate: Yup.boolean()
+            .required(),
         username: Yup.string()
             .required()
             .test("unique-username",
@@ -142,13 +144,19 @@ const RegisterForm = (props: Props) => {
                     />
                 </Row>
 
-                <Row className="mb-3" id="listNameRow">
+                <Row className="mb-3" id="listNamePopulateRow">
                     <TextField
                         errors={errors}
                         label="(Optional) Shopping List Name To Create:"
                         name="listName"
                         register={register}
                         valid="The first shopping list to be created for you (if any)."
+                    />
+                    <CheckBoxField
+                        errors={errors}
+                        label="Populate with standard Categories and Items?"
+                        name="populate"
+                        register={register}
                     />
                 </Row>
 

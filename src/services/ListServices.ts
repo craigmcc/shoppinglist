@@ -76,12 +76,14 @@ class ListServices extends BaseParentServices<List> {
      * Populate Categories and Items for the specified List (which should have none).
      * Then, return the List with its new nested elements.
      *
-     * TODO: Do we need a flag to request deleting all existing Categories and Items?
+     * @param listId                    ID of the list to be populated
+     * @param options                   Optional Sequelize options
      */
-    public async populate(listId: string): Promise<List> {
+    public async populate(listId: string, options?: any): Promise<List> {
 
         const categories: Category[] = [];
         const items: Item[] = [];
+        const populateOptions = options ? options : {};
 
         // Populate the categories we are creating
         InitialListData.forEach(element => {
@@ -92,7 +94,7 @@ class ListServices extends BaseParentServices<List> {
                 name: element[0],
             });
         });
-        await Category.bulkCreate(categories);
+        await Category.bulkCreate(categories, populateOptions);
 
         // Populate the items we are creating
         InitialListData.forEach((element, i) => {
@@ -108,12 +110,13 @@ class ListServices extends BaseParentServices<List> {
                 }
             }
         });
-        await Item.bulkCreate(items);
+        await Item.bulkCreate(items, populateOptions);
 
         // Return this List with its nested Categories and Items
-        return await this.find(listId, {
-            withCategories: "",
-            withItems: "",
+        return await List.findOne({
+            ...populateOptions,
+            include: [ Category, Item ],
+            where: { id : listId }
         });
 
     }

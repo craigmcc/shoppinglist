@@ -15,6 +15,7 @@ class CreateAccount {
         this.listName = data.listName ? data.listName : "";
         this.password1 = data.password1 ? data.password1 : "";
         this.password2 = data.password2 ? data.password2 : "";
+        this.populate = data.populate ? data.populate : true;
         this.username = data.username ? data.username : "";
     }
 
@@ -24,6 +25,7 @@ class CreateAccount {
     listName: string;
     password1: string;
     password2: string;
+    populate: boolean;
     username: string;
 
 }

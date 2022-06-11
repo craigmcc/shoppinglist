@@ -130,6 +130,13 @@ class UserServices extends BaseParentServices<User> {
                     transaction: transaction,
                 });
 
+                // If requested, populate the standard Categories and Items
+                if (createUser.populate) {
+                    await ListServices.populate(list.id, {
+                        transaction: transaction
+                    });
+                }
+
             }
 
             // Commit the transaction
