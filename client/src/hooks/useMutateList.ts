@@ -85,8 +85,11 @@ const useMutateList = (props: Props = {}): State => {
         setExecuting(true);
 
         let inserted = new List();
-        const url = USERS_BASE
+        let url = USERS_BASE
             + `/${loginContext.user.id}/lists`;
+        if (theList.populate) {
+            url += "?populate";
+        }
 
         try {
             inserted = ToModel.LIST((await Api.post(url, theList)).data);

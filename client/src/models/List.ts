@@ -20,6 +20,7 @@ export class ListData {
         this.active = (data.active !== undefined) ? data.active : true;
         this.name = data.name ? data.name : null;
         this.notes = data.notes ? data.notes : null;
+        this.populate = (data.populate !== undefined) ? data.populate : true;
         this.theme = data.theme ? data.theme : null;
         if (data.UserList && (data.UserList.admin !== undefined)) {
             this.admin = data.UserList.admin;
@@ -33,6 +34,7 @@ export class ListData {
     admin: boolean;
     name: string;
     notes: string;
+    populate: boolean; // Only referenced on a list creation
     theme: string;
 
 }

@@ -85,13 +85,21 @@ const ListForm = (props: Props) => {
                     />
                 </Row>
 
-                <Row className="mb-3" id="activeRow">
+                <Row className="mb-3" id="activePopulateRow">
                     <CheckBoxField
                         errors={errors}
                         label="Active?"
                         name="active"
                         register={register}
                     />
+                    {(!props.list.id) ? (
+                        <CheckBoxField
+                            errors={errors}
+                            label="Populate with standard Categories and Items?"
+                            name="populate"
+                            register={register}
+                        />
+                    ) : null }
                 </Row>
 
                 <Row className="mb-3">

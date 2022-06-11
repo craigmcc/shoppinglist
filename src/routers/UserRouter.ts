@@ -87,7 +87,8 @@ UserRouter.get("/:userId/lists",
 UserRouter.post("/:userId/lists",
     requireUser,
     async (req: Request, res: Response) => {
-        res.send(await UserServices.listsInsert(req.params.userId, req.body));
+        const populate = ("" === req.query.populate);
+        res.send(await UserServices.listsInsert(req.params.userId, req.body, populate));
     });
 
 // DELETE /:userId/lists/:listId - Disassociate User and List

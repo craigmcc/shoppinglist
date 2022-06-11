@@ -205,7 +205,7 @@ class UserServices extends BaseParentServices<User> {
         return list;
     }
 
-    public async listsInsert(userId: string, list: Partial<List>): Promise<List> {
+    public async listsInsert(userId: string, list: Partial<List>, populate = false): Promise<List> {
 
         let transaction: Transaction;
         try {
@@ -219,7 +219,12 @@ class UserServices extends BaseParentServices<User> {
                 id: list.id ? list.id : uuid.v4(),
             }
             // @ts-ignore
-            const inserted = await List.create(insertee, {transaction});
+            let inserted = await List.create(insertee, {transaction});
+
+            // If requested, populate the new List with Categories and Items
+            if (populate) {
+                inserted = await ListServices.populate(inserted.id, {transaction});
+            }
 
             // Associate it with the specified User
             const upsertee: Partial<UserList> = {
