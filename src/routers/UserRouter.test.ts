@@ -213,7 +213,7 @@ describe("UserRouter Functional Tests", () => {
                 .get(PATH.replace(":userId", "" + user.id));
             expect(response).to.have.status(FORBIDDEN);
             expect(response).to.be.json;
-            expect(response.body.context).to.equal("OAuthMiddleware.requireSuperuser");
+            expect(response.body.context).to.equal("OAuthMiddleware.requireUser");
             expect(response.body.message).to.equal("No access token presented");
             expect(response.body.status).to.equal(403);
 
@@ -252,7 +252,7 @@ describe("UserRouter Functional Tests", () => {
                 .send(INPUT);
             expect(response).to.have.status(FORBIDDEN);
             expect(response).to.be.json;
-            expect(response.body.context).to.equal("OAuthMiddleware.requireSuperuser");
+            expect(response.body.context).to.equal("OAuthMiddleware.requireUser");
             expect(response.body.message).to.equal("No access token presented");
             expect(response.body.status).to.equal(403);
 
