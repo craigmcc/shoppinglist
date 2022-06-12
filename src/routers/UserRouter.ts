@@ -92,7 +92,7 @@ UserRouter.post("/:userId/lists",
     });
 
 // DELETE /:userId/lists/:listId - Disassociate User and List
-UserRouter.delete("/:userId/lists/:listId}",
+UserRouter.delete("/:userId/lists/:listId",
     requireAdmin,
     requireUser,
     async (req: Request, res: Response) => {
