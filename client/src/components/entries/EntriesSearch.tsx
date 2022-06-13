@@ -5,8 +5,10 @@
 // External Modules ----------------------------------------------------------
 
 import React, {useEffect, useState} from "react";
+import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
+import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 import {SearchBar} from "@craigmcc/shared-react";
@@ -37,6 +39,7 @@ const MISMATCH_NAME = "WILL NOT MATCH ANYTHING";
 const EntriesSearch = (props: Props) => {
 
     const [name, setName] = useState<string>("");
+    const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
     const fetchItems = useFetchItems({
         alertPopup: true,
@@ -73,11 +76,22 @@ const EntriesSearch = (props: Props) => {
 
     // Handle request to clear selected Items
     const handleClear: HandleAction = () => {
+        setShowConfirm(true);
+    }
+
+    // Handle request to clear selected Items that has been confirmed
+    const handleClearConfirmed: HandleAction = () => {
         logger.debug({
-            context: "EntriesSearch.handleClear",
+            context: "EntriesSearch.handleClearConfirmed",
         });
         setName("");
+        setShowConfirm(false);
         props.handleClear();
+    }
+
+    // Handle request to deny clear confirmation
+    const handleClearDenied: HandleAction = () => {
+        setShowConfirm(false);
     }
 
     // Handle request to refresh selected Items
@@ -99,6 +113,7 @@ const EntriesSearch = (props: Props) => {
     }
 
     return (
+        <>
         <Container>
 
             <Row className="mb-3">
@@ -180,6 +195,45 @@ const EntriesSearch = (props: Props) => {
             ) : null }
 
         </Container>
+
+            {/* Clear Entries Confirmation */}
+            <Modal
+                animation={false}
+                backdrop="static"
+                centered
+                dialogClassName="bg-warning"
+                onHide={handleClearDenied}
+                show={showConfirm}
+                size="lg"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Clear Selected Items List?</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>
+                        This action will remove all selected Items for this List.
+                        Please confirm that this is what you wish to do by
+                        clicking the Yes button below.
+                    </p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        autoFocus
+                        onClick={handleClearDenied}
+                        size="sm"
+                        type="button"
+                        variant="primary"
+                    >No</Button>
+                    <Button
+                        autoFocus
+                        onClick={handleClearConfirmed}
+                        size="sm"
+                        type="button"
+                        variant="warning"
+                    >Yes</Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     )
 
 }
