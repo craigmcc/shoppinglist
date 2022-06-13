@@ -5,6 +5,7 @@
 // External Modules ----------------------------------------------------------
 
 const axios = require("axios");
+const NODE_ENV = process.env.NODE_ENV;
 const SECRET = process.env.RECAPTCHA_SECRET_KEY
     ? process.env.RECAPTCHA_SECRET_KEY : "Unknown";
 const URL_PATTERN = "https://www.google.com/recaptcha/api/siteverify?secret=:secret&response=:token";
@@ -15,6 +16,8 @@ import logger from "../util/ServerLogger";
 
 // Public Objects ------------------------------------------------------------
 
+export const TEST_MODE_TOKEN = "TEST MODE TOKEN";
+
 export type VerifyTokenV2Response = {
     challenge_ts: string;               // ISO format timestamp of the challenge
     "error-codes"?: string[];           // Error code(s) if challenge failed
@@ -23,6 +26,14 @@ export type VerifyTokenV2Response = {
 }
 
 export const verifyTokenV2 = async (token: string): Promise<VerifyTokenV2Response> => {
+
+    if ((NODE_ENV === "test") && (token === TEST_MODE_TOKEN)) {
+        return {
+            challenge_ts: (new Date()).toISOString(),
+            hostname: "localhost",
+            success: true,
+        }
+    }
 
     const url = URL_PATTERN
         .replace(":secret", SECRET)

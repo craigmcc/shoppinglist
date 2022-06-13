@@ -17,6 +17,7 @@ chai.use(chaiHttp);
 
 import app from "./ExpressApplication";
 import User from "../models/User";
+import {TEST_MODE_TOKEN} from "../services/CaptchaServices";
 import RouterUtils, {AUTHORIZATION} from "../test/RouterUtils";
 import * as SeedData from "../test/SeedData";
 import {CREATED} from "../util/HttpErrors";
@@ -51,6 +52,7 @@ describe("UserRouter Special Tests", () => {
                 listName: SeedData.LIST_NAME_SECOND,    // Not required to be unique
                 password1: "newpass",
                 password2: "newpass",
+                token: TEST_MODE_TOKEN,
                 username: "newuser",
             });
 
@@ -72,6 +74,7 @@ describe("UserRouter Special Tests", () => {
                 listName: SeedData.LIST_NAME_SECOND,    // Not required to be unique
                 password1: "newpass",
                 password2: "newpass",
+                token: TEST_MODE_TOKEN,
                 username: "newuser",
             });
 

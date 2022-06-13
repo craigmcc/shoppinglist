@@ -11,6 +11,7 @@ const expect = chai.expect;
 
 import UserServices from "./UserServices";
 import CreateAccount from "../models/CreateAccount";
+import {TEST_MODE_TOKEN} from "./CaptchaServices";
 import * as SeedData from "../test/SeedData";
 import ServicesUtils from "../test/ServicesUtils";
 
@@ -42,6 +43,7 @@ describe ("UserServices Special Tests", () => {
                 listName: SeedData.LIST_NAME_SECOND,    // Not required to be unique
                 password1: "newpass",
                 password2: "newpass",
+                token: TEST_MODE_TOKEN,
                 username: "newuser",
             });
 
@@ -74,6 +76,7 @@ describe ("UserServices Special Tests", () => {
                 lastName: "User",
                 password1: "newpass",
                 password2: "newpass",
+                token: TEST_MODE_TOKEN,
                 username: "newuser",
             });
 
