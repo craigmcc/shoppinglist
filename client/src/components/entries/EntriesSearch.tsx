@@ -80,6 +80,14 @@ const EntriesSearch = (props: Props) => {
         props.handleClear();
     }
 
+    // Handle request to refresh selected Items
+    const handleRefresh: HandleAction = () => {
+        logger.debug({
+            context: "EntriesSearch.handleRefresh",
+        });
+        fetchItems.handleRefresh();
+    }
+
     // Handle request to select this Item
     const handleSelect: HandleItem = (item) => {
         logger.debug({
@@ -119,6 +127,10 @@ const EntriesSearch = (props: Props) => {
                             <ThreeDots size={16}/>
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
+                            <Dropdown.Item
+                                onClick={handleRefresh}
+                            >Refresh Entries</Dropdown.Item>
+                            <Dropdown.Divider/>
                             <Dropdown.Item
                                 onClick={handleClear}
                             >Clear Entries</Dropdown.Item>
