@@ -29,7 +29,7 @@ export const verifyTokenV2 = async (token: string): Promise<VerifyTokenV2Respons
         .replace(":token", token);
     try {
         const response = (await axios.post(url)).data as VerifyTokenV2Response;
-        logger.info({
+        logger.debug({
             context: "CaptchaServices.verifyToken",
             token: token,
             response: response,

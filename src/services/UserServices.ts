@@ -90,11 +90,11 @@ class UserServices extends BaseParentServices<User> {
 
     public async create(createUser: CreateAccount): Promise<User> {
 
-        // Verify that the included reCAPTCHA token is valid
+        // Verify that the included ReCAPTCHA token is valid
         const verifyTokenResponse = await verifyTokenV2(createUser.token);
         // @ts-ignore
         if (!verifyTokenResponse.success) {
-            throw new ServiceUnavailable("Failed reCAPTCHA validation");
+            throw new ServiceUnavailable("Failed ReCAPTCHA validation");
         }
 
         // Begin the processing needed to create this User
