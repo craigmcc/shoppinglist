@@ -13,6 +13,7 @@ export const FORBIDDEN = 403;
 export const NOT_FOUND = 404;
 export const NOT_UNIQUE = 409;
 export const SERVER_ERROR = 500;
+export const SERVICE_UNAVAILABLE = 503;
 
 // Base Error Class ----------------------------------------------------------
 
@@ -92,3 +93,14 @@ export class ServerError extends HttpError {
         this.status = SERVER_ERROR;
     }
 }
+
+/**
+ * Report that a service is temporarily unavailable.
+ */
+export class ServiceUnavailable extends HttpError {
+    constructor(source: Source, context?: string) {
+        super(source, context);
+        this.status = SERVICE_UNAVAILABLE;
+    }
+}
+

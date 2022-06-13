@@ -4,12 +4,13 @@
 
 // External Modules ----------------------------------------------------------
 
-import React from "react";
+import React, {useState} from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
+import ReCAPTCHA from "react-google-recaptcha";
 import {SubmitHandler, useForm} from "react-hook-form"
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -32,19 +33,31 @@ export interface Props {
     handleCreateAccount: HandleCreateAccount; // Handle User registration request
 }
 
+const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY
+    ? process.env.REACT_APP_RECAPTCHA_SITE_KEY
+    : "UnknownSiteKey";
+
 // Component Details ---------------------------------------------------------
 
 const RegisterForm = (props: Props) => {
 
+    const [token, setToken] = useState<string>("");
+
     const onSubmit: SubmitHandler<CreateAccount> = (values) => {
         const theCreateAccount = new CreateAccount({
             ...values,
+            token: token,
         });
         logger.debug({
             context: "RegisterForm.onSubmit",
             createAccount: theCreateAccount,
         });
         props.handleCreateAccount(theCreateAccount);
+    }
+
+    // The reCAPTCHA check was successfully completed
+    const onSuccess = (theToken: string | null): void => {
+        setToken(theToken ? theToken : "");
     }
 
     const validationSchema = Yup.object().shape({
@@ -162,7 +175,15 @@ const RegisterForm = (props: Props) => {
 
                 <Row className="mb-3">
                     <Col className="text-center">
+                        <ReCAPTCHA
+                            onChange={onSuccess}
+                            sitekey={RECAPTCHA_SITE_KEY}
+                            size="normal"
+                        />
+                    </Col>
+                    <Col className="text-center">
                         <Button
+                            disabled={token.length === 0}
                             size="sm"
                             type="submit"
                             variant="primary"

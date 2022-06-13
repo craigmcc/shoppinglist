@@ -9,6 +9,7 @@ const uuid = require("uuid");
 
 // Internal Modules ----------------------------------------------------------
 
+import {verifyTokenV2} from "./CaptchaServices";
 import ListServices from "./ListServices";
 import BaseParentServices from "./BaseParentServices";
 import CreateAccount from "../models/CreateAccount";
@@ -16,7 +17,7 @@ import List from "../models/List";
 import User from "../models/User";
 import UserList from "../models/UserList";
 import {hashPassword} from "../oauth/OAuthUtils";
-import {BadRequest, NotFound} from "../util/HttpErrors";
+import {BadRequest, NotFound, ServiceUnavailable} from "../util/HttpErrors";
 import {appendPaginationOptions} from "../util/QueryParameters";
 import * as SortOrder from "../util/SortOrder";
 import Database from "../models/Database";
@@ -89,6 +90,14 @@ class UserServices extends BaseParentServices<User> {
 
     public async create(createUser: CreateAccount): Promise<User> {
 
+        // Verify that the included reCAPTCHA token is valid
+        const verifyTokenResponse = await verifyTokenV2(createUser.token);
+        // @ts-ignore
+        if (!verifyTokenResponse.success) {
+            throw new ServiceUnavailable("Failed reCAPTCHA validation");
+        }
+
+        // Begin the processing needed to create this User
         let transaction: Transaction | null = null;
         try {
 

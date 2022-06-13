@@ -16,6 +16,7 @@ class CreateAccount {
         this.password1 = data.password1 ? data.password1 : "";
         this.password2 = data.password2 ? data.password2 : "";
         this.populate = data.populate ? data.populate : true;
+        this.token = data.token ? data.token : "";
         this.username = data.username ? data.username : "";
     }
 
@@ -26,6 +27,7 @@ class CreateAccount {
     password1: string;
     password2: string;
     populate: boolean;
+    token: string;                      // Google reCAPTCHA v2 token
     username: string;
 
 }
