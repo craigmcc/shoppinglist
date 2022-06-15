@@ -10,6 +10,7 @@ import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 import {Pencil} from "react-bootstrap-icons";
+import PullToRefresh from "react-simple-pull-to-refresh";
 
 // Internal Modules ----------------------------------------------------------
 
@@ -168,6 +169,17 @@ const EntriesList = (props: Props) => {
         setShowItem(false);
     }
 
+    // Handle request to refresh the selected Items list
+    const handleRefresh = (): Promise<any> => {
+        logger.info({
+            context: "EntriesList.handleRefresh",
+        });
+        fetchItems.handleRefresh();
+        return new Promise((resolve) => {
+            setTimeout(resolve, 200);
+        });
+    }
+
     // Handle selection of an Item to be added
     const handleSelect: HandleItem = async (item) => {
         logger.debug({
@@ -192,45 +204,49 @@ const EntriesList = (props: Props) => {
                     />
                 </Row>
                 <Row className="mb-3">
-                    <Table hover size="sm">
-                        <tbody>
-                        {categoryNames.map((categoryName, index) => (
-                            <>
-                                <tr key={`C-${categoryName}`}>
-                                    <td
-                                        className="text-center bg-info"
-                                        colSpan={2}
-                                    >
-                                        <strong>{categoryName}</strong>
-                                    </td>
-                                </tr>
-                                {categoryItems[index].map(categoryItem => (
-                                    <tr key={`I-${categoryItem.id}`}>
+                    <PullToRefresh
+                        onRefresh={handleRefresh}
+                    >
+                        <Table hover size="sm">
+                            <tbody>
+                            {categoryNames.map((categoryName, index) => (
+                                <>
+                                    <tr key={`C-${categoryName}`}>
                                         <td
-                                            className="text-start"
-                                            onClick={() => handleChecked(categoryItem)}
+                                            className="text-center bg-info"
+                                            colSpan={2}
                                         >
-                                            {!categoryItem.checked ? (
-                                                <span>{categoryItem.name}</span>
-                                            ) : (
-                                                <span><del>{categoryItem.name}</del></span>
-                                            )}
-                                            {categoryItem.notes ? (
-                                                <p><small>&nbsp;&nbsp;{categoryItem.notes}</small></p>
-                                            ) : null }
-                                        </td>
-                                        <td
-                                            className="text-end"
-                                            onClick={() => handleEdit(categoryItem)}
-                                        >
-                                            <Pencil className="me-2" size={16}/>
+                                            <strong>{categoryName}</strong>
                                         </td>
                                     </tr>
-                                ))}
-                            </>
-                        ))}
-                        </tbody>
-                    </Table>
+                                    {categoryItems[index].map(categoryItem => (
+                                        <tr key={`I-${categoryItem.id}`}>
+                                            <td
+                                                className="text-start"
+                                                onClick={() => handleChecked(categoryItem)}
+                                            >
+                                                {!categoryItem.checked ? (
+                                                    <span>{categoryItem.name}</span>
+                                                ) : (
+                                                    <span><del>{categoryItem.name}</del></span>
+                                                )}
+                                                {categoryItem.notes ? (
+                                                    <p><small>&nbsp;&nbsp;{categoryItem.notes}</small></p>
+                                                ) : null }
+                                            </td>
+                                            <td
+                                                className="text-end"
+                                                onClick={() => handleEdit(categoryItem)}
+                                            >
+                                                <Pencil className="me-2" size={16}/>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </>
+                            ))}
+                            </tbody>
+                        </Table>
+                    </PullToRefresh>
                 </Row>
             </Container>
 
