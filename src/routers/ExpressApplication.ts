@@ -24,7 +24,14 @@ import logger from "../util/ServerLogger";
 
 // Initialize Express environment
 const app = express();
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+            "script-src": ["'self'", "google.com"],
+        },
+    },
+}));
 
 // Configure access log management
 const ACCESS_LOG = process.env.ACCESS_LOG ? process.env.ACCESS_LOG : "stderr";
