@@ -6,7 +6,7 @@
 
 import bodyParser from "body-parser";
 import express from "express";
-import helmet from "helmet";
+//import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 const rfs = require("rotating-file-stream");
@@ -24,6 +24,7 @@ import logger from "../util/ServerLogger";
 
 // Initialize Express environment
 const app = express();
+/*
 app.use(helmet({
     contentSecurityPolicy: {
         useDefaults: true,
@@ -32,6 +33,7 @@ app.use(helmet({
         },
     },
 }));
+*/
 
 // Configure access log management
 const ACCESS_LOG = process.env.ACCESS_LOG ? process.env.ACCESS_LOG : "stderr";
