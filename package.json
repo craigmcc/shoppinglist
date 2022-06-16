@@ -11,7 +11,7 @@
     "develop:prod": "concurrently \"npm:server:build:watch\" \"npm:start:prod\"",
     "heroku:local": "cross-env heroku local web",
     "heroku:start": "node dist/server.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false && npm install --force --prefix client && npm run build --prefix client",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false && npm ci --force --prefix client && npm run build --prefix client",
     "preheroku:local": "tsc",
     "postinstall": "tsc",
     "server:build": "tsc",
