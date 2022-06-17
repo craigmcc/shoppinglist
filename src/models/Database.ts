@@ -20,9 +20,10 @@ import logger from "../util/ServerLogger";
 
 // Configure Database Instance -----------------------------------------------
 
+const DATABASE_SSL = process.env.DATABASE_SSL ? process.env.DATABASE_SSL : "false";
 const DATABASE_URL = process.env.DATABASE_URL ? process.env.DATABASE_URL : "test";
 
-export const Database = new Sequelize(DATABASE_URL, {
+const options: any = {
     logging: false,
     pool: {
         acquire: 30000,
@@ -30,7 +31,17 @@ export const Database = new Sequelize(DATABASE_URL, {
         max: 5,
         min: 0
     }
-});
+}
+if (DATABASE_SSL === "true") {
+    options.dialectOptions = {
+        ssl: {
+            rejectUnauthorized: false,
+            require: true,
+        }
+    }
+}
+
+export const Database = new Sequelize(DATABASE_URL, options);
 
 Database.addModels([
     // User Stack
@@ -49,6 +60,7 @@ logger.info({
     msg: "Sequelize models initialized",
     dialect: `${Database.getDialect()}`,
     name: `${Database.getDatabaseName()}`,
+    ssl: DATABASE_SSL,
 });
 
 export default Database;

@@ -39,6 +39,7 @@ if (DATABASE_SYNC !== "none") {
                 force: force,               // Drop and rebuild tables,
                 logging: console.log,
             });
+
             // Did we come back from the sync call?
             logger.info({
                 context: "Startup",
