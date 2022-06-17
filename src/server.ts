@@ -40,6 +40,11 @@ if (DATABASE_SYNC !== "none") {
             });
             // Force a read to make sure the tables are there
             const users = await User.findAll();
+            logger.info({
+                context: "Database.startup",
+                msg: "Find all users successful",
+                count: users.length,
+            })
         } catch (error) {
             logger.error({
                 context: "Startup",
