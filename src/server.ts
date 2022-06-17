@@ -9,8 +9,7 @@ import * as fs from "fs";
 require("custom-env").env(true);
 const https = require("https");
 
-export const DATABASE_FORCE = process.env.DATABASE_FORCE ? process.env.DATABASE_FORCE : "false";
-export const DATABASE_SYNC = process.env.DATABASE_SYNC ? process.env.DATABASE_SYNC : "false";
+export const DATABASE_SYNC = process.env.DATABASE_SYNC ? process.env.DATABASE_SYNC : "none";
 export const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV : "production";
 export const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : undefined;
 export const PORT_HTTPS = process.env.PORT_HTTPS ? parseInt(process.env.PORT_HTTPS, 10) : undefined;
@@ -24,16 +23,18 @@ import logger from "./util/ServerLogger";
 // Configure Models and Associations -----------------------------------------
 
 Database.getDatabaseName(); // Trigger initialization of Database module
-if (DATABASE_SYNC === "true") {
+if (DATABASE_SYNC !== "none") {
     logger.info({
         context: "Startup",
         msg: "Synchronizing database table structures",
-        force: DATABASE_FORCE,
+        sync: DATABASE_SYNC,
     });
     (async () => {
+        const alter: boolean | undefined = DATABASE_SYNC === "alter" ? true : undefined;
+        const force: boolean | undefined = DATABASE_SYNC === "force" ? true : undefined;
         await Database.sync({
-           alter: true,     // Synchronize tables and models
-           force: (DATABASE_FORCE === "true") ? true : false,
+            alter: alter,               // Alter existing tables to match changes
+            force: force,               // Drop and rebuild tables
         });
     });
 }
