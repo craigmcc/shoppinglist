@@ -61,7 +61,7 @@ if (DATABASE_SYNC !== "none") {
                 message: (error as Error).message,
             });
         }
-    });
+    })();
 }
 
 // Configure and Start Server ------------------------------------------------
