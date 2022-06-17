@@ -41,28 +41,6 @@ describe("UserRouter Functional Tests", () => {
 
         const PATH = "/api/users/exact/:username";
 
-        it("should fail on authenticated admin", async () => {
-
-            const response = await chai.request(app)
-                .get(PATH.replace(":username", SeedData.USER_USERNAME_SUPERUSER))
-                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
-            expect(response).to.have.status(FORBIDDEN);
-            expect(response).to.be.json;
-            expect(response.body.message).to.include("Required scope not authorized");
-
-        })
-
-        it("should fail on authenticated regular", async () => {
-
-            const response = await chai.request(app)
-                .get(PATH.replace(":username", SeedData.USER_USERNAME_SUPERUSER))
-                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_REGULAR));
-            expect(response).to.have.status(FORBIDDEN);
-            expect(response).to.be.json;
-            expect(response.body.message).to.include("Required scope not authorized");
-
-        })
-
         it("should fail on invalid username", async () => {
 
             const INVALID_USERNAME = "Invalid Username";
@@ -76,14 +54,27 @@ describe("UserRouter Functional Tests", () => {
 
         })
 
-        it("should fail on unauthenticated request", async () => {
+        it("should pass on authenticated admin", async () => {
 
             const response = await chai.request(app)
-                .get(PATH.replace(":username", SeedData.USER_USERNAME_SUPERUSER));
-            expect(response).to.have.status(FORBIDDEN);
+                .get(PATH.replace(":username", SeedData.USER_USERNAME_SUPERUSER))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_ADMIN));
+            expect(response).to.have.status(OK);
             expect(response).to.be.json;
-            expect(response.body.context).to.equal("OAuthMiddleware.requireSuperuser");
-            expect(response.body.message).to.equal("No access token presented");
+            expect(response.body.username).to.equal(SeedData.USER_USERNAME_SUPERUSER);
+            expect(response.body.password).to.equal("");
+
+        })
+
+        it("should pass on authenticated regular", async () => {
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":username", SeedData.USER_USERNAME_SUPERUSER))
+                .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_FIRST_REGULAR));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+            expect(response.body.username).to.equal(SeedData.USER_USERNAME_SUPERUSER);
+            expect(response.body.password).to.equal("");
 
         })
 
@@ -92,6 +83,17 @@ describe("UserRouter Functional Tests", () => {
             const response = await chai.request(app)
                 .get(PATH.replace(":username", SeedData.USER_USERNAME_SUPERUSER))
                 .set(AUTHORIZATION, await UTILS.credentials(SeedData.USER_USERNAME_SUPERUSER));
+            expect(response).to.have.status(OK);
+            expect(response).to.be.json;
+            expect(response.body.username).to.equal(SeedData.USER_USERNAME_SUPERUSER);
+            expect(response.body.password).to.equal("");
+
+        })
+
+        it("should pass on unauthenticated request", async () => {
+
+            const response = await chai.request(app)
+                .get(PATH.replace(":username", SeedData.USER_USERNAME_SUPERUSER));
             expect(response).to.have.status(OK);
             expect(response).to.be.json;
             expect(response.body.username).to.equal(SeedData.USER_USERNAME_SUPERUSER);
