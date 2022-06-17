@@ -32,10 +32,20 @@ if (DATABASE_SYNC !== "none") {
     (async () => {
         const alter: boolean | undefined = DATABASE_SYNC === "alter" ? true : undefined;
         const force: boolean | undefined = DATABASE_SYNC === "force" ? true : undefined;
-        await Database.sync({
-            alter: alter,               // Alter existing tables to match changes
-            force: force,               // Drop and rebuild tables
-        });
+        try {
+            await Database.sync({
+                alter: alter,               // Alter existing tables to match changes
+                force: force,               // Drop and rebuild tables
+            });
+        } catch (error) {
+            logger.error({
+                context: "Startup",
+                msg: "Error synchronizing database",
+                alter: alter,
+                force: force,
+                message: (error as Error).message,
+            });
+        }
     });
 }
 
