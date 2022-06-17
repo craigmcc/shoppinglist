@@ -9,6 +9,7 @@ import * as fs from "fs";
 require("custom-env").env(true);
 const https = require("https");
 
+export const DATABASE_SYNC = process.env.DATABASE_SYNC ? process.env.DATABASE_SYNC : "false";
 export const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV : "production";
 export const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : undefined;
 export const PORT_HTTPS = process.env.PORT_HTTPS ? parseInt(process.env.PORT_HTTPS, 10) : undefined;
@@ -22,6 +23,18 @@ import logger from "./util/ServerLogger";
 // Configure Models and Associations -----------------------------------------
 
 Database.getDatabaseName(); // Trigger initialization of Database module
+if (DATABASE_SYNC === "true") {
+    logger.info({
+        context: "Startup",
+        msg: "Synchronizing database table structures",
+    });
+    (async () => {
+        await Database.sync({
+           alter: true,     // Synchronize tables and models
+           force: false,    // Do NOT drop existing tables
+        });
+    });
+}
 
 // Configure and Start Server ------------------------------------------------
 
