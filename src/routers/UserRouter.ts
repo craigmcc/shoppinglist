@@ -24,7 +24,7 @@ export default UserRouter;
 
 // GET /exact/:username - Find User by exact username
 UserRouter.get("/exact/:username",
-    requireSuperuser,
+    // Required by the registration dialog so we cannot require a logged in user
     async (req: Request, res: Response) => {
         res.send(await UserServices.exact(
             req.params.username,

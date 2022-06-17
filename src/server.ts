@@ -28,6 +28,7 @@ if (DATABASE_SYNC === "true") {
     logger.info({
         context: "Startup",
         msg: "Synchronizing database table structures",
+        force: DATABASE_FORCE,
     });
     (async () => {
         await Database.sync({
