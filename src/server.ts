@@ -34,13 +34,19 @@ if (DATABASE_SYNC !== "none") {
         const alter: boolean | undefined = DATABASE_SYNC === "alter" ? true : undefined;
         const force: boolean | undefined = DATABASE_SYNC === "force" ? true : undefined;
         try {
-            await Database.sync({
+            const result = await Database.sync({
                 alter: alter,               // Alter existing tables to match changes
                 force: force,               // Drop and rebuild tables,
                 logging: console.log,
             });
+            // Did we come back from the sync call?
+            logger.info({
+                context: "Startup",
+                msg: "Result of Database.sync()",
+                result: result,
+            });
             // Force a read to make sure the tables are there
-            const lists = await List.findAll();
+            const lists = await List.findAll({ logging: console.log });
             logger.info({
                 context: "Database.startup",
                 msg: "Find all lists successful",
