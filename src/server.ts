@@ -9,6 +9,7 @@ import * as fs from "fs";
 require("custom-env").env(true);
 const https = require("https");
 
+export const DATABASE_FORCE = process.env.DATABASE_FORCE ? process.env.DATABASE_FORCE : "false";
 export const DATABASE_SYNC = process.env.DATABASE_SYNC ? process.env.DATABASE_SYNC : "false";
 export const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV : "production";
 export const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : undefined;
@@ -31,7 +32,7 @@ if (DATABASE_SYNC === "true") {
     (async () => {
         await Database.sync({
            alter: true,     // Synchronize tables and models
-           force: false,    // Do NOT drop existing tables
+           force: (DATABASE_FORCE === "true") ? true : false,
         });
     });
 }
