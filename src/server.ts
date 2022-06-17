@@ -17,6 +17,7 @@ export const PORT_HTTPS = process.env.PORT_HTTPS ? parseInt(process.env.PORT_HTT
 // Internal Modules ----------------------------------------------------------
 
 import Database from "./models/Database";
+import User from "./models/User";
 import ExpressApplication from "./routers/ExpressApplication";
 import logger from "./util/ServerLogger";
 
@@ -37,6 +38,8 @@ if (DATABASE_SYNC !== "none") {
                 alter: alter,               // Alter existing tables to match changes
                 force: force,               // Drop and rebuild tables
             });
+            // Force a read to make sure the tables are there
+            const users = await User.findAll();
         } catch (error) {
             logger.error({
                 context: "Startup",
