@@ -4,15 +4,18 @@
 
 // External Modules ----------------------------------------------------------
 
+import Mail from "nodemailer/lib/mailer";
 import {FindOptions, Op} from "sequelize";
 const uuid = require("uuid");
 
 // Internal Modules ----------------------------------------------------------
 
 import BaseParentServices from "./BaseParentServices";
+import EmailServices from "./EmailServices";
 import Category from "../models/Category";
 import Item from "../models/Item";
 import List from "../models/List";
+import Share from "../models/Share";
 import User from "../models/User";
 import UserList from "../models/UserList";
 import CategoryServices from "./CategoryServices";
@@ -118,6 +121,58 @@ class ListServices extends BaseParentServices<List> {
             include: [ Category, Item ],
             where: { id : listId }
         });
+
+    }
+
+    /**
+     * Email an offer to share the specified List with a new or existing
+     * User at the specified email address.
+     *
+     * @param listId                    ID of the List being offered
+     * @param email                     Email address of the offeree
+     * @param admin                     Will this user receive admin permissions?
+     *
+     * @return Share representing this offer
+     */
+    public async share(listId: string, offer: Partial<Share>): Promise<Share> {
+
+        // Look up the list to be shared
+        const list = await this.read("ListServices.categories", listId, {
+            withUsers: "",
+        });
+
+        // Record an offer of this List to this User
+        const input: Partial<Share> = {
+            id: uuid.v4(),
+            admin: offer.admin,
+            email: offer.email,
+            listId: listId, // No cheating
+        };
+        // Email a message containing the offer to this User
+        // TODO - instruct them to create a new login first if new
+        // TODO - link to the accept UI
+        const message: Mail.Options = {
+            html: `
+                <p>
+                    ${list.users[0].firstName} ${list.users[0].lastName}
+                    is offering to share a Shopping List named
+                    ${list.name} with you.
+                </p>
+            `,
+            subject: "Offer to access a ShoppingList shared list",
+            text: `
+                    ${list.users[0].firstName} ${list.users[0].lastName}
+                    is offering to share a Shopping List named
+                    ${list.name} with you.
+            `,
+            to: input.email,
+        }
+        await EmailServices.send(message);
+
+        // Create and return a Share instance for this offer
+        // @ts-ignore
+        const output = await Share.create(input);
+        return output;
 
     }
 

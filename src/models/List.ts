@@ -11,6 +11,7 @@ import {BelongsToMany, Column, DataType, HasMany, Model, Table} from "sequelize-
 
 import Category from "./Category";
 import Item from "./Item";
+import Share from "./Share";
 import User from "./User";
 import UserList from "./UserList";
 
@@ -81,6 +82,13 @@ class List extends Model<List> {
     })
     // General notes about this List
     notes?: string;
+
+    @HasMany(() => Share, {
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+    })
+    // Shares owned by this List
+    shares!: Share[];
 
     @Column({
         allowNull: true,

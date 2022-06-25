@@ -14,6 +14,7 @@ import Category from "./Category";
 import Item from "./Item";
 import List from "./List";
 import RefreshToken from "./RefreshToken";
+import Share from "./Share";
 import User from "./User";
 import UserList from "./UserList";
 import logger from "../util/ServerLogger";
@@ -53,6 +54,7 @@ Database.addModels([
     UserList,
     Category,
     Item,
+    Share,
 ]);
 
 logger.info({

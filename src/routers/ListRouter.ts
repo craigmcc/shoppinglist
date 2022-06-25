@@ -77,6 +77,13 @@ ListRouter.post("/:listId/populate",
         res.send(await ListServices.populate(req.params.listId));
     });
 
+// POST /:listId/share - Email an offer to share this List
+ListRouter.post("/:listId/share",
+    requireAdmin,
+    async (req: Request, res: Response) => {
+        res.send(await ListServices.share(req.params.listId, req.body));
+    });
+
 // List-Child Routes ---------------------------------------------------------
 
 // GET /:listId/categories - Find Categories for this List
