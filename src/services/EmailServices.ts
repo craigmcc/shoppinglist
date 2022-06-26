@@ -17,7 +17,7 @@ import logger from "../util/ServerLogger";
 class EmailServices {
 
     public async receive(message: IncomingMail): Promise<void> {
-        logger.info({
+        logger.debug({
             context: "EmailServices.receive",
             message: message,
         });
@@ -25,7 +25,7 @@ class EmailServices {
     }
 
     public async send(message: Mail.Options): Promise<void> {
-        logger.info({
+        logger.debug({
             context: "EmailServices.send",
             message: message,
         })

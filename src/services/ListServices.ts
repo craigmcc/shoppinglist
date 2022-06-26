@@ -26,6 +26,8 @@ import {InitialListData} from "../util/InitialListData";
 import {appendPaginationOptions} from "../util/QueryParameters";
 import * as SortOrder from "../util/SortOrder";
 
+const BASE_URL = process.env.BASE_URL ? process.env.BASE_URL : "";
+
 // Public Classes ------------------------------------------------------------
 
 class ListServices extends BaseParentServices<List> {
@@ -134,44 +136,102 @@ class ListServices extends BaseParentServices<List> {
      *
      * @return Share representing this offer
      */
-    public async share(listId: string, offer: Partial<Share>): Promise<Share> {
+    public async share(listId: string, offer: Share): Promise<Share> {
 
         // Look up the list to be shared
         const list = await this.read("ListServices.categories", listId, {
             withUsers: "",
         });
 
-        // Record an offer of this List to this User
-        const input: Partial<Share> = {
+        // See if there is already a User with this email address
+        const user = await User.findOne({
+            where: { email: offer.email}
+        });
+
+        // Configure the Share that we will be storing
+        const share = {
             id: uuid.v4(),
-            admin: offer.admin,
+            admin: (offer.admin !== undefined) ? offer.admin : true,
             email: offer.email,
             listId: listId, // No cheating
-        };
-        // Email a message containing the offer to this User
-        // TODO - instruct them to create a new login first if new
-        // TODO - link to the accept UI
-        const message: Mail.Options = {
-            html: `
+        }
+
+        // Compose the html version of the invitation message
+        const ACCEPT_URL = `${BASE_URL}/accept/${share.id}`;
+        let html: string = `
                 <p>
                     ${list.users[0].firstName} ${list.users[0].lastName}
                     is offering to share a Shopping List named
                     <strong>${list.name}</strong> with you.
                 </p>
-            `,
+        `;
+        if (user) {
+            html += `
+                <p>
+                    Please log in to your Shopping List account (if you
+                    are not aleady logged in) at
+                    <a href="${BASE_URL}">${BASE_URL}</a>.
+                </p>
+            `;
+        } else {
+            html += `
+                <p>
+                    If you do not have a Shopping List account yet, first
+                    please create one (with this email address) at
+                    <a href="${BASE_URL}">${BASE_URL}</a> and log in to it.
+                </p>
+            `
+        }
+        html += `
+                <p>
+                    Next, click on the following link to accept the invitation:
+                    <a href="${ACCEPT_URL}">${ACCEPT_URL}</a>.
+                </p>
+        `;
+
+        // Compose the text version of the invitation message
+        let text = `
+                ${list.users[0].firstName} ${list.users[0].lastName} is offering to\r\n
+                share a Shopping List named "${list.name}" with you.\r\n
+                \r\n
+        `;
+        if (user) {
+            text += `
+                Please log in to your Shopping List account (if you are not already logged in) at\r\n
+                \r\n
+                ${BASE_URL}\r\n
+                \r\n
+            `;
+        } else {
+            text += `
+                If you do not have a Shopping List account yet, first please create\r\n
+                one (with this email address) at\r\n
+                \r\n
+                ${BASE_URL}\r\n
+                \r\n
+                and log in to it.\r\n
+                \r\n
+            `;
+        }
+        text += `
+                Next, click on the following link to accept the invitation:\r\n
+                \r\n
+                "${BASE_URL}\r\n
+                \r\n
+        `;
+
+        // Email a message containing the offer to this User
+        const message: Mail.Options = {
+            html: html,
             subject: "Offer to access a ShoppingList shared list",
-            text: `
-                    ${list.users[0].firstName} ${list.users[0].lastName}
-                    is offering to share a Shopping List named
-                    "${list.name}" with you.
-            `,
-            to: input.email,
+            text: text,
+            to: offer.email,
         }
         await EmailServices.send(message);
 
         // Create and return a Share instance for this offer
         // @ts-ignore
-        const output = await Share.create(input);
+        const output = await Share.create(share);
         return output;
 
     }
