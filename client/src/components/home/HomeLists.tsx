@@ -4,7 +4,7 @@
 
 // External Modules ----------------------------------------------------------
 
-import {useEffect} from "react";
+import {useContext, useEffect} from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -15,6 +15,7 @@ import {useNavigate} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
 
+import LoginContext from "../login/LoginContext";
 import {CURRENT_LIST_KEY} from "../../constants";
 import {HandleAction, HandleList} from "../../types";
 import useFetchLists from "../../hooks/useFetchLists";
@@ -31,6 +32,8 @@ export interface Props {
 // Component Details ---------------------------------------------------------
 
 const HomeLists = (props: Props) => {
+
+    const loginContext = useContext(LoginContext);
 
     const [list, setList] = useLocalStorage(CURRENT_LIST_KEY);
 
@@ -94,7 +97,12 @@ const HomeLists = (props: Props) => {
     }
 
     const handleShare: HandleList = (list) => {
-        alert(`TODO: Share List for '${list.name}' is not yet implemented`);
+        logger.debug({
+            context: "HomeLists.handleShare",
+            list: Abridgers.LIST(list),
+        });
+        setList(list);
+        navigate("/share");
     }
 
     return (
@@ -140,6 +148,7 @@ const HomeLists = (props: Props) => {
                                         >Manage Items</Dropdown.Item>
                                         <Dropdown.Divider/>
                                         <Dropdown.Item
+                                            disabled={!loginContext.validateAdmin(list)}
                                             onClick={(() => handleShare(list))}
                                         >Share List</Dropdown.Item>
                                     </Dropdown.Menu>

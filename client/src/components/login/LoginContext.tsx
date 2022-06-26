@@ -15,6 +15,7 @@ import {Scope} from "../../types";
 import OAuth from "../../clients/OAuth";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import TokenResponse from "../../models/TokenResponse";
+import List from "../../models/List";
 import User from "../../models/User";
 import logger from "../../util/ClientLogger";
 import * as ToModel from "../../util/ToModel";
@@ -56,6 +57,8 @@ export interface LoginState {
     handleLogin: (username: string, tokenResponse: TokenResponse) => void;
     handleLogout: () => void;
     refreshUser: (data?: LoginData) => Promise<void>; // Refresh user data
+    validateAdmin: (list: List) => boolean;
+    validateRegular: (list: List) => boolean;
     validateScope: (scope: string) => boolean;
 }
 
@@ -181,6 +184,29 @@ export const LoginContextProvider = ({ children }) => {
     }
 
     /**
+     * Return true if the currently logged in user has regular permissions
+     * on the specified List.
+     *
+     * @param list                      List to be tested for
+     */
+    const validateAdmin = (list: List): boolean => {
+        return validateScope(`admin:${list.id}`);
+    }
+
+    /**
+     * Return true if the currently logged in user has admin permissions
+     * on the specified List.
+     *
+     * @param list                      List to be tested for
+     */
+    const validateRegular = (list: List): boolean => {
+        if (validateScope(`list:${list.id}`)) {
+            return true;
+        } else
+            return validateScope(`admin:${list.id}`);
+    }
+
+    /**
      * Return true if the currently logged in user has authorization for the
      * specified scope.
      *
@@ -230,6 +256,8 @@ export const LoginContextProvider = ({ children }) => {
         handleLogin: handleLogin,
         handleLogout: handleLogout,
         refreshUser: refreshUser,
+        validateAdmin: validateAdmin,
+        validateRegular: validateRegular,
         validateScope: validateScope,
     };
 

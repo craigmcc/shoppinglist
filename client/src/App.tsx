@@ -23,6 +23,7 @@ import ItemsView from "./components/items/ItemsView";
 import ListView from "./components/list/ListView";
 import ProfileView from "./components/profile/ProfileView";
 import RegisterView from "./components/register/RegisterView";
+import ShareView from "./components/share/ShareView";
 
 // Component Details ---------------------------------------------------------
 
@@ -54,6 +55,7 @@ function App() {
                         <Route path="/list" element={<ListView/>}/>
                         <Route path="/profile" element={<ProfileView/>}/>
                         <Route path="/register" element={<RegisterView/>}/>
+                        <Route path="/share" element={<ShareView/>}/>
                     </Route>
                 </Routes>
             </Router>

@@ -8,10 +8,11 @@ import {useContext, useEffect, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {ProcessList} from "../types";
+import {ProcessList, ProcessShare} from "../types";
 import Api from "../clients/Api";
 import LoginContext from "../components/login/LoginContext";
 import List, {LISTS_BASE} from "../models/List";
+import Share from "../models/Share";
 import * as Abridgers from "../util/Abridgers";
 import logger from "../util/ClientLogger";
 import ReportError from "../util/ReportError";
@@ -30,6 +31,7 @@ export interface State {
     executing: boolean;                 // Are we currently executing?
     insert: ProcessList;                // Function to insert a new List
     remove: ProcessList;                // Function to remove an existing List
+    share: ProcessShare;                // Function to share an existing List
     update: ProcessList;                // Function to update an existing List
 }
 
@@ -139,6 +141,34 @@ const useMutateList = (props: Props = {}): State => {
 
     }
 
+    const share: ProcessShare = async (theShare) => {
+
+        setError(null);
+        setExecuting(true);
+
+        let output = new Share();
+        const url = LISTS_BASE + `/${theShare.listId}/share`;
+
+        try {
+            output = ToModel.SHARE((await Api.post(url, theShare)).data);
+            logger.debug({
+                context: "useMutateList.share",
+                url: url,
+                share: output,
+            });
+        } catch (e) {
+            setError(e as Error);
+            ReportError("useMutateList.share", e, {
+                url: url,
+                share: theShare,
+            }, alertPopup);
+        }
+
+        setExecuting(false);
+        return output;
+
+    }
+
     const update: ProcessList = async (theList) => {
 
         setError(null);
@@ -173,6 +203,7 @@ const useMutateList = (props: Props = {}): State => {
         executing: executing,
         insert: insert,
         remove: remove,
+        share: share,
         update: update,
     };
 

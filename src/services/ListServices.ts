@@ -156,14 +156,14 @@ class ListServices extends BaseParentServices<List> {
                 <p>
                     ${list.users[0].firstName} ${list.users[0].lastName}
                     is offering to share a Shopping List named
-                    ${list.name} with you.
+                    <strong>${list.name}</strong> with you.
                 </p>
             `,
             subject: "Offer to access a ShoppingList shared list",
             text: `
                     ${list.users[0].firstName} ${list.users[0].lastName}
                     is offering to share a Shopping List named
-                    ${list.name} with you.
+                    "${list.name}" with you.
             `,
             to: input.email,
         }

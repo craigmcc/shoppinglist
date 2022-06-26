@@ -9,6 +9,7 @@ import Category from "../models/Category";
 import Item from "../models/Item";
 import List from "../models/List";
 import RefreshToken from "../models/RefreshToken";
+import Share from "../models/Share";
 import User from "../models/User";
 
 // Public Objects ------------------------------------------------------------
@@ -71,6 +72,10 @@ export const REFRESH_TOKENS = (values: object[]): RefreshToken[] => {
         results.push(new RefreshToken(value));
     });
     return results;
+}
+
+export const SHARE = (value: object): Share => {
+    return new Share(value);
 }
 
 export const USER = (value: object): User => {
