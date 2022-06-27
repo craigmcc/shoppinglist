@@ -52,7 +52,7 @@ function UserWidget(props: Props) {
         const accessToken = loginContext.data.accessToken;
         const username = loginContext.data.username;
         try {
-            logger.info({
+            logger.debug({
                 context: "UserWidget.handleLogout",
                 username: username,
 //                accessToken: accessToken,

@@ -44,7 +44,7 @@ const ItemView = (props: Props) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        logger.info({
+        logger.debug({
             context: "ItemView.useEffect",
             list: list,
             item: item,

@@ -16,9 +16,9 @@ import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import {CheckBoxField, TextField} from "@craigmcc/shared-react";
 
-
 // Internal Modules ----------------------------------------------------------
 
+import {RECAPTCHA_SITE_KEY} from "../../constants";
 import {HandleCreateAccount} from "../../types";
 import CreateAccount from "../../models/CreateAccount";
 import {validateUserUsernameUnique} from "../../util/AsyncValidators";
@@ -32,10 +32,6 @@ export interface Props {
     createAccount: CreateAccount;       // Initial values
     handleCreateAccount: HandleCreateAccount; // Handle User registration request
 }
-
-// This is lame, but it gets baked in to the build output anyway.
-// Plus, this key only works from authorized domains.
-const RECAPTCHA_SITE_KEY = "6LccmWIgAAAAAE8rP_RUWYtcK_e4GSkj7GM0_RgM";
 
 // Component Details ---------------------------------------------------------
 

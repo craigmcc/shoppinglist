@@ -44,7 +44,7 @@ const ProfileView = (props: Props) => {
                 firstName: theUser.firstName,
                 lastName: theUser.lastName,
             }
-            logger.info({
+            logger.debug({
                 context: "ProfileView.handleUpdate",
                 input: theUser,
                 update: useUser,

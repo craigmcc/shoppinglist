@@ -157,7 +157,8 @@ class ListServices extends BaseParentServices<List> {
         }
 
         // Compose the html version of the invitation message
-        const ACCEPT_URL = `${BASE_URL}/accept/${share.id}`;
+        // NOTE - the "/#" part is because we need to use HashRouter
+        const ACCEPT_URL = `${BASE_URL}/#/accept/${share.id}`;
         let html: string = `
                 <p>
                     ${list.users[0].firstName} ${list.users[0].lastName}
@@ -248,6 +249,7 @@ class ListServices extends BaseParentServices<List> {
         const list = await this.read("ListServices.usersExclude", listId);
         const user = await UserServices.read("ListServices.usersExclude", userId);
         await list.$remove("users", user);
+        // TODO - update the User's current access tokens to exclude the old List
         return user;
     }
 
@@ -260,6 +262,7 @@ class ListServices extends BaseParentServices<List> {
             listId: listId,
             userId: userId,
         });
+        // TODO - update the User's current access tokens to include the new List
         return user;
     }
 

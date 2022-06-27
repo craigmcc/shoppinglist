@@ -72,6 +72,9 @@ class Share extends Model<Share> {
     // ID of the List that owns this Share
     listId!: string;
 
+    // Google reCAPTCHA v2 token (when accept is processed), not persisted
+    token?: string;
+
 }
 
 export default Share;

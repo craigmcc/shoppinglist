@@ -45,7 +45,7 @@ const RegisterView = (props: Props) => {
             password2: "*REDACTED*",
         }
         try {
-            logger.info({
+            logger.debug({
                 context: "RegisterView.handleCreateAccount",
                 createAccount: redactedCreateAccount,
             });

@@ -171,7 +171,7 @@ const EntriesList = (props: Props) => {
 
     // Handle request to refresh the selected Items list
     const handleRefresh = (): Promise<any> => {
-        logger.info({
+        logger.debug({
             context: "EntriesList.handleRefresh",
         });
         fetchItems.handleRefresh();

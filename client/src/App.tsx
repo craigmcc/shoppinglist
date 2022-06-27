@@ -5,7 +5,7 @@
 // External Modules ----------------------------------------------------------
 
 import React from 'react';
-import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import {HashRouter as Router, Route, Routes} from "react-router-dom";
 import {ToastContainer} from "react-toastify";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 // Internal Modules ----------------------------------------------------------
 
 import {LoginContextProvider} from "./components/login/LoginContext";
+import AcceptView from "./components/accept/AcceptView";
 import CategoriesView from "./components/categories/CategoriesView";
 import CategoryView from "./components/category/CategoryView";
 import EntriesView from "./components/entries/EntriesView";
@@ -47,15 +48,18 @@ function App() {
                 <Routes>
                     <Route path="/">
                         <Route path="" element={<HomeView/>}/>
-                        <Route path="/categories" element={<CategoriesView/>}/>
-                        <Route path="/category" element={<CategoryView/>}/>
-                        <Route path="/entries" element={<EntriesView/>}/>
-                        <Route path="/item" element={<ItemView/>}/>
-                        <Route path="/items" element={<ItemsView/>}/>
-                        <Route path="/list" element={<ListView/>}/>
-                        <Route path="/profile" element={<ProfileView/>}/>
-                        <Route path="/register" element={<RegisterView/>}/>
-                        <Route path="/share" element={<ShareView/>}/>
+                        <Route path="accept">
+                            <Route path=":shareId" element={<AcceptView/>}/>
+                        </Route>
+                        <Route path="categories" element={<CategoriesView/>}/>
+                        <Route path="category" element={<CategoryView/>}/>
+                        <Route path="entries" element={<EntriesView/>}/>
+                        <Route path="item" element={<ItemView/>}/>
+                        <Route path="items" element={<ItemsView/>}/>
+                        <Route path="list" element={<ListView/>}/>
+                        <Route path="profile" element={<ProfileView/>}/>
+                        <Route path="register" element={<RegisterView/>}/>
+                        <Route path="share" element={<ShareView/>}/>
                     </Route>
                 </Routes>
             </Router>

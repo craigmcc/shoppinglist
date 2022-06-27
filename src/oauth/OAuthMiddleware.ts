@@ -333,9 +333,7 @@ export const requireUser: RequestHandler =
                 include: [ List ],
                 where: { id: accessToken.userId }
             });
-            if (user) {
-                res.locals.user = user;
-            }
+            res.locals.user = user;
         }
 
         // Pass control to the next middleware, as usual

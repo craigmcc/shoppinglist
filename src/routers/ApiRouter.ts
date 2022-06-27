@@ -13,6 +13,7 @@ import ClientRouter from "./ClientRouter";
 import EmailRouter from "./EmailRouter";
 import ItemRouter from "./ItemRouter";
 import ListRouter from "./ListRouter";
+import ShareRouter from "./ShareRouter";
 import UserRouter from "./UserRouter";
 
 // Public Objects ------------------------------------------------------------
@@ -30,4 +31,5 @@ ApiRouter.use("/client", ClientRouter);
 ApiRouter.use("/email", EmailRouter);
 ApiRouter.use("/items", ItemRouter);
 ApiRouter.use("/lists", ListRouter);
+ApiRouter.use("/shares", ShareRouter);
 ApiRouter.use("/users", UserRouter);

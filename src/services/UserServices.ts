@@ -151,6 +151,8 @@ class UserServices extends BaseParentServices<User> {
             // Commit the transaction
             await transaction.commit();
 
+            // TODO - update the User's current access token to include the new List
+
             // Return the new User with its nested List
             return await this.find(user.id, {
                 withLists: "",
@@ -199,6 +201,7 @@ class UserServices extends BaseParentServices<User> {
         const user = await this.read("UserServices.listsExclude", userId);
         const list = await ListServices.read("UserServices.listsExclude", listId);
         await user.$remove("lists", list);
+        // TODO - update the User's current access tokens to exclude the old List
         return list;
     }
 
@@ -211,6 +214,7 @@ class UserServices extends BaseParentServices<User> {
             listId: listId,
             userId: userId,
         }, options);
+        // TODO - update the User's current access tokens to include the new List
         return list;
     }
 

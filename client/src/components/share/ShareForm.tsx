@@ -65,6 +65,7 @@ const ShareForm = (props: Props) => {
 
     const {formState: {errors}, handleSubmit, register} = useForm<Share>({
         defaultValues: new Share({
+            id: "TODO",
             admin: true,
             email: "",
             listId: props.list.id,
