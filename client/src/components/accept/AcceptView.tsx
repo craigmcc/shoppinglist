@@ -4,7 +4,8 @@
 
 // External Modules ----------------------------------------------------------
 
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
+import Container from "react-bootstrap/Container";
 import {useNavigate, useParams} from "react-router-dom";
 import {MutatingProgress} from "@craigmcc/shared-react";
 
@@ -27,6 +28,8 @@ export interface Props {
 
 const AcceptView = (props: Props) => {
 
+    const [expired, setExpired] = useState<boolean>(false);
+
     const {shareId} = useParams();
 
     const manageShare = useManageShare({
@@ -36,10 +39,17 @@ const AcceptView = (props: Props) => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        let theExpired = false;
+        if (manageShare.share) {
+            theExpired = new Date(manageShare.share.expires) < new Date();
+        }
         logger.debug({
             context: "AcceptView.useEffect",
             shareId: shareId,
+            share: manageShare.share,
+            expired: theExpired,
         });
+        setExpired(theExpired)
     }, [shareId, manageShare.share]);
 
     const handleAccept: HandleShare = async (theShare) => {
@@ -65,11 +75,18 @@ const AcceptView = (props: Props) => {
                 message="Accepting the Share invite email"
             />
             <AcceptHeader share={manageShare.share ? manageShare.share : new Share()}/>
-            <AcceptForm
-                autoFocus
-                handleAccept={handleAccept}
-                share={manageShare.share ? manageShare.share : new Share()}
-            />
+            {expired ? (
+                <Container className="text-center">
+                    <span>This Share expired at {manageShare.share?.expires}</span>
+                </Container>
+            ) : (
+                <AcceptForm
+                    autoFocus
+                    handleAccept={handleAccept}
+                    share={manageShare.share ? manageShare.share : new Share()}
+                />
+            )}
+
         </>
     )
 

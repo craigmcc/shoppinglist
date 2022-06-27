@@ -27,6 +27,9 @@ import {appendPaginationOptions} from "../util/QueryParameters";
 import * as SortOrder from "../util/SortOrder";
 
 const BASE_URL = process.env.BASE_URL ? process.env.BASE_URL : "";
+const SHARE_EXPIRES_DELTA = process.env.SHARE_EXPIRES_DELTA
+    ? Number(process.env.SHARE_EXPIRES_DELTA)
+    : 1 * 24 * 60 * 60 * 1000;      // One day in milliseconds
 
 // Public Classes ------------------------------------------------------------
 
@@ -153,6 +156,7 @@ class ListServices extends BaseParentServices<List> {
             id: uuid.v4(),
             admin: (offer.admin !== undefined) ? offer.admin : true,
             email: offer.email,
+            expires: new Date((new Date()).getTime() + SHARE_EXPIRES_DELTA),
             listId: listId, // No cheating
         }
 

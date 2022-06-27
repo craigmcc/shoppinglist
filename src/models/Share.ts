@@ -47,6 +47,19 @@ class Share extends Model<Share> {
     // Email address of the person this Share was extended to
     email!: string;
 
+    @Column({
+        allowNull: false,
+        field: "expires",
+        type: DataType.DATE,
+        validate: {
+            notNull: {
+                msg: "expires: Is required",
+            }
+        }
+    })
+    // Timestamp when this Share will no longer be valid
+    expires!: Date;
+
     @BelongsTo(() => List, {
         foreignKey: {
             allowNull: false,

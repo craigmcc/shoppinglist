@@ -18,6 +18,7 @@ export class Share {
         this.id = data.id ? data.id : null;
         this.admin = (data.admin !== undefined) ? data.admin : true;
         this.email = data.email ? data.email : null;
+        this.expires = data.expires ? data.expires : null;
         this.listId = data.listId ? data.listId : null;
         this.list = data.list ? ToModel.LIST(data.list) : undefined;
         this.token = data.token ? data.token : undefined;
@@ -26,6 +27,7 @@ export class Share {
     id: string;
     admin: boolean;
     email: string;
+    expires: string;
     listId: string;
     token: string;                      // Google reCAPTCHA v2 token
 
