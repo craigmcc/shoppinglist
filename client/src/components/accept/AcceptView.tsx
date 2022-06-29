@@ -29,7 +29,6 @@ export interface Props {
 const AcceptView = (props: Props) => {
 
     const [expired, setExpired] = useState<boolean>(false);
-
     const {shareId} = useParams();
 
     const manageShare = useManageShare({
@@ -49,7 +48,7 @@ const AcceptView = (props: Props) => {
             share: manageShare.share,
             expired: theExpired,
         });
-        setExpired(theExpired)
+        setExpired(theExpired);
     }, [shareId, manageShare.share]);
 
     const handleAccept: HandleShare = async (theShare) => {
@@ -58,7 +57,7 @@ const AcceptView = (props: Props) => {
                 context: "AcceptView.handleAccept",
                 share: theShare,
             });
-            manageShare.accept(theShare);
+            await manageShare.accept(theShare);
         } catch (error) {
             ReportError("AcceptView.handleAccept", error, {
                 share: theShare,

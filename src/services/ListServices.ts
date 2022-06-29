@@ -148,7 +148,7 @@ class ListServices extends BaseParentServices<List> {
 
         // See if there is already a User with this email address
         const user = await User.findOne({
-            where: { email: offer.email}
+            where: { email: offer.email},
         });
 
         // Configure the Share that we will be storing

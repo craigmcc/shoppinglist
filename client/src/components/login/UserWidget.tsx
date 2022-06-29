@@ -75,7 +75,7 @@ function UserWidget(props: Props) {
     }
 
     const handlePassword: HandleAction = () => {
-        alert("User clicked 'Change Password'");
+        navigate("/password");
     }
 
     const handleProfile: HandleAction = () => {
@@ -98,9 +98,9 @@ function UserWidget(props: Props) {
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.Item
-                                    onClick={handlePassword}>Change Password</Dropdown.Item>
-                                <Dropdown.Item
                                     onClick={handleProfile}>Edit Profile</Dropdown.Item>
+                                <Dropdown.Item
+                                    onClick={handlePassword}>Update Password</Dropdown.Item>
                                 <Dropdown.Divider/>
                                 <Dropdown.Item
                                     onClick={handleLogout}>Log Out</Dropdown.Item>

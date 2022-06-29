@@ -13,7 +13,7 @@ import UserServices from "./UserServices";
 import List from "../models/List";
 import Share from "../models/Share";
 import User from "../models/User";
-import {BadRequest, Forbidden, NotFound, ServiceUnavailable} from "../util/HttpErrors";
+import {BadRequest, NotFound, ServiceUnavailable} from "../util/HttpErrors";
 
 // Public Objects ------------------------------------------------------------
 
@@ -21,9 +21,8 @@ class ShareServices {
 
     public async accept(shareId: string, input: Share, user: User): Promise<Share> {
 
-        // Verify that the included ReCAPTCHA token is valid
+        // Verify that the included reCAPTCHA token is valid
         const verifyTokenResponse = await verifyTokenV2(input.token ? input.token :"");
-        // @ts-ignore
         if (!verifyTokenResponse.success) {
             throw new ServiceUnavailable("Failed ReCAPTCHA validation");
         }
@@ -66,9 +65,7 @@ class ShareServices {
         if (share) {
             return share;
         } else {
-            throw new NotFound(
-                `shareId: Missing Share ${shareId}`
-            )
+            throw new NotFound(`shareId: Missing Share ${shareId}`);
         }
     }
 

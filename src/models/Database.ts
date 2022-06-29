@@ -13,6 +13,7 @@ import AccessToken from "./AccessToken";
 import Category from "./Category";
 import Item from "./Item";
 import List from "./List";
+import Password from "./Password";
 import RefreshToken from "./RefreshToken";
 import Share from "./Share";
 import User from "./User";
@@ -48,6 +49,7 @@ Database.addModels([
     // User Stack
     User,
     AccessToken,
+    Password,
     RefreshToken,
     // List Stack
     List,

@@ -13,6 +13,7 @@ import CreateAccount from "./models/CreateAccount";
 import Credentials from "./models/Credentials";
 import Item from "./models/Item";
 import List from "./models/List";
+import Password from "./models/Password";
 import Share from "./models/Share";
 import User from "./models/User";
 
@@ -64,6 +65,7 @@ export type HandleCreateAccount = (createAccount: CreateAccount) => void;
 export type HandleCredentials = (credentials: Credentials) => void;
 export type HandleItem = (item: Item) => void;
 export type HandleList = (list: List) => void;
+export type HandlePassword = (password: Password) => void;
 export type HandleShare = (share: Share) => void;
 export type HandleUser = (user: User) => void;
 
@@ -72,5 +74,6 @@ export type ProcessCreateAccount = (createAccount: CreateAccount) => Promise<Use
 export type ProcessCredentials = (credentials: Credentials) => Promise<Credentials>;
 export type ProcessItem = (item: Item) => Promise<Item>;
 export type ProcessList = (list: List) => Promise<List>;
+export type ProcessPassword = (password: Password) => Promise<Password>;
 export type ProcessShare = (share: Share) => Promise<Share>;
 export type ProcessUser = (user: User) => Promise<User>;

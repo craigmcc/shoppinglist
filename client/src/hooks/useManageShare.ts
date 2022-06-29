@@ -53,13 +53,13 @@ const useManageShare = (props: Props): State => {
             try {
                 if (props.shareId) {
                     theShare = ToModel.SHARE((await Api.get(url)).data);
-                    logger.info({
+                    logger.debug({
                         context: "useManageShare.fetchShare",
                         share: theShare,
                         url: url,
                     });
                 } else {
-                    logger.info({
+                    logger.debug({
                         context: "useManageShare.fetchShare",
                         msg: "Skipped fetching Share",
                     });
@@ -89,7 +89,7 @@ const useManageShare = (props: Props): State => {
 
         try {
             shared = ToModel.SHARE((await Api.post(url, theShare)).data);
-            logger.info({
+            logger.debug({
                 context: "useManageShare.accept",
                 share: shared,
                 url: url,

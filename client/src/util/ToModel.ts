@@ -8,6 +8,7 @@ import AccessToken from "../models/AccessToken";
 import Category from "../models/Category";
 import Item from "../models/Item";
 import List from "../models/List";
+import Password from "../models/Password";
 import RefreshToken from "../models/RefreshToken";
 import Share from "../models/Share";
 import User from "../models/User";
@@ -60,6 +61,10 @@ export const LISTS = (values: object[]): List[] => {
         results.push(new List(value));
     });
     return results;
+}
+
+export const PASSWORD = (value: object): Password => {
+    return new Password(value);
 }
 
 export const REFRESH_TOKEN = (value: object): RefreshToken => {
