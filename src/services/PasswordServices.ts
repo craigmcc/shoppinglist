@@ -103,6 +103,49 @@ class PasswordServices {
     }
 
     /**
+     * Submit the new passwords after successful "forgot" interaction.
+     *
+     * @param password                  Password with userId, reCAPTCHA, and new values
+     */
+    public async submit(password: Password): Promise<void> {
+
+        // Verify that the included reCAPTCHA token is valid
+        const verifyTokenResponse = await verifyTokenV2(password.token ? password.token :"");
+        if (!verifyTokenResponse.success) {
+            throw new ServiceUnavailable("Failed ReCAPTCHA validation");
+        }
+
+        // Verify that the two password values match
+        if (!password.password1 || !password.password2 || (password.password1 !== password.password2)) {
+            throw new BadRequest("Password values do not match");
+        }
+
+        // Look up the User to be updated
+        const user = await User.findOne({
+            where: { email: password.email }
+        });
+        if (!user) {
+            throw new NotFound(`Missing User ${password.userId}`);
+        }
+
+        // Update this User's password
+        const hashedPassword = await hashPassword(password.password1);
+        await User.update({
+                password: hashedPassword,
+            },
+            {
+                fields: [ "password" ],
+                where: { id: user.id }
+            });
+
+        // Delete the Password from the database
+        await Password.destroy({
+            where: { id: password.id }
+        });
+
+    }
+
+    /**
      * Update the password for the specified user.
      *
      * @param user                      User whose password is being updated
@@ -122,9 +165,9 @@ class PasswordServices {
         }
 
         // Update the password on this User
-        const thePassword = await hashPassword(password.password1);
+        const hashedPassword = await hashPassword(password.password1);
         await User.update({
-                password: thePassword,
+                password: hashedPassword,
             },
             {
                 fields: [ "password" ],

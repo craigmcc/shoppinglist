@@ -39,17 +39,13 @@ PasswordRouter.post("/:email",
 
 // GET /:passwordId - Find Password by ID
 PasswordRouter.get("/:passwordId",
-    requireUser,
     async (req: Request, res: Response) => {
         return res.send(await PasswordServices.find(req.params.passwordId));
     });
 
-// POST /:passwordId - Accept the specified Password
-/*
-PasswordRouter.post("/:passwordId",
-    requireUser,
+// PUT /:passwordId - Update forgotten password
+PasswordRouter.put("/:passwordId",
     async (req: Request, res: Response) => {
-        return res.send(await PasswordServices.submit(req.params.passwordId, req.body));
+        return res.send(await PasswordServices.submit(req.body));
     });
-*/
 

@@ -10,6 +10,7 @@ import Mail from "nodemailer/lib/mailer";
 // Internal Modules ----------------------------------------------------------
 
 import {sendMessage} from "./GMailServices";
+import {ServerError} from "../util/HttpErrors";
 import logger from "../util/ServerLogger";
 
 // Public Objects ------------------------------------------------------------
@@ -28,8 +29,16 @@ class EmailServices {
         logger.debug({
             context: "EmailServices.send",
             message: message,
-        })
-        await sendMessage(message);
+        });
+        try {
+            await sendMessage(message);
+        } catch (error) {
+            logger.error({
+                context: "EmailServices.send",
+                error: error,
+            });
+            throw new ServerError(error as Error, "EmailServices.send");
+        }
     }
 
 }

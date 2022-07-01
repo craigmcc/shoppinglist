@@ -56,7 +56,10 @@ function HomeView(props: Props) {
     }, [loginContext.data.loggedIn, Mode]);
 
     const handleForgotPassword: HandleAction = () => {
-        alert("handleForgotPassword is not yet implemented.");
+        logger.debug({
+            context: "HomeView.handleForgotPassword",
+        })
+        navigate("/reset");
     }
 
     const handleLogin: HandleCredentials = async (credentials) => {

@@ -25,6 +25,7 @@ import ListView from "./components/list/ListView";
 import PasswordView from "./components/password/PasswordView";
 import ProfileView from "./components/profile/ProfileView";
 import RegisterView from "./components/register/RegisterView";
+import ResetView from "./components/reset/ResetView";
 import ShareView from "./components/share/ShareView";
 
 // Component Details ---------------------------------------------------------
@@ -59,11 +60,12 @@ function App() {
                         <Route path="items" element={<ItemsView/>}/>
                         <Route path="list" element={<ListView/>}/>
                         {/* PasswordView supports both with and without passwordId */}
-                        <Route path="password" element={<PasswordView/>}>
+                        <Route path="passwords" element={<PasswordView/>}>
                             <Route path=":passwordId" element={<PasswordView/>}/>
                         </Route>
                         <Route path="profile" element={<ProfileView/>}/>
                         <Route path="register" element={<RegisterView/>}/>
+                        <Route path="reset" element={<ResetView/>}/>
                         <Route path="share" element={<ShareView/>}/>
                     </Route>
                 </Routes>

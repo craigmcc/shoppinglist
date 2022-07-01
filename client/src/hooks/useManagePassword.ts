@@ -8,7 +8,7 @@ import {useEffect, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {HandlePassword} from "../types";
+import {HandlePassword, HandleValue} from "../types";
 import Api from "../clients/Api";
 import Password, {PASSWORDS_BASE} from "../models/Password";
 import logger from "../util/ClientLogger";
@@ -27,6 +27,7 @@ export interface State {
     executing: boolean;                 // Are we currently executing?
     loading: boolean;                   // Are we currently loading?
     password: Password;                 // Password retrieved at initialization (if any)
+    reset: HandleValue;                 // Function to send a password reset email
     submit: HandlePassword;             // Function to submit a reset
     update: HandlePassword;             // Function to submit an update
 }
@@ -82,6 +83,59 @@ const useManagePassword = (props: Props): State => {
     }, [props.passwordId, alertPopup]);
 
     /**
+     * Request a password reset email to be sent.
+     *
+     * @param theEmail                  Email address to send to
+     */
+    const reset: HandleValue = async (theEmail) => {
+
+        const url = `${PASSWORDS_BASE}/${theEmail}`;
+        setError(null);
+        setExecuting(true);
+
+        try {
+            await Api.post(url);
+        } catch (anError) {
+            setError(anError as Error);
+            ReportError("useManagePassword.reset", anError, {
+                url: url,
+            });
+        }
+
+        setExecuting(false);
+
+    }
+
+    /**
+     * Submit the new password for a reset.
+     *
+     * @param thePassword               Password object with updated information
+     */
+    const submit: HandlePassword = async (thePassword) => {
+
+        const url = `${PASSWORDS_BASE}/${props.passwordId}`;
+        let password = new Password();
+        setError(null);
+        setExecuting(true);
+
+        try {
+            password = ToModel.PASSWORD((await Api.put(url, thePassword)).data);
+            logger.debug({
+                context: "useManagePassword.submit",
+                password: password,
+                url: url,
+            });
+        } catch (anError) {
+            setError(anError as Error);
+            ReportError("useManagePassword.submit", anError, {
+                password: thePassword,
+                url: url,
+            });
+        }
+
+    }
+
+    /**
      * Update the password for the current User
      *
      * @param thePassword               New password and reCAPTCHA token
@@ -113,35 +167,12 @@ const useManagePassword = (props: Props): State => {
 
     }
 
-    const submit: HandlePassword = async (thePassword) => {
-
-        const url = `${PASSWORDS_BASE}/${props.passwordId}`;
-        let password = new Password();
-        setError(null);
-        setExecuting(true);
-
-        try {
-            password = ToModel.PASSWORD((await Api.post(url, thePassword)).data);
-            logger.debug({
-                context: "useManagePassword.submit",
-                password: password,
-                url: url,
-            });
-        } catch (anError) {
-            setError(anError as Error);
-            ReportError("useManagePassword.submit", anError, {
-                password: thePassword,
-                url: url,
-            });
-        }
-
-    }
-
     return {
         error: error ? error : null,
         executing: executing,
         loading: loading,
         password: password,
+        reset: reset,
         submit: submit,
         update: update,
     }

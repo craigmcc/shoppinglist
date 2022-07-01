@@ -75,7 +75,7 @@ const PasswordView = (props: Props) => {
             if (loginContext.data.loggedIn) {
                 await managePassword.update(thePassword);
             } else {
-                alert("Send 'forgot password' email");
+                await managePassword.submit(thePassword);
             }
         } catch (error) {
             ReportError("PasswordView.handlePassword", error, {
@@ -111,7 +111,6 @@ const PasswordView = (props: Props) => {
                         password1: null,
                         password2: null,
                     })}
-//                    password={managePassword.password ? managePassword.password : new Password()}
                 />
             )}
         </>
