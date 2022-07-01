@@ -75,7 +75,7 @@ function UserWidget(props: Props) {
     }
 
     const handlePassword: HandleAction = () => {
-        navigate("/password");
+        navigate("/passwords");
     }
 
     const handleProfile: HandleAction = () => {
