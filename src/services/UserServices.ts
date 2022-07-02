@@ -10,8 +10,9 @@ const uuid = require("uuid");
 // Internal Modules ----------------------------------------------------------
 
 import {verifyTokenV2} from "./CaptchaServices";
-import ListServices from "./ListServices";
 import BaseParentServices from "./BaseParentServices";
+import ListServices from "./ListServices";
+import ScopeServices from "./ScopeServices";
 import CreateAccount from "../models/CreateAccount";
 import List from "../models/List";
 import User from "../models/User";
@@ -146,12 +147,13 @@ class UserServices extends BaseParentServices<User> {
                     });
                 }
 
+                // Add the new list to any active access tokens for this user
+                await ScopeServices.include(user.id, list.id, true, transaction);
+
             }
 
             // Commit the transaction
             await transaction.commit();
-
-            // TODO - update the User's current access token to include the new List
 
             // Return the new User with its nested List
             return await this.find(user.id, {
@@ -201,7 +203,7 @@ class UserServices extends BaseParentServices<User> {
         const user = await this.read("UserServices.listsExclude", userId);
         const list = await ListServices.read("UserServices.listsExclude", listId);
         await user.$remove("lists", list);
-        // TODO - update the User's current access tokens to exclude the old List
+        await ScopeServices.exclude(userId, listId);
         return list;
     }
 
@@ -214,7 +216,7 @@ class UserServices extends BaseParentServices<User> {
             listId: listId,
             userId: userId,
         }, options);
-        // TODO - update the User's current access tokens to include the new List
+        await ScopeServices.include(userId, listId, (admin !== undefined) ? admin : true);
         return list;
     }
 
@@ -247,6 +249,9 @@ class UserServices extends BaseParentServices<User> {
             }
             // @ts-ignore
             await UserList.upsert(upsertee, {transaction});
+
+            // Append the new List to any AccessToken for this User
+            await ScopeServices.include(userId, inserted.id, true, transaction);
 
             // Commit transaction and return the result
             await transaction.commit();

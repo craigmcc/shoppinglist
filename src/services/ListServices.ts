@@ -20,6 +20,7 @@ import User from "../models/User";
 import UserList from "../models/UserList";
 import CategoryServices from "./CategoryServices";
 import ItemServices from "./ItemServices";
+import ScopeServices from "./ScopeServices";
 import UserServices from "../services/UserServices";
 import {validateUuid} from "../util/ApplicationValidators";
 import {InitialListData} from "../util/InitialListData";
@@ -253,7 +254,7 @@ class ListServices extends BaseParentServices<List> {
         const list = await this.read("ListServices.usersExclude", listId);
         const user = await UserServices.read("ListServices.usersExclude", userId);
         await list.$remove("users", user);
-        // TODO - update the User's current access tokens to exclude the old List
+        await ScopeServices.exclude(userId, listId);
         return user;
     }
 
@@ -266,7 +267,7 @@ class ListServices extends BaseParentServices<List> {
             listId: listId,
             userId: userId,
         });
-        // TODO - update the User's current access tokens to include the new List
+        await ScopeServices.include(userId, listId, (admin !== undefined) ? admin : true);
         return user;
     }
 

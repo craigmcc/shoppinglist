@@ -111,14 +111,14 @@ ListRouter.get("/:listId/users",
 
 // DELETE /:listId/users/:listId - Disassociate List and User
 ListRouter.delete("/:listId/users/:userId",
-    requireAdmin,
+    requireSuperuser,
     async (req: Request, res: Response) => {
         res.send(await ListServices.usersExclude(req.params.listId, req.params.userId));
     });
 
 // POST /:listId/users/:listId - Associate List and User
 ListRouter.post("/:listId/users/:userId",
-    requireAdmin,
+    requireSuperuser,
     async (req: Request, res: Response) => {
         let admin: boolean = false;
         if (req.query && (req.query.admin === "")) {

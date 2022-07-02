@@ -24,11 +24,11 @@ import User from "../models/User";
 import {Forbidden} from "../util/HttpErrors";
 import logger from "../util/ServerLogger";
 
-const ADMIN_PERMISSION = "admin";
+export const ADMIN_PERMISSION = "admin";
 const AUTHORIZATION_HEADER = "Authorization";
 const DATABASE_TOKEN = process.env.DATABASE_TOKEN ? process.env.DATABASE_TOKEN : "";
 const NODE_ENV: string | undefined = process.env.NODE_ENV;
-const REGULAR_PERMISSION = "list";
+export const REGULAR_PERMISSION = "list";
 const SUPERUSER_SCOPE = process.env.SUPERUSER_SCOPE ? process.env.SUPERUSER_SCOPE : "superuser";
 
 let oauthEnabled: boolean = true;
