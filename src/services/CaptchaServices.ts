@@ -5,7 +5,7 @@
 // External Modules ----------------------------------------------------------
 
 const axios = require("axios");
-const NODE_ENV = process.env.NODE_ENV;
+const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV : "test";
 const SECRET = process.env.RECAPTCHA_SECRET_KEY
     ? process.env.RECAPTCHA_SECRET_KEY : "Unknown";
 const URL_PATTERN = "https://www.google.com/recaptcha/api/siteverify?secret=:secret&response=:token";

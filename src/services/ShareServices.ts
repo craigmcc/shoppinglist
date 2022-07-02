@@ -40,7 +40,7 @@ class ShareServices {
         }
 
         // Verify that the requesting User has an email address matching the invite
-        if (!user || (user.email !== share.email)) {
+        if (input.email !== user.email) {
             throw new BadRequest(`Invite was for a different email address`);
         }
 

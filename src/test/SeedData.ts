@@ -136,6 +136,7 @@ export const USER_USERNAME_THIRD_REGULAR = "thirdregular";
 export const USERS: Partial<User>[] = [
     {
         active: true,
+        email: "first.admin@example.com",
         firstName: "First",
         lastName: "Admin",
         scope: USER_SCOPE_FIRST_ADMIN,
@@ -143,6 +144,7 @@ export const USERS: Partial<User>[] = [
     },
     {
         active: true,
+        email: "first.regular@example.com",
         firstName: "First",
         lastName: "Regular",
         scope: USER_SCOPE_FIRST_REGULAR,
@@ -150,6 +152,7 @@ export const USERS: Partial<User>[] = [
     },
     {
         active: false,
+        email: "second.admin@example.com",
         firstName: "Second",
         lastName: "Admin",
         scope: USER_SCOPE_SECOND_ADMIN,
@@ -157,6 +160,7 @@ export const USERS: Partial<User>[] = [
     },
     {
         active: false,
+        email: "second.regular@example.com",
         firstName: "Second",
         lastName: "Regular",
         scope: USER_SCOPE_SECOND_REGULAR,
@@ -164,6 +168,7 @@ export const USERS: Partial<User>[] = [
     },
     {
         active: true,
+        email: "third.admin@example.com",
         firstName: "Third",
         lastName: "Admin",
         scope: USER_SCOPE_THIRD_ADMIN,
@@ -171,6 +176,7 @@ export const USERS: Partial<User>[] = [
     },
     {
         active: true,
+        email: "third.regular@example.com",
         firstName: "Third",
         lastName: "Regular",
         scope: USER_SCOPE_THIRD_REGULAR,
@@ -178,6 +184,7 @@ export const USERS: Partial<User>[] = [
     },
     {
         active: true,
+        email: "superuser@example.com",
         firstName: "Superuser",
         lastName: "User",
         scope: USER_SCOPE_SUPERUSER,

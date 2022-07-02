@@ -1,6 +1,6 @@
-// ListServices.special.test -------------------------------------------------
+// UserServices.special.test -------------------------------------------------
 
-// Functional tests for ListServices that require special seed data loading.
+// Functional tests for UserServices that require special seed data loading.
 
 // External Modules ----------------------------------------------------------
 
