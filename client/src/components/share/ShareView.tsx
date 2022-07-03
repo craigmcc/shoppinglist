@@ -15,7 +15,7 @@ import ShareHeader from "./ShareHeader";
 import {CURRENT_LIST_KEY} from "../../constants";
 import {HandleShare} from "../../types";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import useMutateList from "../../hooks/useMutateList";
+import useManageShare from "../../hooks/useManageShare";
 import logger from "../../util/ClientLogger";
 import ReportError from "../../util/ReportError";
 
@@ -30,7 +30,7 @@ const ShareView = (props: Props) => {
 
     const [list] = useLocalStorage(CURRENT_LIST_KEY);
 
-    const mutateList = useMutateList({
+    const manageShare = useManageShare({
         alertPopup: true,
     });
     const navigate = useNavigate();
@@ -44,7 +44,7 @@ const ShareView = (props: Props) => {
 
     const handleSave: HandleShare = async (theShare) => {
         try {
-            const shared = await mutateList.share(theShare);
+            const shared = await manageShare.offer(theShare);
             logger.debug({
                 context: "ShareView.handleSave",
                 share: shared,
@@ -61,8 +61,8 @@ const ShareView = (props: Props) => {
     return (
         <>
             <MutatingProgress
-                error={mutateList.error}
-                executing={mutateList.executing}
+                error={manageShare.error}
+                executing={manageShare.executing}
                 message="Sending the Share invite email"
             />
             <ShareHeader list={list}/>

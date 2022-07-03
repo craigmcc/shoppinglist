@@ -8,7 +8,7 @@ import {useEffect, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {HandleShare} from "../types";
+import {HandleShare, ProcessShare} from "../types";
 import Api from "../clients/Api";
 import Share, {SHARES_BASE} from "../models/Share";
 import logger from "../util/ClientLogger";
@@ -27,6 +27,7 @@ export interface State {
     error: Error | null;                // I/O error (if any)
     executing: boolean;                 // Are we currently executing?
     loading: boolean;                   // Are we currently loading?
+    offer: ProcessShare;                // Offer a Share to another User
     share?: Share;                      // Share retrieved at initalization (if any)
 }
 
@@ -104,11 +105,40 @@ const useManageShare = (props: Props): State => {
 
     }
 
+    const offer: ProcessShare = async (theShare) => {
+
+        setError(null);
+        setExecuting(true);
+
+        let output = new Share();
+        const url = SHARES_BASE + `/${theShare.listId}/offer`;
+
+        try {
+            output = ToModel.SHARE((await Api.post(url, theShare)).data);
+            logger.debug({
+                context: "useManageShare.offer",
+                url: url,
+                share: output,
+            });
+        } catch (e) {
+            setError(e as Error);
+            ReportError("useManageShare.offer", e, {
+                url: url,
+                share: theShare,
+            }, alertPopup);
+        }
+
+        setExecuting(false);
+        return output;
+
+    }
+
     return {
         accept: accept,
         error: error ? error : null,
         executing: executing,
         loading: loading,
+        offer: offer,
         share: share,
     }
 
