@@ -19,6 +19,7 @@ import User from "../models/User";
 import {BadRequest, NotFound, ServiceUnavailable} from "../util/HttpErrors";
 
 const BASE_URL = process.env.BASE_URL ? process.env.BASE_URL : "";
+const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV : "test";
 const SHARE_EXPIRES_DELTA = process.env.SHARE_EXPIRES_DELTA
     ? Number(process.env.SHARE_EXPIRES_DELTA)
     : 1 * 24 * 60 * 60 * 1000;      // One day in milliseconds
@@ -192,7 +193,11 @@ class ShareServices {
             text: text,
             to: share.email,
         }
-        await EmailServices.send(message);
+        if (NODE_ENV !== "test") {
+            await EmailServices.send(message);
+        } else {
+            console.log("Suppressed 'Share List' email in test mode to ", share.email);
+        }
 
         // Create and return a Share instance for this offer
         // @ts-ignore

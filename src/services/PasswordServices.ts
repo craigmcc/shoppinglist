@@ -17,6 +17,7 @@ import {hashPassword} from "../oauth/OAuthUtils";
 import {BadRequest, NotFound, ServiceUnavailable} from "../util/HttpErrors";
 
 const BASE_URL = process.env.BASE_URL ? process.env.BASE_URL : "";
+const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV : "test";
 const PASSWORD_EXPIRES_DELTA = process.env.PASSWORD_EXPIRES_DELTA
     ? Number(process.env.PASSWORD_EXPIRES_DELTA)
     : 1 * 24 * 60 * 60 * 1000;      // One day in milliseconds
@@ -94,7 +95,12 @@ class PasswordServices {
             text: text,
             to: email,
         }
-        await EmailServices.send(message);
+        if (NODE_ENV !== "test") {
+            await EmailServices.send(message);
+        } else {
+            console.log("Suppressed 'Forgot My Password' email in test mode to ", email);
+        }
+
 
         // Create a Password instance for this offer
         // @ts-ignore

@@ -96,8 +96,7 @@ describe("PasswordServices Special Tests", () => {
 
         });
 
-        // TODO - commented out until I figure out why GMail API is flaky sometimes
-        xit("should pass on a valid email address", async () => {
+        it("should pass on a valid email address", async () => {
 
             const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_FIRST_ADMIN);
 

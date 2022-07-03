@@ -208,4 +208,60 @@ describe("ShareServices Special Tests", () => {
 
     });
 
+    describe("ShareServices.offer()", () => {
+
+        beforeEach("offer#beforeEach", async () => {
+            await UTILS.loadData({
+                withLists: true,
+                withUsers: true,
+            });
+        });
+
+        it("should fail with invalid list ID", async () => {
+
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_THIRD_REGULAR, true);
+            const INPUT: Partial<Share> = {
+                admin: true,
+                email: "another.user@example.com",
+                expires: new Date(),
+            }
+
+            try {
+                // @ts-ignore
+                await ShareServices.offer(INVALID_ID, INPUT);
+                expect.fail("Should have thrown NotFound");
+            } catch (error) {
+                if (error instanceof NotFound) {
+                    expect(error.message).to.include(`Missing List ${INVALID_ID}`);
+                } else {
+                    expect.fail(`Should not have thrown '${error}'`);
+                }
+            }
+
+        })
+
+        it("should pass with valid information", async () => {
+
+            const USER = await UTILS.lookupUser(SeedData.USER_USERNAME_THIRD_REGULAR, true);
+            const INPUT: Partial<Share> = {
+                admin: true,
+                email: "another.user@example.com",
+                expires: new Date(),
+            }
+
+            try {
+                // @ts-ignore
+                const OUTPUT = await ShareServices.offer(USER.lists[0].id, INPUT);
+                expect(OUTPUT.admin).to.equal(INPUT.admin);
+                expect(OUTPUT.email).to.equal(INPUT.email);
+                //expect(OUTPUT.expires).to.equal(INPUT.expires); // Date comparisons are weird
+                expect(OUTPUT.listId).to.equal(USER.lists[0].id);
+            } catch (error) {
+                expect.fail(`Should not have thrown '${error}'`);
+            }
+
+        })
+
+    });
+
 });
