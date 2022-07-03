@@ -26,10 +26,12 @@ class EmailServices {
     }
 
     public async send(message: Mail.Options): Promise<void> {
+/*
         logger.debug({
             context: "EmailServices.send",
             message: message,
         });
+*/
         try {
             await sendMessage(message);
         } catch (error) {

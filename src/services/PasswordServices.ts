@@ -48,7 +48,7 @@ class PasswordServices {
      *
      * @param email                     Email address to send an offer to
      */
-    public async forgot(email: string): Promise<void> {
+    public async forgot(email: string): Promise<Password> {
 
         // Ensure that there is a User with this email address
         const user = await User.findOne({
@@ -84,7 +84,7 @@ class PasswordServices {
             You have requested a link to reset your password.\r\n
             Click on the following link and fill out the form:\r\n
             \r\n
-            ${RESET_URL}
+            ${RESET_URL}\r\n
         `;
 
         // Email a message containing the offer to this email address
@@ -98,7 +98,7 @@ class PasswordServices {
 
         // Create a Password instance for this offer
         // @ts-ignore
-        await Password.create(password);
+        return await Password.create(password);
 
     }
 
@@ -125,7 +125,7 @@ class PasswordServices {
             where: { email: password.email }
         });
         if (!user) {
-            throw new NotFound(`Missing User ${password.userId}`);
+            throw new NotFound(`Missing User ${password.email}`);
         }
 
         // Update this User's password

@@ -19,6 +19,13 @@ import {BadRequest, NotFound, ServiceUnavailable} from "../util/HttpErrors";
 
 class ShareServices {
 
+    /**
+     * Accept a Share offer.
+     *
+     * @param shareId                   ID of the Share being accepted
+     * @param input                     Data including reCAPTCHA token
+     * @param user                      User accepting the Share
+     */
     public async accept(shareId: string, input: Share, user: User): Promise<Share> {
 
         // Verify that the included reCAPTCHA token is valid
@@ -57,6 +64,11 @@ class ShareServices {
 
     }
 
+    /**
+     * Find and return the specified Share.
+     *
+     * @param shareId                   ID of the Share to be returned
+     */
     public async find(shareId: string): Promise<Share> {
         const share = await Share.findOne({
             include: [ List ],

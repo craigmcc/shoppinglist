@@ -14,10 +14,10 @@ import ShareServices from "./ShareServices";
 import Share from "../models/Share";
 import {TEST_MODE_TOKEN} from "./CaptchaServices";
 import * as SeedData from "../test/SeedData";
-import ServiceUtils from "../test/ServicesUtils";
+import ServicesUtils from "../test/ServicesUtils";
 import {BadRequest, NotFound, ServiceUnavailable} from "../util/HttpErrors";
 
-const UTILS = new ServiceUtils();
+const UTILS = new ServicesUtils();
 const INVALID_ID = UTILS.invalidId();
 
 // Test Specifications -------------------------------------------------------
@@ -193,7 +193,7 @@ describe("ShareServices Special Tests", () => {
                 token: TEST_MODE_TOKEN,
             }
             // @ts-ignore
-            const STORED = await Share.create(INPUT);
+            await Share.create(INPUT);
 
             // @ts-ignore
             const OUTPUT = await ShareServices.find(INPUT.id);
