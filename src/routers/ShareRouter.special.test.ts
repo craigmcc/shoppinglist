@@ -4,9 +4,6 @@
 
 // External Modules ----------------------------------------------------------
 
-// External Modules ----------------------------------------------------------
-
-import {BAD_REQUEST, FORBIDDEN, NOT_FOUND, OK, SERVICE_UNAVAILABLE} from "../util/HttpErrors";
 
 const chai = require("chai");
 const expect = chai.expect;
@@ -21,6 +18,7 @@ import Share from "../models/Share";
 import {TEST_MODE_TOKEN} from "../services/CaptchaServices";
 import RouterUtils, {AUTHORIZATION} from "../test/RouterUtils";
 import * as SeedData from "../test/SeedData";
+import {BAD_REQUEST, FORBIDDEN, NOT_FOUND, OK, SERVICE_UNAVAILABLE} from "../util/HttpErrors";
 
 const UTILS = new RouterUtils();
 const INVALID_ID = uuid.v4();

@@ -46,6 +46,7 @@ PasswordRouter.get("/:passwordId",
 // PUT /:passwordId - Update forgotten password
 PasswordRouter.put("/:passwordId",
     async (req: Request, res: Response) => {
-        return res.send(await PasswordServices.submit(req.body));
+        await PasswordServices.submit(req.body);
+        return res.sendStatus(NO_CONTENT);
     });
 
