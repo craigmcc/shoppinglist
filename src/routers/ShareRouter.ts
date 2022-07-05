@@ -38,7 +38,8 @@ ShareRouter.post("/:shareId",
 // POST /:listId/share - Email an offer to share this List
 ShareRouter.post("/:listId/offer",
     requireAdmin,
+    requireUser,
     async (req: Request, res: Response) => {
-        res.send(await ShareServices.offer(req.params.listId, req.body));
+        res.send(await ShareServices.offer(req.params.listId, req.body, res.locals.user));
     });
 

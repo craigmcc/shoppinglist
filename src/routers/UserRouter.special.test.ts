@@ -1,12 +1,8 @@
-// ListRouter.test --------------------------------------------------------
+// UserRouter.special.test ---------------------------------------------------
 
-// Functional tests for ListRouter that require special seed data loading.
-
-// External Modules ----------------------------------------------------------
+// Functional tests for UserRouter that require special seed data loading.
 
 // External Modules ----------------------------------------------------------
-
-import CreateAccount from "../models/CreateAccount";
 
 const chai = require("chai");
 const expect = chai.expect;
@@ -17,6 +13,7 @@ chai.use(chaiHttp);
 
 import app from "./ExpressApplication";
 import AccessToken from "../models/AccessToken";
+import CreateAccount from "../models/CreateAccount";
 import List from "../models/List";
 import User from "../models/User";
 import {ADMIN_PERMISSION, REGULAR_PERMISSION} from "../oauth/OAuthMiddleware";

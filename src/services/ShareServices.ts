@@ -95,20 +95,20 @@ class ShareServices {
      * User at the specified email address.
      *
      * @param listId                    ID of the List being offered
-     * @param email                     Email address of the offeree
-     * @param admin                     Will this user receive admin permissions?
+     * @param share                     Share to be offere
+     * @param offeror                   User making the offer
      *
      * @return Share representing this offer
      */
-    public async offer(listId: string, share: Share): Promise<Share> {
+    public async offer(listId: string, share: Share, offeror: User): Promise<Share> {
 
         // Look up the list to be shared
         const list = await ListServices.read("ShareServices.share", listId, {
             withUsers: "",
         });
 
-        // See if there is already a User with this email address
-        const user = await User.findOne({
+        // See if there is already an offeree User with this email address
+        const offeree = await User.findOne({
             where: { email: share.email},
         });
 
@@ -131,7 +131,7 @@ class ShareServices {
                     <strong>${list.name}</strong> with you.
                 </p>
         `;
-        if (user) {
+        if (offeree) {
             html += `
                 <p>
                     Please log in to your Shopping List account (if you
@@ -161,7 +161,7 @@ class ShareServices {
                 share a Shopping List named "${list.name}" with you.\r\n
                 \r\n
         `;
-        if (user) {
+        if (offeree) {
             text += `
                 Please log in to your Shopping List account (if you are not already logged in) at\r\n
                 \r\n
