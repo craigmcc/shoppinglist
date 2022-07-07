@@ -4,7 +4,7 @@
 
 // External Modules ----------------------------------------------------------
 
-import React, {useContext} from "react";
+import React from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -14,8 +14,9 @@ import {useNavigate} from "react-router-dom";
 
 import RegisterForm from "./RegisterForm";
 import RegisterHeader from "./RegisterHeader";
-import LoginContext from "../login/LoginContext";
-import {HandleCreateAccount} from "../../types";
+import {LOGIN_DATA_KEY} from "../../constants";
+import {HandleCreateAccount, LoginData} from "../../types";
+import useLocalStorage from "../../hooks/useLocalStorage";
 import useMutateUser from "../../hooks/useMutateUser";
 import CreateAccount from "../../models/CreateAccount";
 import logger from "../../util/ClientLogger";
@@ -30,7 +31,7 @@ export interface Props {
 
 const RegisterView = (props: Props) => {
 
-    const loginContext = useContext(LoginContext);
+    const [data] = useLocalStorage<LoginData>(LOGIN_DATA_KEY);
     const mutateUser = useMutateUser();
     const navigate = useNavigate();
 
@@ -63,7 +64,7 @@ const RegisterView = (props: Props) => {
             <RegisterHeader/>
 
             <Container>
-                {!loginContext.data.loggedIn ? (
+                {!data.loggedIn ? (
                     <RegisterForm
                         autoFocus
                         handleCreateAccount={handleCreateAccount}

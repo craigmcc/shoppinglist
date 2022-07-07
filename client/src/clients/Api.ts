@@ -9,11 +9,11 @@ import axios, {AxiosInstance} from "axios";
 
 // Internal Modules ----------------------------------------------------------
 
-import {LOGIN_CONTEXT_DATA_KEY} from "../constants";
-import {LoginData} from "../components/login/LoginContext";
+import {LOGIN_DATA_KEY} from "../constants";
+import {LoginData} from "../types";
 import LocalStorage from "../util/LocalStorage";
 
-const loginData = new LocalStorage<LoginData>(LOGIN_CONTEXT_DATA_KEY);
+const loginData = new LocalStorage<LoginData>(LOGIN_DATA_KEY);
 
 // Public Objects ------------------------------------------------------------
 

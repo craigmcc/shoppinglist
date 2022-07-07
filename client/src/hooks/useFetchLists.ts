@@ -4,14 +4,16 @@
 
 // External Modules ----------------------------------------------------------
 
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
+import useLocalStorage from "./useLocalStorage";
 import Api from "../clients/Api";
-import LoginContext from "../components/login/LoginContext";
+import {LOGIN_DATA_KEY, LOGIN_USER_KEY} from "../constants";
 import List from "../models/List";
-import {USERS_BASE} from "../models/User";
+import User, {USERS_BASE} from "../models/User";
+import {LoginData} from "../types";
 import * as Abridgers from "../util/Abridgers";
 import logger from "../util/ClientLogger";
 import {queryParameters} from "../util/QueryParameters";
@@ -40,12 +42,12 @@ export interface State {
 
 const useFetchLists = (props: Props): State => {
 
-    const loginContext = useContext(LoginContext);
-
     const [alertPopup] = useState<boolean>((props.alertPopup !== undefined) ? props.alertPopup : true);
+    const [data] = useLocalStorage<LoginData>(LOGIN_DATA_KEY);
     const [error, setError] = useState<Error | null>(null);
     const [lists, setLists] = useState<List[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [user] = useLocalStorage<User>(LOGIN_USER_KEY);
 
     useEffect(() => {
 
@@ -64,10 +66,10 @@ const useFetchLists = (props: Props): State => {
                 withUsers: props.withUsers ? "" : undefined,
             }
             const url = USERS_BASE
-                + `/${loginContext.user.id}/lists${queryParameters(parameters)}`;
+                + `/${user.id}/lists${queryParameters(parameters)}`;
 
             try {
-                if (loginContext.data.loggedIn && loginContext.user.id) {
+                if (data.loggedIn && user.id) {
                     theLists = ToModel.LISTS((await Api.get(url)).data);
                     logger.debug({
                         context: "useFetchLists.fetchLists",
@@ -78,16 +80,16 @@ const useFetchLists = (props: Props): State => {
                     logger.info({
                         context: "useFetchLists.fetchLists",
                         msg: "Skipped fetching Lists",
-                        loggedIn: loginContext.data.loggedIn,
-                        user: Abridgers.USER(loginContext.user),
+                        loggedIn: data.loggedIn,
+                        user: Abridgers.USER(user),
                         url: url,
                     })
                 }
             } catch (e) {
                 setError(e as Error);
                 ReportError("useFetchLists.fetchLists", e, {
-                    loggedIn: loginContext.data.loggedIn,
-                    user: Abridgers.USER(loginContext.user),
+                    loggedIn: data.loggedIn,
+                    user: Abridgers.USER(user),
                     url: url,
                 }, alertPopup);
             }
@@ -99,8 +101,7 @@ const useFetchLists = (props: Props): State => {
 
         fetchLists();
 
-    }, [loginContext,
-        alertPopup,
+    }, [alertPopup, data, user,
         props.active, props.listId, props.name,
         props.withCategories, props.withItems, props.withUsers])
 

@@ -4,7 +4,7 @@
 
 // External Modules ----------------------------------------------------------
 
-import React, {useContext} from "react";
+import React from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -18,9 +18,11 @@ import {Validators} from "@craigmcc/shared-utils";
 
 // Internal Modules ----------------------------------------------------------
 
-import LoginContext from "../login/LoginContext";
+import {LOGIN_USER_KEY} from "../../constants";
 import {HandleShare} from "../../types";
+import useLocalStorage from "../../hooks/useLocalStorage";
 import Share from "../../models/Share";
+import User from "../../models/User";
 import logger from "../../util/ClientLogger";
 import List from "../../models/List";
 
@@ -36,7 +38,7 @@ export interface Props {
 
 const ShareForm = (props: Props) => {
 
-    const loginContext = useContext(LoginContext);
+    const [user] = useLocalStorage<User>(LOGIN_USER_KEY);
 
     const onSubmit: SubmitHandler<Share> = (values) => {
         const theShare = new Share(values);
@@ -59,7 +61,7 @@ const ShareForm = (props: Props) => {
             .test("duplicate-email",
                 "Can not share to yourself",
                 function (value) {
-                    return value !== loginContext.user.email;
+                    return value !== user.email;
                 }),
     });
 

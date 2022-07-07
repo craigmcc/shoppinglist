@@ -10,27 +10,18 @@ import React, {createContext, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {LOGIN_CONTEXT_DATA_KEY, LOGIN_CONTEXT_USER_KEY} from "../../constants";
-import {Scope} from "../../types";
+import {LOGIN_DATA_KEY, LOGIN_USER_KEY} from "../../constants";
+import {LoginData, Scope} from "../../types";
 import OAuth from "../../clients/OAuth";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import TokenResponse from "../../models/TokenResponse";
 import List from "../../models/List";
 import User from "../../models/User";
+import * as Abridgers from "../../util/Abridgers";
 import logger from "../../util/ClientLogger";
 import * as ToModel from "../../util/ToModel";
 
 // Context Properties --------------------------------------------------------
-
-// Data that is visible to HTTP clients not part of the React component hierarchy
-export interface LoginData {
-    accessToken: string | null;         // Current access token (if logged in)
-    expires: Date | null;               // Absolute expiration time (if logged in)
-    loggedIn: boolean;                  // Is user currently logged in?
-    refreshToken: string | null;        // Current refresh token (if logged in and returned)
-    scope: string | null;               // Allowed scope(s) (if logged in)
-    username: string | null;            // Logged in username (if logged in)
-}
 
 // Dummy initial values for Data
 const LOGIN_DATA: LoginData = {
@@ -82,8 +73,8 @@ const LOG_PREFIX = "log:";              // Prefix for scope values defining log 
 export const LoginContextProvider = ({ children }) => {
 
     const [alloweds, setAlloweds] = useState<string[]>([]);
-    const [data, setData] = useLocalStorage<LoginData>(LOGIN_CONTEXT_DATA_KEY, LOGIN_DATA);
-    const [user, setUser] = useLocalStorage<User>(LOGIN_CONTEXT_USER_KEY, LOGIN_USER);
+    const [data, setData] = useLocalStorage<LoginData>(LOGIN_DATA_KEY, LOGIN_DATA);
+    const [user, setUser] = useLocalStorage<User>(LOGIN_USER_KEY, LOGIN_USER);
 
     /**
      * Handle a successful login.
@@ -173,12 +164,16 @@ export const LoginContextProvider = ({ children }) => {
         });
         if (useData.loggedIn) {
             const user: User = ToModel.USER((await OAuth.get("/me")).data);
-            logger.debug({
+            logger.info({
                 context: "LoginContext.refreshUser",
-                user: user,
+                user: Abridgers.USER(user),
             });
             setUser(user);
         } else {
+            logger.info({
+                context: "LoginContext.refreshUser",
+                msg: "Not logged in",
+            });
             setUser(LOGIN_USER);
         }
     }

@@ -37,6 +37,18 @@ export enum Scope {
     SUPERUSER = "superuser",
 }
 
+// Login Data ----------------------------------------------------------------
+
+// Data that is visible to HTTP clients not part of the React component hierarchy
+export interface LoginData {
+    accessToken: string | null;         // Current access token (if logged in)
+    expires: Date | null;               // Absolute expiration time (if logged in)
+    loggedIn: boolean;                  // Is user currently logged in?
+    refreshToken: string | null;        // Current refresh token (if logged in and returned)
+    scope: string | null;               // Allowed scope(s) (if logged in)
+    username: string | null;            // Logged in username (if logged in)
+}
+
 // HTML Event Handlers -------------------------------------------------------
 
 export type OnAction = () => void; // Nothing to pass, just trigger action

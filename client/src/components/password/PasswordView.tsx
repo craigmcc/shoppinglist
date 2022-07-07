@@ -5,19 +5,22 @@
 
 // External Modules ----------------------------------------------------------
 
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Container from "react-bootstrap/Container";
 import {useNavigate, useParams} from "react-router-dom";
 import {MutatingProgress} from "@craigmcc/shared-react";
 
 // Internal Modules ----------------------------------------------------------
 
+
 import PasswordForm from "./PasswordForm";
 import PasswordHeader from "./PasswordHeader";
-import LoginContext from "../login/LoginContext";
-import {HandlePassword} from "../../types";
+import {LOGIN_DATA_KEY, LOGIN_USER_KEY} from "../../constants";
+import {HandlePassword, LoginData} from "../../types";
+import useLocalStorage from "../../hooks/useLocalStorage";
 import useManagePassword from "../../hooks/useManagePassword";
 import Password from "../../models/Password";
+import User from "../../models/User";
 import * as Abridgers from "../../util/Abridgers";
 import logger from "../../util/ClientLogger";
 import ReportError from "../../util/ReportError";
@@ -31,10 +34,10 @@ export interface Props {
 
 const PasswordView = (props: Props) => {
 
-    const loginContext = useContext(LoginContext);
-
+    const [data] = useLocalStorage<LoginData>(LOGIN_DATA_KEY);
     const [expired, setExpired] = useState<boolean>(false);
     const {passwordId} = useParams();
+    const [user] = useLocalStorage<User>(LOGIN_USER_KEY);
 
     const managePassword = useManagePassword({
         alertPopup: true,
@@ -55,10 +58,10 @@ const PasswordView = (props: Props) => {
                 password1: "*REDACTED*",
                 password2: "*REDACTED*",
             } : undefined,
-            user: loginContext.data.loggedIn ? Abridgers.USER(loginContext.user) : undefined,
+            user: data.loggedIn ? Abridgers.USER(user) : undefined,
         });
         setExpired(theExpired);
-    }, [loginContext.data.loggedIn, loginContext.user,
+    }, [data.loggedIn, user,
             passwordId, managePassword.password]);
 
     const handlePassword: HandlePassword = async (thePassword) => {
@@ -70,9 +73,9 @@ const PasswordView = (props: Props) => {
                     password1: "*REDACTED*",
                     password2: "*REDACTED*",
                 },
-                user: loginContext.data.loggedIn ? Abridgers.USER(loginContext.user) : undefined,
+                user: data.loggedIn ? Abridgers.USER(user) : undefined,
             });
-            if (loginContext.data.loggedIn) {
+            if (data.loggedIn) {
                 await managePassword.update(thePassword);
             } else {
                 await managePassword.submit(thePassword);
@@ -84,7 +87,7 @@ const PasswordView = (props: Props) => {
                     password1: "*REDACTED*",
                     password2: "*REDACTED*",
                 },
-                user: loginContext.data.loggedIn ? Abridgers.USER(loginContext.user) : undefined,
+                user: data.loggedIn ? Abridgers.USER(user) : undefined,
             });
         }
         navigate("/");

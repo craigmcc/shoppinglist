@@ -35,7 +35,7 @@ const HomeLists = (props: Props) => {
 
     const loginContext = useContext(LoginContext);
 
-    const [list, setList] = useLocalStorage(CURRENT_LIST_KEY);
+    const [list, setList] = useLocalStorage<List>(CURRENT_LIST_KEY);
 
     const fetchLists = useFetchLists({
         alertPopup: false,

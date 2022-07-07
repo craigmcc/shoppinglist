@@ -4,7 +4,7 @@
 
 // External Modules ----------------------------------------------------------
 
-import React, {useContext} from "react";
+import React from "react";
 import Container from "react-bootstrap/Container";
 import {useNavigate} from "react-router-dom";
 
@@ -12,8 +12,9 @@ import {useNavigate} from "react-router-dom";
 
 import ResetForm from "./ResetForm";
 import ResetHeader from "./ResetHeader";
-import LoginContext from "../login/LoginContext";
-import {HandleValue} from "../../types";
+import {LOGIN_DATA_KEY} from "../../constants";
+import {HandleValue, LoginData} from "../../types";
+import useLocalStorage from "../../hooks/useLocalStorage";
 import useManagePassword from "../../hooks/useManagePassword";
 import logger from "../../util/ClientLogger";
 import ReportError from "../../util/ReportError";
@@ -27,7 +28,8 @@ export interface Props {
 
 const ResetView = (props: Props) => {
 
-    const loginContext = useContext(LoginContext);
+    const [data] = useLocalStorage<LoginData>(LOGIN_DATA_KEY);
+
     const managePassword = useManagePassword({
         alertPopup: true,
     });
@@ -52,7 +54,7 @@ const ResetView = (props: Props) => {
     return (
         <>
             <ResetHeader/>
-            {!loginContext.data.loggedIn ? (
+            {!data.loggedIn ? (
                 <ResetForm
                     autoFocus
                     handleEmail={handleEmail}

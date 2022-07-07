@@ -4,7 +4,7 @@
 
 // External Modules ----------------------------------------------------------
 
-import React, {useContext, useEffect} from "react";
+import React, {useEffect} from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -14,9 +14,8 @@ import {useNavigate} from "react-router-dom";
 
 import ListForm from "./ListForm";
 import ListHeader from "./ListHeader";
-import LoginContext from "../login/LoginContext";
-import {CURRENT_LIST_KEY} from "../../constants";
-import {HandleList} from "../../types";
+import {CURRENT_LIST_KEY, LOGIN_DATA_KEY} from "../../constants";
+import {HandleList, LoginData} from "../../types";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import useMutateList from "../../hooks/useMutateList";
 import List from "../../models/List";
@@ -32,9 +31,8 @@ export interface Props {
 
 const ListView = (props: Props) => {
 
-    const loginContext = useContext(LoginContext);
-
-    const [list] = useLocalStorage(CURRENT_LIST_KEY);
+    const [data] = useLocalStorage<LoginData>(LOGIN_DATA_KEY)
+    const [list] = useLocalStorage<List>(CURRENT_LIST_KEY);
 
     const mutateList = useMutateList();
     const navigate = useNavigate();
@@ -73,7 +71,7 @@ const ListView = (props: Props) => {
                 <>
                     <ListHeader list={list}/>
                     <Container>
-                        {loginContext.data.loggedIn ? (
+                        {data.loggedIn ? (
                             <ListForm
                                 autoFocus
                                 handleSave={handleSave}

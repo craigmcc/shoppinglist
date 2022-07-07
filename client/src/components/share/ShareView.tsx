@@ -16,6 +16,7 @@ import {CURRENT_LIST_KEY} from "../../constants";
 import {HandleShare} from "../../types";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import useManageShare from "../../hooks/useManageShare";
+import List from "../../models/List";
 import logger from "../../util/ClientLogger";
 import ReportError from "../../util/ReportError";
 
@@ -28,7 +29,7 @@ export interface Props {
 
 const ShareView = (props: Props) => {
 
-    const [list] = useLocalStorage(CURRENT_LIST_KEY);
+    const [list] = useLocalStorage<List>(CURRENT_LIST_KEY);
 
     const manageShare = useManageShare({
         alertPopup: true,

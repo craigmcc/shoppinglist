@@ -4,7 +4,7 @@
 
 // External Modules ----------------------------------------------------------
 
-import React, {useContext, useState} from "react";
+import React, {useState} from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -19,10 +19,11 @@ import {Validators} from "@craigmcc/shared-utils";
 
 // Internal Modules ----------------------------------------------------------
 
-import LoginContext from "../login/LoginContext";
-import {RECAPTCHA_SITE_KEY} from "../../constants";
-import {HandlePassword} from "../../types"
+import {LOGIN_DATA_KEY, LOGIN_USER_KEY, RECAPTCHA_SITE_KEY} from "../../constants";
+import {HandlePassword, LoginData} from "../../types"
+import useLocalStorage from "../../hooks/useLocalStorage";
 import Password from "../../models/Password";
+import User from "../../models/User";
 import logger from "../../util/ClientLogger";
 
 // Incoming Properties -------------------------------------------------------
@@ -44,9 +45,9 @@ const PasswordForm = (props: Props) => {
     }
 
     const [autoFocus] = useState<boolean>(props.autoFocus ? props.autoFocus : false);
+    const [data] = useLocalStorage<LoginData>(LOGIN_DATA_KEY);
     const [token, setToken] = useState<string>("");
-
-    const loginContext = useContext(LoginContext);
+    const [user] = useLocalStorage<User>(LOGIN_USER_KEY);
 
     const onSubmit: SubmitHandler<Values> = (values) => {
         const thePassword = new Password({
@@ -76,8 +77,8 @@ const PasswordForm = (props: Props) => {
             .test("email-match",
                 "That is not the correct email address for this reset",
                 function (value) {
-                    if (loginContext.data.loggedIn) {
-                        return loginContext.user.email === value;
+                    if (data.loggedIn) {
+                        return user.email === value;
                     } else {
                         return true;
                     }
@@ -95,7 +96,7 @@ const PasswordForm = (props: Props) => {
 
     const {formState: {errors}, handleSubmit, register} = useForm<Password>({
         defaultValues: new Password({
-            email: (loginContext.data.loggedIn ? loginContext.user.email : null),
+            email: (data.loggedIn ? user.email : null),
             password1: null,
             password2: null,
         }),
@@ -113,8 +114,8 @@ const PasswordForm = (props: Props) => {
 
                 <Row className="mb-3" id="emailRow">
                     <TextField
-                        autoFocus={!loginContext.data.loggedIn && autoFocus}
-                        disabled={loginContext.data.loggedIn}
+                        autoFocus={!data.loggedIn && autoFocus}
+                        disabled={data.loggedIn}
                         errors={errors}
                         label="Email Address:"
                         name="email"
@@ -125,7 +126,7 @@ const PasswordForm = (props: Props) => {
 
                 <Row className="mb-3" id="passwordsRow">
                     <TextField
-                        autoFocus={loginContext.data.loggedIn && autoFocus}
+                        autoFocus={data.loggedIn && autoFocus}
                         errors={errors}
                         label="Requested Password:"
                         name="password1"
@@ -158,7 +159,7 @@ const PasswordForm = (props: Props) => {
                             type="submit"
                             variant="primary"
                         >
-                            {(loginContext.data.loggedIn) ? (
+                            {(data.loggedIn) ? (
                                 <>Update</>
                             ) : (
                                 <>Reset</>

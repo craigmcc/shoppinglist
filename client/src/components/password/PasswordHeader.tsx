@@ -4,7 +4,7 @@
 
 // External Modules ----------------------------------------------------------
 
-import React, {useContext} from "react";
+import React from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -13,7 +13,9 @@ import {useNavigate} from "react-router-dom";
 
 // Internal Modules ----------------------------------------------------------
 
-import LoginContext from "../login/LoginContext";
+import {LOGIN_DATA_KEY} from "../../constants";
+import {LoginData} from "../../types";
+import useLocalStorage from "../../hooks/useLocalStorage";
 import UserWidget from "../login/UserWidget";
 import {HandleAction} from "../../types";
 
@@ -26,7 +28,7 @@ export interface Props {
 
 const PasswordHeader = (props: Props) => {
 
-    const loginContext = useContext(LoginContext);
+    const [data] = useLocalStorage<LoginData>(LOGIN_DATA_KEY);
     const navigate = useNavigate();
 
     const handleBack: HandleAction = () => {
@@ -44,7 +46,7 @@ const PasswordHeader = (props: Props) => {
                             size={48}/>
                     </Col>
                     <Col className="text-center">
-                        {(loginContext.data.loggedIn) ? (
+                        {(data.loggedIn) ? (
                             <span className="align-middle"><strong>Update Your Password</strong></span>
                         ) : (
                             <span className="align-middle"><strong>Reset Your Password</strong></span>

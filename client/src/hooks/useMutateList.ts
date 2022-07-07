@@ -4,19 +4,20 @@
 
 // External Modules ----------------------------------------------------------
 
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 
 // Internal Modules ----------------------------------------------------------
 
-import {ProcessList} from "../types";
+import useLocalStorage from "./useLocalStorage";
+import {LOGIN_DATA_KEY, LOGIN_USER_KEY} from "../constants";
+import {LoginData, ProcessList} from "../types";
 import Api from "../clients/Api";
-import LoginContext from "../components/login/LoginContext";
 import List, {LISTS_BASE} from "../models/List";
 import * as Abridgers from "../util/Abridgers";
 import logger from "../util/ClientLogger";
 import ReportError from "../util/ReportError";
 import * as ToModel from "../util/ToModel";
-import {USERS_BASE} from "../models/User";
+import User, {USERS_BASE} from "../models/User";
 
 // Incoming Properties and Outgoing State ------------------------------------
 
@@ -37,19 +38,19 @@ export interface State {
 
 const useMutateList = (props: Props = {}): State => {
 
-    const loginContext = useContext(LoginContext);
-
     const [alertPopup] = useState<boolean>((props.alertPopup !== undefined) ? props.alertPopup : true);
+    const [data] = useLocalStorage<LoginData>(LOGIN_DATA_KEY);
     const [error, setError] = useState<Error | null>(null);
     const [executing, setExecuting] = useState<boolean>(false);
+    const [user] = useLocalStorage<User>(LOGIN_USER_KEY);
 
     useEffect(() => {
         logger.debug({
             context: "useMutateList.useEffect",
-            loggedIn: loginContext.data.loggedIn,
-            username: loginContext.data.username,
+            loggedIn: data.loggedIn,
+            username: data.username,
         });
-    }, [loginContext.data.loggedIn, loginContext.data.username]);
+    }, [data.loggedIn, data.username]);
 
     const clear: ProcessList = async (theList) => {
 
@@ -86,7 +87,7 @@ const useMutateList = (props: Props = {}): State => {
 
         let inserted = new List();
         let url = USERS_BASE
-            + `/${loginContext.user.id}/lists`;
+            + `/${user.id}/lists`;
         if (theList.populate) {
             url += "?populate";
         }
