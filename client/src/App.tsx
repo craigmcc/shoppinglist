@@ -22,6 +22,7 @@ import HomeView from "./components/home/HomeView";
 import ItemView from "./components/item/ItemView";
 import ItemsView from "./components/items/ItemsView";
 import ListView from "./components/list/ListView";
+import ListsView from "./components/lists/ListsView";
 import PasswordView from "./components/password/PasswordView";
 import ProfileView from "./components/profile/ProfileView";
 import RegisterView from "./components/register/RegisterView";
@@ -59,6 +60,7 @@ function App() {
                         <Route path="item" element={<ItemView/>}/>
                         <Route path="items" element={<ItemsView/>}/>
                         <Route path="list" element={<ListView/>}/>
+                        <Route path="lists" element={<ListsView/>}/>
                         {/* PasswordView supports both with and without passwordId */}
                         <Route path="passwords" element={<PasswordView/>}>
                             <Route path=":passwordId" element={<PasswordView/>}/>

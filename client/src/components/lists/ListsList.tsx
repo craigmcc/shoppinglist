@@ -1,10 +1,10 @@
-// HomeLists -----------------------------------------------------------------
+// ListsList -----------------------------------------------------------------
 
-// List the authorized List(s) for the currently logged in User.
+// List of available Lists for the currently logged in User.
 
 // External Modules ----------------------------------------------------------
 
-import {useContext, useEffect} from "react";
+import React, {useContext, useEffect} from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -31,7 +31,7 @@ export interface Props {
 
 // Component Details ---------------------------------------------------------
 
-const HomeLists = (props: Props) => {
+const ListsList = (props: Props) => {
 
     const loginContext = useContext(LoginContext);
 
@@ -45,60 +45,66 @@ const HomeLists = (props: Props) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        logger.debug({
-            context: "HomeLists.useEffect",
+        logger.info({
+            context: "ListsList.useEffect",
             list: Abridgers.LIST(list),
             lists: Abridgers.LISTS(fetchLists.lists),
         });
     }, [list, fetchLists.lists]);
 
+    // Handle a request to add a new List
     const handleAdd: HandleAction = () => {
         logger.debug({
-            context: "HomeLists.handleAdd",
+            context: "ListsList.handleAdd",
         });
         setList(new List());
         navigate("/list");
     }
 
+    // Select a List for which its Categories will be managed
     const handleCategories: HandleList = (list) => {
         logger.debug({
-            context: "HomeLists.handleCategories",
+            context: "ListsList.handleCategories",
             list: Abridgers.LIST(list),
         });
         setList(list);
         navigate("/categories");
     }
 
+    // Select a List for which its current contents will be managed
     const handleEdit: HandleList = (list) => {
         logger.debug({
-            context: "HomeLists.handleEdit",
+            context: "ListsList.handleEdit",
             list: list,
         });
         setList(list);
         navigate("/list");
     }
 
+    // Select a List for which its Items will be managed
     const handleItems: HandleList = (list) => {
         logger.debug({
-            context: "HomeLists.handleItems",
+            context: "ListsList.handleItems",
             list: Abridgers.LIST(list),
         });
         setList(list);
         navigate("/items");
     }
 
+    // Select a List for which its current entries will be managed
     const handleSelect: HandleList = (list) => {
         logger.debug({
-            context: "HomeLists.handleSelect",
+            context: "ListsList.handleSelect",
             list: Abridgers.LIST(list),
         });
         setList(list);
         navigate("/entries");
     }
 
+    // Select a List which will be offered to be shared with another User
     const handleShare: HandleList = (list) => {
         logger.debug({
-            context: "HomeLists.handleShare",
+            context: "ListsList.handleShare",
             list: Abridgers.LIST(list),
         });
         setList(list);
@@ -173,4 +179,4 @@ const HomeLists = (props: Props) => {
 
 }
 
-export default HomeLists;
+export default ListsList;

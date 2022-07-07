@@ -13,7 +13,7 @@ import Api from "../clients/Api";
 import {LOGIN_DATA_KEY, LOGIN_USER_KEY} from "../constants";
 import List from "../models/List";
 import User, {USERS_BASE} from "../models/User";
-import {LoginData} from "../types";
+import {HandleAction, LoginData} from "../types";
 import * as Abridgers from "../util/Abridgers";
 import logger from "../util/ClientLogger";
 import {queryParameters} from "../util/QueryParameters";
@@ -36,6 +36,7 @@ export interface State {
     error: Error | null;                // I/O error (if any)
     lists: List[];                      // Fetched Lists
     loading: boolean;                   // Are we currently loading?
+    refresh: HandleAction;              // Trigger a refresh
 }
 
 // Hook Details --------------------------------------------------------------
@@ -47,6 +48,7 @@ const useFetchLists = (props: Props): State => {
     const [error, setError] = useState<Error | null>(null);
     const [lists, setLists] = useState<List[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [refresh, setRefresh] = useState<boolean>(false);
     const [user] = useLocalStorage<User>(LOGIN_USER_KEY);
 
     useEffect(() => {
@@ -71,8 +73,9 @@ const useFetchLists = (props: Props): State => {
             try {
                 if (data.loggedIn && user.id) {
                     theLists = ToModel.LISTS((await Api.get(url)).data);
-                    logger.debug({
+                    logger.info({
                         context: "useFetchLists.fetchLists",
+                        refresh: refresh,
                         url: url,
                         lists: Abridgers.LISTS(theLists),
                     });
@@ -81,6 +84,7 @@ const useFetchLists = (props: Props): State => {
                         context: "useFetchLists.fetchLists",
                         msg: "Skipped fetching Lists",
                         loggedIn: data.loggedIn,
+                        refresh: refresh,
                         user: Abridgers.USER(user),
                         url: url,
                     })
@@ -96,19 +100,25 @@ const useFetchLists = (props: Props): State => {
 
             setLists(theLists);
             setLoading(false);
+            setRefresh(false);
 
         }
 
         fetchLists();
 
-    }, [alertPopup, data, user,
+    }, [alertPopup, data, refresh, user,
         props.active, props.listId, props.name,
         props.withCategories, props.withItems, props.withUsers])
+
+    const handleRefresh: HandleAction = () => {
+        setRefresh(true);
+    }
 
     return {
         error: error ? error : null,
         lists: lists,
         loading: loading,
+        refresh: handleRefresh,
     }
 
 }
