@@ -6,15 +6,17 @@
 
 import Item from "./Item";
 import List from "./List";
+import Model from "./Model";
 import * as ToModel from "../util/ToModel";
 
 // Public Objects ------------------------------------------------------------
 
 export const CATEGORIES_BASE = "/categories";
 
-export class CategoryData {
+export class CategoryData extends Model<Category> {
 
     constructor(data: any = {}) {
+        super();
         this.id = data.id ? data.id : null;
         this.active = (data.active !== undefined) ? data.active : true;
         this.listId = data.listId ? data.listId : null;

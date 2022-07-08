@@ -4,9 +4,12 @@
 
 // Public Objects ------------------------------------------------------------
 
-class RefreshToken {
+import Model from "./Model";
+
+class RefreshToken extends Model<RefreshToken> {
 
     constructor(data: any = {}) {
+        super();
         this.id = data.id ? data.id : null;
         this.accessToken = data.accessToken ? data.accessToken : null;
         this.expires = data.expires ? data.expires : null;

@@ -7,15 +7,17 @@
 
 import Category from "./Category";
 import Item from "./Item";
+import Model from "./Model";
 import * as ToModel from "../util/ToModel";
 
 // Public Objects ------------------------------------------------------------
 
 export const LISTS_BASE = "/lists";
 
-export class ListData {
+export class ListData extends Model<List> {
 
     constructor(data: any = {}) {
+        super();
         this.id = data.id ? data.id : null;
         this.active = (data.active !== undefined) ? data.active : true;
         this.name = data.name ? data.name : null;
