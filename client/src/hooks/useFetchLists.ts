@@ -73,14 +73,14 @@ const useFetchLists = (props: Props): State => {
             try {
                 if (loginContext.data.loggedIn && loginContext.user.id) {
                     theLists = ToModel.LISTS((await Api.get(url)).data);
-                    logger.info({
+                    logger.debug({
                         context: "useFetchLists.fetchLists",
                         refresh: refresh,
                         url: url,
                         lists: Abridgers.LISTS(theLists),
                     });
                 } else {
-                    logger.info({
+                    logger.debug({
                         context: "useFetchLists.fetchLists",
                         msg: "Skipped fetching Lists",
                         loggedIn: loginContext.data.loggedIn,

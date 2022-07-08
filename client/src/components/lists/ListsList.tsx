@@ -45,7 +45,7 @@ const ListsList = (props: Props) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        logger.info({
+        logger.debug({
             context: "ListsList.useEffect",
             list: Abridgers.LIST(list),
             lists: Abridgers.LISTS(fetchLists.lists),
