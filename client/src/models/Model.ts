@@ -6,6 +6,13 @@
 // Public Objects ------------------------------------------------------------
 
 class Model<M> {
+
+    constructor(id?: string) {
+        this.id = id ? id : "";
+    }
+
+    public id: string;
+
 }
 
 export default Model;

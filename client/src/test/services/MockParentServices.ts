@@ -12,7 +12,7 @@ const uuid = require("uuid");
 
 import MockCommonServices, {ModelStatic} from "./MockCommonServices";
 import Model from "../../models/Model";
-import {NotFound} from "../../util/HttpErrors";
+import {NotFound, NotUnique} from "../../util/HttpErrors";
 
 // Public Objects ------------------------------------------------------------
 
@@ -67,6 +67,25 @@ abstract class MockParentServices<M extends Model<M>> extends MockCommonServices
      */
     public find(modelId: string, query?: URLSearchParams): M {
         return this.read(`${this.name}Services.find`, modelId, query);
+    }
+
+    /**
+     * Insert and return a new model instance with the specified contents.
+     *
+     * @param model                     Object containing fields for the inserted instance
+     *
+     * @throws NotUnique                Object with this ID already exists
+     */
+    public insert(model: M): M {
+        if (!model.id) {
+            model.id = uuid.v4();
+        }
+        if (this.map.has(model.id)) {
+            throw new NotUnique(`id: Duplicate ${this.name} identifier`,
+                `${this.name}Services.insert`);
+        }
+        this.map.set(model.id, model);
+        return model;
     }
 
     // Default Helper Methods ------------------------------------------------

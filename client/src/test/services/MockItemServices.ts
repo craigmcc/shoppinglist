@@ -1,36 +1,37 @@
-// MockCategoryServices ------------------------------------------------------
+// MockItemServices ----------------------------------------------------------
 
-// Client side mocks for CategoryServices operations.
+// Client side mocks for ItemServices operations.
 
 // External Modules ----------------------------------------------------------
 
 // Internal Modules ----------------------------------------------------------
 
+import MockCategoryServices from "./MockCategoryServices";
 import MockChildServices from "./MockChildServices";
 import MockListServices from "./MockListServices";
-import Category from "../../models/Category";
+import Item from "../../models/Item";
 import List from "../../models/List";
 import {NotFound} from "../../util/HttpErrors";
 
 // Public Objects ------------------------------------------------------------
 
-class MockCategoryServices extends MockChildServices<Category, List> {
+class MockItemServices extends MockChildServices<Item, List> {
 
     constructor() {
-        super(MockListServices, Category);
+        super(MockListServices, Item);
     }
 
     // Model Specific Methods ------------------------------------------------
 
     /**
-     * Return the Category with the specified name (if any), or throw NotFound.
+     * Return the Item with the specified name (if any), or throw NotFound.
      *
      * @param listId                    ID of the owning List
      * @param name                      Name to be matched
      *
      * @throws NotFound                 If no List with this name is found
      */
-    public exact(listId: string, name: string): Category {
+    public exact(listId: string, name: string): Item {
         for (const result of this.map.values()) {
             if (result.listId === listId) {
                 if (result.name === name) {
@@ -39,7 +40,7 @@ class MockCategoryServices extends MockChildServices<Category, List> {
             }
         }
         throw new NotFound(
-            `name: Missing Category '${name}'`,
+            `name: Missing Item '${name}'`,
             `${this.name}Services.exact`,
         );
     }
@@ -54,14 +55,17 @@ class MockCategoryServices extends MockChildServices<Category, List> {
      * @param model                     Instance being decorated
      * @param query                     Optional query parameters
      */
-    public includes(model: Category, query?: URLSearchParams): Category {
-        const result = new Category(model);
+    public includes(model: Item, query?: URLSearchParams): Item {
+        const result = new Item(model);
         if (query) {
-            if (query.has("withItems")) {
-                // TODO - implement withItems
+            if (query.has("withCategory")) {
+                result.category = MockCategoryServices.read(
+                    "MockItemServices.includes",
+                    result.listId, result.categoryId);
             }
             if (query.has("withList")) {
-                result.list = MockListServices.find(result.listId);
+                result.list = MockListServices.read(
+                    "MockItemServices.includes", result.listId);
             }
         }
         return result;
@@ -74,7 +78,7 @@ class MockCategoryServices extends MockChildServices<Category, List> {
      * @param model                     Instance being checked
      * @param query                     Optional query parameters
      */
-    public matches(model: Category, query?: URLSearchParams): boolean {
+    public matches(model: Item, query?: URLSearchParams): boolean {
         let result = true;
         if (query) {
             if (query.has("active") && !model.active) {
@@ -86,4 +90,4 @@ class MockCategoryServices extends MockChildServices<Category, List> {
 
 }
 
-export default new MockCategoryServices();
+export default new MockItemServices();

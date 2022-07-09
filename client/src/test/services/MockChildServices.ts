@@ -13,7 +13,7 @@ const uuid = require("uuid");
 import MockCommonServices, {ModelStatic} from "./MockCommonServices";
 import MockParentServices from "./MockParentServices";
 import Model from "../../models/Model";
-import {NotFound} from "../../util/HttpErrors";
+import {NotFound, NotUnique} from "../../util/HttpErrors";
 
 // Public Objects -----------------------------------------------------------
 
@@ -94,6 +94,28 @@ abstract class MockChildServices<C extends Model<C>, P extends Model<P>> extends
      */
     public find(parentId: string, childId: string, query?: URLSearchParams): C {
         return this.read(`${this.name}Services.find`, parentId, childId, query);
+    }
+
+    /**
+     * Insert and return a new model instance with the specified contents.
+     *
+     * @param parentId                  ID of the required parent instance
+     * @param child                     Contents of the child model to be updated
+     */
+    public insert(parentId: string, child: C): C {
+        const parent = this.parentInstance.read(`${this.name}Services.insert`, parentId);
+        if (!child.id) {
+            child.id = uuid.v4();
+        }
+        if (this.map.has(child.id)) {
+            throw new NotUnique(`id: Duplicate ${this.name} identifier`,
+                `${this.name}Services.insert`);
+        }
+        this.map.set(child.id, {
+            ...child,
+            [`${this.parentKey}`]: parentId,
+        });
+        return child;
     }
 
     // Default Helper Methods ------------------------------------------------
