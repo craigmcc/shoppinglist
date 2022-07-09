@@ -39,7 +39,7 @@ abstract class MockCommonServices<M extends Model<M>> {
     /**
      * Model constructor this service class will operate on.
      */
-    public readonly model: Model<M>;
+    public readonly model: ModelStatic<M>;
 
     /**
      * Name of the Model class we are supporting.
