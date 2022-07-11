@@ -57,22 +57,27 @@ describe("CategoryForm", () =>{
 
             const LIST = MockListServices.exact(SeedData.LIST_NAME_FIRST);
             const CATEGORY = new Category({
+                active: true,
                 listId: LIST.id,
-            })
+                name: null,
+                notes: null,
+            });
             const PROPS: Props = {
                 category: CATEGORY,
                 handleSave: jest.fn(),
             }
-
             await act(async () => {
                 render(<CategoryForm {...PROPS}/>);
             });
+
             const {save} = elements();
             const client = userEvent.setup();
             await client.click(save);
 
-            expect(PROPS.handleSave).not.toBeCalled();
-// TODO            screen.getByText("name is required");
+            await waitFor(() => {
+                expect(PROPS.handleSave).not.toBeCalled();
+                screen.getByText("Name is required");
+            });
 
         });
 

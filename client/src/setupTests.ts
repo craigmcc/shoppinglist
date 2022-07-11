@@ -13,3 +13,13 @@ beforeAll(() => server.listen());
 beforeEach(() => reset());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
+import { jestPreviewConfigure } from 'jest-preview'
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
+// TODO: To add your global css here
+import './index.css';
+
+jestPreviewConfigure({
+  // Opt-in to automatic mode to preview failed test case automatically.
+  autoPreview: true,
+})

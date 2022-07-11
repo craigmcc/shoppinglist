@@ -45,7 +45,8 @@ const CategoryForm = (props: Props) => {
     const validationSchema = Yup.object().shape({
         active: Yup.boolean(),
         name: Yup.string()
-            .required(),
+            .nullable()
+            .required("Name is required"),
         notes: Yup.string()
             .nullable(),
     });
