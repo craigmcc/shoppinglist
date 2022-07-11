@@ -8,6 +8,7 @@ import {rest, RestHandler} from "msw";
 
 // Internal Modules ----------------------------------------------------------
 
+import {HttpErrorResponse} from "../Helpers";
 import MockUserServices from "../services/MockUserServices";
 import {CREATED, HttpError, OK} from "../../util/HttpErrors";
 import * as ToModel from "../../util/ToModel";
@@ -38,15 +39,7 @@ export const MockUserHandlers: RestHandler[] = [
                 ctx.json(user),
             );
         } catch (error) {
-            const httpError = error as HttpError;
-            return res(
-                ctx.status(httpError.status),
-                ctx.json({
-                    context: httpError.context,
-                    message: httpError.message,
-                    status: httpError.status,
-                }),
-            );
+            return HttpErrorResponse(res, ctx, error);
         }
     }),
 
@@ -61,15 +54,7 @@ export const MockUserHandlers: RestHandler[] = [
                 ctx.json(user),
             );
         } catch (error) {
-            const httpError = error as HttpError;
-            return res(
-                ctx.status(httpError.status),
-                ctx.json({
-                    context: httpError.context,
-                    message: httpError.message,
-                    status: httpError.status,
-                }),
-            );
+            return HttpErrorResponse(res, ctx, error);
         }
     }),
 
@@ -84,17 +69,9 @@ export const MockUserHandlers: RestHandler[] = [
                 ctx.json(inserted),
             );
         } catch (error) {
-            const httpError = error as HttpError;
-            return res(
-                ctx.status(httpError.status),
-                ctx.json({
-                    context: httpError.context,
-                    message: httpError.message,
-                    status: httpError.status,
-                }),
-            );
+            return HttpErrorResponse(res, ctx, error);
         }
-    })
+    }),
 
 ];
 

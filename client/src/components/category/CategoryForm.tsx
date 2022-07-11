@@ -19,7 +19,9 @@ import {CheckBoxField, TextField} from "@craigmcc/shared-react";
 
 import {HandleCategory} from "../../types";
 import Category, {CategoryData} from "../../models/Category";
+import {validateCategoryNameUnique} from "../../util/AsyncValidators";
 import logger from "../../util/ClientLogger";
+import * as ToModel from "../../util/ToModel";
 
 // Incoming Properties -------------------------------------------------------
 
@@ -46,7 +48,12 @@ const CategoryForm = (props: Props) => {
         active: Yup.boolean(),
         name: Yup.string()
             .nullable()
-            .required("Name is required"),
+            .required("Name is required")
+            .test("unique-name",
+                "That name is already in use within this List",
+                async function (this) {
+                    return validateCategoryNameUnique(ToModel.CATEGORY(this));
+                }),
         notes: Yup.string()
             .nullable(),
     });

@@ -24,11 +24,11 @@ import * as ToModel from "./ToModel";
 
 // Public Objects ------------------------------------------------------------
 
-export const validateCategoryNameUnique = async (list: List, category: Category): Promise<boolean> => {
-    if (list && list.id && category && category.name) {
+export const validateCategoryNameUnique = async (category: Category): Promise<boolean> => {
+    if (category && category.listId && category.name) {
         try {
             const result = (await Api.get(CATEGORIES_BASE
-                + `/${list.id}/exact/${category.name}`)).data;
+                + `/${category.listId}/exact/${category.name}`)).data;
             return (result.id === category.id);
         } catch (error) {
             return true;    // Definitely unique
@@ -38,11 +38,11 @@ export const validateCategoryNameUnique = async (list: List, category: Category)
     }
 }
 
-export const validateItemNameUnique = async (list: List, item: Item): Promise<boolean> => {
-    if (list && list.id && item && item.name) {
+export const validateItemNameUnique = async (item: Item): Promise<boolean> => {
+    if (item && item.listId && item.name) {
         try {
             const result = (await Api.get(ITEMS_BASE
-                + `/${list.id}/exact/${item.name}`)).data;
+                + `/${item.listId}/exact/${item.name}`)).data;
             return (result.id === item.id);
         } catch (error) {
             return true;    // Definitely unique

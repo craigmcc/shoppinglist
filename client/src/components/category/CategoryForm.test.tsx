@@ -51,7 +51,7 @@ const elements = (): {
 
 describe("CategoryForm", () =>{
 
-    describe("Invalid data", () => {
+    describe("Invalid Data", () => {
 
         it("should fail on missing name", async () => {
 
