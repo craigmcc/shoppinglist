@@ -53,6 +53,34 @@ describe("CategoryForm", () =>{
 
     describe("Invalid Data", () => {
 
+        it("should fail on duplicate name", async () => {
+
+            const LIST = MockListServices.exact(SeedData.LIST_NAME_THIRD);
+            const CATEGORIES = MockCategoryServices.all(LIST.id);
+            const CATEGORY = {
+                ...CATEGORIES[0],
+                name: CATEGORIES[1].name,
+            }
+            const PROPS: Props = {
+                category: CATEGORY,
+                handleSave: jest.fn(),
+            }
+            await act(async () => {
+                render(<CategoryForm {...PROPS}/>);
+            })
+
+            const {name, save} = elements();
+            const client = userEvent.setup();
+            await client.click(save);
+
+            await waitFor(() => {
+                expect(PROPS.handleSave).not.toBeCalled();
+                screen.getByText("That name is already in use within this List");
+            });
+
+
+        })
+
         it("should fail on missing name", async () => {
 
             const LIST = MockListServices.exact(SeedData.LIST_NAME_FIRST);

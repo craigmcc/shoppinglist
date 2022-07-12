@@ -52,7 +52,7 @@ const CategoryForm = (props: Props) => {
             .test("unique-name",
                 "That name is already in use within this List",
                 async function (this) {
-                    return validateCategoryNameUnique(ToModel.CATEGORY(this));
+                    return validateCategoryNameUnique(ToModel.CATEGORY(this.parent));
                 }),
         notes: Yup.string()
             .nullable(),
