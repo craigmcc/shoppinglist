@@ -78,7 +78,6 @@ describe("CategoryForm", () =>{
                 screen.getByText("That name is already in use within this List");
             });
 
-
         })
 
         it("should fail on missing name", async () => {
@@ -105,6 +104,87 @@ describe("CategoryForm", () =>{
             await waitFor(() => {
                 expect(PROPS.handleSave).not.toBeCalled();
                 screen.getByText("Name is required");
+            });
+
+        });
+
+    });
+
+    describe("Valid Data", () => {
+
+        it("should pass validation on a name update", async () => {
+
+            const LIST = MockListServices.exact(SeedData.LIST_NAME_THIRD);
+            const CATEGORIES = MockCategoryServices.all(LIST.id);
+            const CATEGORY = {
+                ...CATEGORIES[0],
+                name: "Completely brand new name",
+            }
+            const PROPS: Props = {
+                category: CATEGORY,
+                handleSave: jest.fn(),
+            }
+            await act(async () => {
+                render(<CategoryForm {...PROPS}/>);
+            })
+
+            const {save} = elements();
+            const client = userEvent.setup();
+            await client.click(save);
+
+            await waitFor(() => {
+                expect(PROPS.handleSave).toBeCalled();
+            });
+
+        });
+
+        it("should pass validation on a no change update", async () => {
+
+            const LIST = MockListServices.exact(SeedData.LIST_NAME_FIRST);
+            const CATEGORIES = MockCategoryServices.all(LIST.id);
+            const CATEGORY = {
+                ...CATEGORIES[0],
+            }
+            const PROPS: Props = {
+                category: CATEGORY,
+                handleSave: jest.fn(),
+            }
+            await act(async () => {
+                render(<CategoryForm {...PROPS}/>);
+            })
+
+            const {save} = elements();
+            const client = userEvent.setup();
+            await client.click(save);
+
+            await waitFor(() => {
+                expect(PROPS.handleSave).toBeCalled();
+            });
+
+        });
+
+        it("should pass validation on a notes update", async () => {
+
+            const LIST = MockListServices.exact(SeedData.LIST_NAME_FIRST);
+            const CATEGORIES = MockCategoryServices.all(LIST.id);
+            const CATEGORY = {
+                ...CATEGORIES[0],
+                note: "Completely brand new note",
+            }
+            const PROPS: Props = {
+                category: CATEGORY,
+                handleSave: jest.fn(),
+            }
+            await act(async () => {
+                render(<CategoryForm {...PROPS}/>);
+            })
+
+            const {save} = elements();
+            const client = userEvent.setup();
+            await client.click(save);
+
+            await waitFor(() => {
+                expect(PROPS.handleSave).toBeCalled();
             });
 
         });
