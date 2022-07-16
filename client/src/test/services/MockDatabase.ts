@@ -55,6 +55,17 @@ export const reset = (): void => {
         lists.push(list);
     });
 
-    // TODO - Associate Users and Lists
+    // Associate Users and Lists, associating the Users with first name "First"
+    // to the List that has "First" in the name, and then the same for "Second"
+    // and "Third".
+    users.forEach(user => {
+        if (["First", "Second", "Third"].includes(user.firstName)) {
+            lists.forEach(list => {
+                if (list.name.includes(user.firstName)) {
+                    MockUserServices.listsInclude(user.id, list.id);
+                }
+            });
+        }
+    });
 
 }

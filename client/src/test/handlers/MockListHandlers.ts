@@ -10,7 +10,7 @@ import {rest, RestHandler} from "msw";
 
 import {HttpErrorResponse} from "../Helpers";
 import MockListServices from "../services/MockListServices";
-import {CREATED, HttpError, OK} from "../../util/HttpErrors";
+import {CREATED, OK} from "../../util/HttpErrors";
 import * as ToModel from "../../util/ToModel";
 
 // Public Objects ------------------------------------------------------------

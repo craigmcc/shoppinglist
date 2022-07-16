@@ -10,7 +10,7 @@ import {rest, RestHandler} from "msw";
 
 import {HttpErrorResponse} from "../Helpers";
 import MockUserServices from "../services/MockUserServices";
-import {CREATED, HttpError, OK} from "../../util/HttpErrors";
+import {CREATED, OK} from "../../util/HttpErrors";
 import * as ToModel from "../../util/ToModel";
 
 // Public Objects ------------------------------------------------------------
@@ -67,6 +67,51 @@ export const MockUserHandlers: RestHandler[] = [
             return res(
                 ctx.status(CREATED),
                 ctx.json(inserted),
+            );
+        } catch (error) {
+            return HttpErrorResponse(res, ctx, error);
+        }
+    }),
+
+    // lists -----------------------------------------------------------------
+    rest.get(`${PREFIX}/:userId/lists`, (req, res, ctx) => {
+        try {
+            const {userId} = req.params;
+            // @ts-ignore
+            const lists = MockUserServices.lists(userId);
+            return res(
+                ctx.status(OK),
+                ctx.json(lists),
+            );
+        } catch (error) {
+            return HttpErrorResponse(res, ctx, error);
+        }
+    }),
+
+    // listsExclude ----------------------------------------------------------
+    rest.delete(`${PREFIX}/:userId/lists/:listId`, (req, res, ctx) => {
+        try {
+            const {listId, userId} = req.params;
+            // @ts-ignore
+            const list = MockUserServices.listsExclude(userId, listId);
+            return res(
+                ctx.status(OK),
+                ctx.json(list),
+            );
+        } catch (error) {
+            return HttpErrorResponse(res, ctx, error);
+        }
+    }),
+
+    // listsInclude ----------------------------------------------------------
+    rest.post(`${PREFIX}/:userId/lists/:listId`, (req, res, ctx) => {
+        try {
+            const {listId, userId} = req.params;
+            // @ts-ignore
+            const list = MockUserServices.listsInclude(userId, listId);
+            return res(
+                ctx.status(OK),
+                ctx.json(list),
             );
         } catch (error) {
             return HttpErrorResponse(res, ctx, error);
