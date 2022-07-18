@@ -65,7 +65,7 @@ const CategoriesList = (props: Props) => {
 
     const handleEdit: HandleCategory = (category) => {
         logger.debug({
-            context: "CategoriesList.handleEit",
+            context: "CategoriesList.handleEdit",
             category: Abridgers.CATEGORY(category),
         });
         setCategory(category);
@@ -116,6 +116,7 @@ const CategoriesList = (props: Props) => {
                 <Col className="text-center">
                     <PlusCircleFill
                         color="primary"
+                        data-testid="add"
                         onClick={handleAdd}
                         size={48}
                     />

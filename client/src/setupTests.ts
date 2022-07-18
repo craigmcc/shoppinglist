@@ -9,10 +9,19 @@ import {reset} from "./test/services/MockDatabase";
 import {server} from "./test/server";
 
 // Configure mock service workers
-beforeAll(() => server.listen());
-beforeEach(() => reset());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+beforeAll(() => {
+  server.listen();
+});
+beforeEach(() => {
+  reset();
+  global.localStorage.clear();
+});
+afterEach(() => {
+  server.resetHandlers()
+});
+afterAll(() => {
+  server.close()
+});
 import { jestPreviewConfigure } from 'jest-preview'
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
