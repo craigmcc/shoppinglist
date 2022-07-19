@@ -47,8 +47,7 @@ const storedList = new LocalStorage<List>(CURRENT_LIST_KEY);
 const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
-    navigate: () => mockNavigate,
-    useNavigate: () => (jest.fn()),
+    useNavigate: () => mockNavigate,
 }));
 
 // Test Methods --------------------------------------------------------------
@@ -74,7 +73,7 @@ describe("CategoriesList", () => {
             await client.click(add);
 
             await waitFor(() => {
-                //expect(mockNavigate).toBeCalledWith("/category"); // TODO - does not work
+                expect(mockNavigate).toBeCalledWith("/category");
                 const category = storedCategory.value;
                 expect(category.listId).toBe(LIST.id);
             });
