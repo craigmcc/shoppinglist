@@ -9,6 +9,7 @@ import {setupServer} from "msw/node";
 // Internal Modules ----------------------------------------------------------
 
 import MockCategoryHandlers from "./handlers/MockCategoryHandlers";
+import MockItemHandlers from "./handlers/MockItemHandlers";
 import MockListHandlers from "./handlers/MockListHandlers";
 import MockUserHandlers from "./handlers/MockUserHandlers";
 import {RestHandler} from "msw";
@@ -17,6 +18,7 @@ import {RestHandler} from "msw";
 
 const handlers: RestHandler[] = [
     ...MockCategoryHandlers,
+    ...MockItemHandlers,
     ...MockListHandlers,
     ...MockUserHandlers,
 ];

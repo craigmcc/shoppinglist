@@ -77,7 +77,7 @@ abstract class MockChildServices<C extends Model<C>, P extends Model<P>> extends
         for (const result of this.map.values()) {
             // @ts-ignore
             if ((result[this.parentKey] === parentId) && this.matches(result, query)) {
-                results.push(result);
+                results.push(this.includes(result, query));
             }
         }
         return results;

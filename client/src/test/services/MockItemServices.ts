@@ -49,7 +49,7 @@ class MockItemServices extends MockChildServices<Item, List> {
 
     /**
      * Supported include query parameters
-     * * withItems                      Include associated Items
+     * * withCategory                   Include associated Category
      * * withList                       Include owning List
      *
      * @param model                     Instance being decorated
@@ -57,16 +57,15 @@ class MockItemServices extends MockChildServices<Item, List> {
      */
     public includes(model: Item, query?: URLSearchParams): Item {
         const result = new Item(model);
-        if (query) {
-            if (query.has("withCategory")) {
-                result.category = MockCategoryServices.read(
-                    "MockItemServices.includes",
-                    result.listId, result.categoryId);
-            }
-            if (query.has("withList")) {
-                result.list = MockListServices.read(
-                    "MockItemServices.includes", result.listId);
-            }
+        // TODO - query not actually getting passed in?
+        if (result.categoryId) {
+            result.category = MockCategoryServices.read(
+                "MockItemServices.includes",
+                result.listId, result.categoryId);
+        }
+        if (result.listId) {
+            result.list = MockListServices.read(
+                "MockItemServices.includes", result.listId);
         }
         return result;
     }

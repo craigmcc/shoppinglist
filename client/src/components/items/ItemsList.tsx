@@ -103,7 +103,7 @@ const ItemsList = (props: Props) => {
                                 <span>{item.categoryName}</span>
                             </td>
                             <td className="text-end">
-                                <Dropdown>
+                                <Dropdown data-testid="dropdown">
                                     <Dropdown.Toggle
                                         className="px-0"
                                         variant="success-outline"
@@ -126,6 +126,7 @@ const ItemsList = (props: Props) => {
                 <Col className="text-center">
                     <PlusCircleFill
                         color="primary"
+                        data-testid="add"
                         onClick={handleAdd}
                         size={48}
                     />

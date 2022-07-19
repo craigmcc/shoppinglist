@@ -9,6 +9,8 @@ import {rest, RestHandler} from "msw";
 // Internal Modules ----------------------------------------------------------
 
 import {HttpErrorResponse} from "../Helpers";
+import MockCategoryServices from "../services/MockCategoryServices";
+import MockItemServices from "../services/MockItemServices";
 import MockListServices from "../services/MockListServices";
 import {CREATED, OK} from "../../util/HttpErrors";
 import * as ToModel from "../../util/ToModel";
@@ -26,6 +28,21 @@ export const MockListHandlers: RestHandler[] = [
             ctx.status(OK),
             ctx.json(lists),
         );
+    }),
+
+    // categories ------------------------------------------------------------
+    rest.get(`${PREFIX}/:listId/categories`, (req, res, ctx) => {
+        try {
+            const {listId} = req.params;
+            // @ts-ignore
+            const list = MockCategoryServices.all(listId, req.url.searchParams);
+            return res(
+                ctx.status(OK),
+                ctx.json(list),
+            );
+        } catch (error) {
+            return HttpErrorResponse(res, ctx, error);
+        }
     }),
 
     // exact -----------------------------------------------------------------
@@ -67,6 +84,21 @@ export const MockListHandlers: RestHandler[] = [
             return res(
                 ctx.status(CREATED),
                 ctx.json(inserted),
+            );
+        } catch (error) {
+            return HttpErrorResponse(res, ctx, error);
+        }
+    }),
+
+    // items -----------------------------------------------------------------
+    rest.get(`${PREFIX}/:listId/items`, (req, res, ctx) => {
+        try {
+            const {listId} = req.params;
+            // @ts-ignore
+            const list = MockItemServices.all(listId, req.url.searchParams);
+            return res(
+                ctx.status(OK),
+                ctx.json(list),
             );
         } catch (error) {
             return HttpErrorResponse(res, ctx, error);

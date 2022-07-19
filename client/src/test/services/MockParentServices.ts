@@ -50,8 +50,7 @@ abstract class MockParentServices<M extends Model<M>> extends MockCommonServices
         const results: M[] = [];
         for (const result of this.map.values()) {
             if (this.matches(result, query)) {
-                // TODO - handle includes
-                results.push(result);
+                results.push(this.includes(result, query));
             }
         }
         return results;
@@ -102,7 +101,7 @@ abstract class MockParentServices<M extends Model<M>> extends MockCommonServices
     public read(context: string, modelId: string, query?: URLSearchParams): M {
         const result = this.map.get(modelId);
         if (result) {
-            return this.includes(result);
+            return this.includes(result, query);
         } else {
             throw new NotFound(
                 `${this.key}: Missing ${this.name} ${modelId}`,
