@@ -87,6 +87,38 @@ abstract class MockParentServices<M extends Model<M>> extends MockCommonServices
         return model;
     }
 
+    /**
+     * Remove and return an existing instance.
+     *
+     * @param modelId                   ID of the instance to be removed
+     *
+     * @throws NotFound                 If no such instance exists.
+     */
+    public remove(modelId: string): M {
+        const removed = this.read(`${this.name}Services.remove`, modelId);
+        this.map.delete(modelId);
+        return removed;
+    }
+
+    /**
+     * Update the contents of an existing instance.
+     *
+     * @param modelId                   ID of the instance to be updated
+     * @param model                     Model properties to be updated
+     *
+     * @throws NotFound                 If the specified child instance does not exist
+     */
+    public update(modelId: string, model: M): M {
+        const original = this.read(`${this.name}Services.update`, modelId);
+        const updated = {
+            ...original,
+            ...model,
+            id: modelId,
+        }
+        this.map.set(modelId, updated);
+        return updated;
+    }
+
     // Default Helper Methods ------------------------------------------------
 
     /**

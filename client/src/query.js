@@ -1,4 +1,4 @@
-const url = "http://example.com/api/lists/abc/items?withCategory";
+const url ="?withCategory";
 console.log("url", url);
 const params = new URLSearchParams(url);
 console.log("params", params);

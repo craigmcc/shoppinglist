@@ -118,6 +118,40 @@ abstract class MockChildServices<C extends Model<C>, P extends Model<P>> extends
         return child;
     }
 
+    /**
+     * Remove and return an existing child instance.
+     *
+     * @param parentId                  ID of the required parent instance
+     * @param childId                   ID of the child instance to be removed
+     *
+     * @throws NotFound                 If the specified child instance does not exist
+     */
+    public remove(parentId: string, childId: string): C {
+        const removed = this.read(`${this.name}Services.remove`, parentId, childId);
+        this.map.delete(childId);
+        return removed;
+    }
+
+    /**
+     * Update the contents of an existing child instance.
+     *
+     * @param parentId                  ID of the required parent instance
+     * @param childId                   ID of the child instance to be updated
+     * @param child                     Child properties to be updated
+     *
+     * @throws NotFound                 If the specified child instance does not exist
+     */
+    public update(parentId: string, childId: string, child: C): C{
+        const original = this.read(`${this.name}Services.update`, parentId, childId);
+        const updated = {
+            ...original,
+            ...child,
+            id: childId,
+        }
+        this.map.set(childId, updated);
+        return updated;
+    }
+
     // Default Helper Methods ------------------------------------------------
 
     /**
