@@ -93,7 +93,7 @@ const CategoriesList = (props: Props) => {
                                 ) : null }
                             </td>
                             <td className="text-end">
-                                <Dropdown>
+                                <Dropdown data-testid="dropdown">
                                     <Dropdown.Toggle
                                         className="px-0"
                                         variant="success-outline"
