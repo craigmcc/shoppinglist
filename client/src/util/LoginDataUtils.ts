@@ -5,8 +5,8 @@
 
 // External Modules ----------------------------------------------------------
 
-import {OAuthError, PasswordTokenRequest, RefreshTokenRequest, TokenResponse} from "@craigmcc/oauth-orchestrator";
-import compareAsc from "date-fns/compareAsc";
+import {OAuthError} from "@craigmcc/oauth-orchestrator/dist/errors";
+import {PasswordTokenRequest, RefreshTokenRequest, TokenResponse} from "@craigmcc/oauth-orchestrator/dist/types";
 
 // Internal Modules ----------------------------------------------------------
 
