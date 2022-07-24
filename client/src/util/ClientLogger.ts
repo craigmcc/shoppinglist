@@ -14,7 +14,7 @@
 
 // Internal Modules ----------------------------------------------------------
 
-import ClientClient from "../clients/ClientClient";
+import Client from "../clients/Client";
 import {Level} from "../types";
 
 // Private Objects -----------------------------------------------------------
@@ -66,7 +66,7 @@ class logger {
             }
             if (!TEST_ENV) {
                 try {
-                    await ClientClient.log(output);
+                    await Client.post("/clientLog", output);
                 } catch (error) {
                     console.error(`Error '${(error as Error).message}' logging client message`, object);
                 }

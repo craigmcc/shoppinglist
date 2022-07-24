@@ -14,11 +14,12 @@ import {LOGIN_DATA_KEY, LOGIN_USER_KEY} from "../../constants";
 import {LoginData, Scope} from "../../types";
 import OAuth from "../../clients/OAuth";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import TokenResponse from "../../models/TokenResponse";
+import Credentials from "../../models/Credentials";
 import List from "../../models/List";
 import User from "../../models/User";
 import * as Abridgers from "../../util/Abridgers";
 import logger from "../../util/ClientLogger";
+import {login, logout} from "../../util/LoginDataUtils";
 import * as ToModel from "../../util/ToModel";
 
 // Context Properties --------------------------------------------------------
@@ -45,7 +46,7 @@ const LOGIN_USER: User = new User({
 export interface LoginState {
     data: LoginData;                    // Externally visible information
     user: User;                         // Currently logged in User (if any)
-    handleLogin: (username: string, tokenResponse: TokenResponse) => void;
+    handleLogin: (credentials: Credentials) => void;
     handleLogout: () => void;
     refreshUser: (data?: LoginData) => Promise<void>; // Refresh user data
     validateAdmin: (list: List) => boolean;
@@ -56,7 +57,7 @@ export interface LoginState {
 const LoginContext = createContext<LoginState>({
     data: LOGIN_DATA,
     user: LOGIN_USER,
-    handleLogin: (username, tokenResponse) => {},
+    handleLogin: (credentials) => {},
     handleLogout: () => {},
     refreshUser: (data) => {},
     validateScope: (scope: string): boolean => { return false; }
@@ -77,17 +78,22 @@ export const LoginContextProvider = ({ children }) => {
     const [user, setUser] = useLocalStorage<User>(LOGIN_USER_KEY, LOGIN_USER);
 
     /**
-     * Handle a successful login.
+     * Attempt a login and record the results.
      *
-     * @param username                  // Username that has been logged in
-     * @param tokenResponse             // OAuth response with token(s) and scope
+     * @param credentials               Login credentials to authenticate
+     *
+     * @throws OAuthError               If authentication fails
      */
-    const handleLogin = async (username: string, tokenResponse: TokenResponse): Promise<void> => {
+    const handleLogin = async (credentials: Credentials): Promise<void> => {
+
+        // Attempt to authenticate the specified credentials
+        const newData = await login(credentials);
+        setData(newData);
 
         // Save allowed scope(s) and set logging level
         let logLevel = LOG_DEFAULT;
-        if (tokenResponse.scope) {
-            const theAlloweds = tokenResponse.scope.split(" ");
+        if (newData.scope) {
+            const theAlloweds = newData.scope.split(" ");
             setAlloweds(theAlloweds);
             theAlloweds.forEach(allowed => {
                 if (allowed.startsWith(LOG_PREFIX)) {
@@ -102,24 +108,13 @@ export const LoginContextProvider = ({ children }) => {
         // Document this login
         logger.info({
             context: "LoginContext.handleLogin",
-            username: username,
-            scope: tokenResponse.scope,
+            username: newData.username,
+            scope: newData.scope,
             logLevel: logLevel,
         });
 
-        // Update the stored data to show this username is now logged in
-        const theData: LoginData = {
-            accessToken: tokenResponse.access_token,
-            expires: new Date((new Date()).getTime() + (tokenResponse.expires_in * 1000)),
-            loggedIn: true,
-            refreshToken: tokenResponse.refresh_token ? tokenResponse.refresh_token : null,
-            scope: tokenResponse.scope,
-            username: username,
-        }
-        setData(theData);
-
         // Refresh the current User information
-        await refreshUser(theData);
+        await refreshUser(newData);
 
     }
 
@@ -136,16 +131,10 @@ export const LoginContextProvider = ({ children }) => {
         // Reset logging to the default level
         logger.setLevel(LOG_DEFAULT);
 
-        // Update the stored data to show this user is now logged out
-        const theData = {
-            accessToken: null,
-            expires: null,
-            loggedIn: false,
-            refreshToken: null,
-            scope: null,
-            username: null,
-        };
-        setData(theData);
+        // Perform logout on the server
+        setData(await logout());
+
+        // Erase our currently logged in User information
         setUser(LOGIN_USER);
 
     }

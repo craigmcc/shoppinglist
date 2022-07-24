@@ -12,6 +12,10 @@ import {Orchestrator} from "@craigmcc/oauth-orchestrator";
 
 import OAuthOrchestratorHandlers from "./OAuthOrchestratorHandlers";
 export const OAuthOrchestrator: Orchestrator
-    = new Orchestrator(OAuthOrchestratorHandlers, { issueRefreshToken: false });
+    = new Orchestrator(OAuthOrchestratorHandlers, {
+        accessTokenLifetime: 24 * 60 * 60, // One day
+        issueRefreshToken: true,
+        refreshTokenLifetime: 24 * 60 * 60 * 365, // One year
+    });
 
 export default OAuthOrchestrator;

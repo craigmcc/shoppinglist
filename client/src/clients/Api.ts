@@ -9,11 +9,7 @@ import axios, {AxiosInstance} from "axios";
 
 // Internal Modules ----------------------------------------------------------
 
-import {LOGIN_DATA_KEY} from "../constants";
-import {LoginData} from "../types";
-import LocalStorage from "../util/LocalStorage";
-
-const loginData = new LocalStorage<LoginData>(LOGIN_DATA_KEY);
+import {refresh} from "../util/LoginDataUtils";
 
 // Public Objects ------------------------------------------------------------
 
@@ -24,8 +20,8 @@ const Api: AxiosInstance = axios.create({
     },
 });
 
-Api.interceptors.request.use(function (config) {
-    const currentData = loginData.value;
+Api.interceptors.request.use(async function (config) {
+    const currentData = await refresh();
     if (currentData.accessToken) {
         // @ts-ignore
         config.headers["Authorization"] = `Bearer ${currentData.accessToken}`;

@@ -14,9 +14,10 @@ import {useNavigate} from "react-router-dom";
 // Internal Modules ----------------------------------------------------------
 
 import LoginContext from "./LoginContext";
-import {HandleAction} from "../../types";
+import {LOGIN_DATA_KEY} from "../../constants";
+import {HandleAction, LoginData} from "../../types";
+import useLocalStorage from "../../hooks/useLocalStorage";
 import logger from "../../util/ClientLogger";
-import OAuth from "../../clients/OAuth";
 import ReportError from "../../util/ReportError";
 
 // Incoming Properties -------------------------------------------------------
@@ -33,6 +34,7 @@ function UserWidget(props: Props) {
         LOGGED_OUT = "Logged Out",
     }
 
+    const [data] = useLocalStorage<LoginData>(LOGIN_DATA_KEY);
     const loginContext = useContext(LoginContext);
     const navigate = useNavigate();
 
@@ -40,38 +42,26 @@ function UserWidget(props: Props) {
 
     useEffect(() => {
         const theMode: Mode =
-            (loginContext.data.loggedIn) ? Mode.LOGGED_IN : Mode.LOGGED_OUT;
+            (data.loggedIn) ? Mode.LOGGED_IN : Mode.LOGGED_OUT;
         logger.debug({
             context: "UserWidget.useEffect",
             mode: theMode.toString(),
         });
-        setMode(theMode);
-    }, [loginContext.data.loggedIn, Mode]);
+        if (mode !== theMode) {
+            setMode(theMode);
+        }
+    }, [data.loggedIn, mode, Mode.LOGGED_IN, Mode.LOGGED_OUT]);
 
     const handleLogout = async (): Promise<void> => {
-        const accessToken = loginContext.data.accessToken;
-        const username = loginContext.data.username;
+        const username = data.username;
         try {
-            logger.debug({
-                context: "UserWidget.handleLogout",
-                username: username,
-//                accessToken: accessToken,
-            })
             await loginContext.handleLogout();
-            navigate("/");
-            if (accessToken) {
-                await OAuth.delete("/token", {
-                    headers: {
-                        "Authorization": `Bearer ${accessToken}`
-                    }
-                });
-            }
         } catch (error) {
             ReportError("UserWidget.handleLogout", error, {
                 username: username,
-//                accessToken: accessToken,
             });
         }
+        navigate("/");
     }
 
     const handlePassword: HandleAction = () => {
