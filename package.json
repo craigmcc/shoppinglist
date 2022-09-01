@@ -63,7 +63,7 @@
     "node-pg-migrate": "^6.2.2",
     "nodemailer": "^6.7.8",
     "nyc": "^15.1.0",
-    "pg": "^8.7.3",
+    "pg": "^8.8.0",
     "pg-hstore": "^2.3.4",
     "pino": "^8.4.2",
     "rotating-file-stream": "^3.0.4",
