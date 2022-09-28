@@ -61,7 +61,7 @@
     "helmet": "^6.0.0",
     "morgan": "^1.10.0",
     "node-pg-migrate": "^6.2.2",
-    "nodemailer": "^6.7.8",
+    "nodemailer": "^6.8.0",
     "nyc": "^15.1.0",
     "pg": "^8.8.0",
     "pg-hstore": "^2.3.4",
