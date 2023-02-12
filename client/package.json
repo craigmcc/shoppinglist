@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "http://localhost:8083",
   "dependencies": {
-    "@craigmcc/oauth-orchestrator": "^1.0.1",
+    "@craigmcc/oauth-orchestrator": "^1.0.4",
     "@craigmcc/shared-react": "^1.2.1",
     "@craigmcc/shared-utils": "^1.0.2",
     "@hookform/resolvers": "^2.9.8",
