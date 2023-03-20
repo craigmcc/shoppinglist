@@ -4,7 +4,7 @@
   "description": "Shopping List Application",
   "main": "dist/server.js",
   "engines": {
-    "node": "16.x"
+    "node": ">=16.x"
   },
   "scripts": {
     "develop:dev": "concurrently \"npm:server:build:watch\" \"npm:start:dev\"",
