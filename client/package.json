@@ -22,7 +22,7 @@
     "jest-preview": "^0.3.1",
     "msw": "^1.2.1",
     "react": "^18.2.0",
-    "react-bootstrap": "^2.7.2",
+    "react-bootstrap": "^2.7.4",
     "react-bootstrap-icons": "^1.10.3",
     "react-device-detect": "^2.2.3",
     "react-dom": "^18.2.0",
