@@ -14,7 +14,7 @@
     "@types/jest": "^29.5.1",
     "@types/node": "^18.15.11",
     "@types/react": "^18.0.38",
-    "@types/react-dom": "^18.0.11",
+    "@types/react-dom": "^18.2.4",
     "@types/react-google-recaptcha": "^2.1.5",
     "axios": "^0.27.2",
     "bootstrap": "^5.2.3",
