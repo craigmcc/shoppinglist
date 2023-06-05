@@ -67,7 +67,7 @@
     "pg-hstore": "^2.3.4",
     "pino": "^8.14.1",
     "rotating-file-stream": "^3.1.0",
-    "sequelize": "^6.31.1",
+    "sequelize": "^6.32.0",
     "sequelize-typescript": "^2.1.5"
   },
   "devDependencies": {
