@@ -71,13 +71,13 @@
     "sequelize-typescript": "^2.1.5"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.5",
+    "@types/chai": "^4.3.6",
     "@types/express": "^4.17.17",
     "@types/mocha": "^10.0.1",
     "@types/morgan": "^1.9.5",
     "@types/nodemailer": "^6.4.10",
     "@types/uuid": "^9.0.3",
-    "chai": "^4.3.7",
+    "chai": "^4.3.8",
     "chai-http": "^4.4.0",
     "concurrently": "^8.2.1",
     "cross-env": "^7.0.3",
