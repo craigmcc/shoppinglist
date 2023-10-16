@@ -7,7 +7,7 @@
     "@craigmcc/oauth-orchestrator": "^1.0.4",
     "@craigmcc/shared-react": "^1.2.1",
     "@craigmcc/shared-utils": "^1.0.3",
-    "@hookform/resolvers": "^3.1.0",
+    "@hookform/resolvers": "^3.3.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
