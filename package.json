@@ -74,7 +74,7 @@
     "@types/chai": "^4.3.6",
     "@types/express": "^4.17.20",
     "@types/mocha": "^10.0.1",
-    "@types/morgan": "^1.9.5",
+    "@types/morgan": "^1.9.7",
     "@types/nodemailer": "^6.4.10",
     "@types/uuid": "^9.0.6",
     "chai": "^4.3.10",
