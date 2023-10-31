@@ -5,7 +5,7 @@
   "proxy": "http://localhost:8083",
   "dependencies": {
     "@craigmcc/oauth-orchestrator": "^1.0.4",
-    "@craigmcc/shared-react": "^1.2.1",
+    "@craigmcc/shared-react": "^2.2.1",
     "@craigmcc/shared-utils": "^1.0.3",
     "@hookform/resolvers": "^3.1.0",
     "@testing-library/jest-dom": "^5.16.5",
