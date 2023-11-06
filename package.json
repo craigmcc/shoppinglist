@@ -73,7 +73,7 @@
   "devDependencies": {
     "@types/chai": "^4.3.9",
     "@types/express": "^4.17.20",
-    "@types/mocha": "^10.0.1",
+    "@types/mocha": "^10.0.3",
     "@types/morgan": "^1.9.7",
     "@types/nodemailer": "^6.4.10",
     "@types/uuid": "^9.0.6",
